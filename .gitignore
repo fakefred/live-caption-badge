@@ -3,5 +3,7 @@
 # kicad
 *.bak
 pcb/live-caption-badge-backups
+pcb/*.lck
+pcb/#auto_saved_files#
 # misc
 *~
