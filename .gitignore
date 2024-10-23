@@ -1,6 +1,7 @@
 # vim
 .undodir/
 # kicad
+*.bak
 pcb/live-caption-badge-backups
 # misc
 *~
