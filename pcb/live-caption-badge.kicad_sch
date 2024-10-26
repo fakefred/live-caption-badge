@@ -3760,6 +3760,16 @@
 	)
 	(wire
 		(pts
+			(xy 154.94 86.36) (xy 165.1 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4e8bc976-a390-460e-a0e3-e0e7a22d0d8b")
+	)
+	(wire
+		(pts
 			(xy 38.1 135.89) (xy 38.1 139.7)
 		)
 		(stroke
@@ -4007,6 +4017,16 @@
 			(type default)
 		)
 		(uuid "b0e1d7c5-da3a-43d8-8b76-db5eacfeb470")
+	)
+	(wire
+		(pts
+			(xy 114.3 66.04) (xy 124.46 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b1dad90d-ca29-404c-8fb6-6a59634fe310")
 	)
 	(wire
 		(pts
@@ -4407,6 +4427,17 @@
 		)
 		(uuid "2dbfd946-0004-435a-9b68-8e1145ce4509")
 	)
+	(label "I2S_SDIN"
+		(at 114.3 66.04 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "3b91b9f1-245d-4eda-aeda-bdb4f1efed61")
+	)
 	(label "USB_D+"
 		(at 177.8 53.34 180)
 		(fields_autoplaced yes)
@@ -4450,6 +4481,17 @@
 			(justify left bottom)
 		)
 		(uuid "5909ab44-e720-4e75-92a2-8c10f307affc")
+	)
+	(label "AMP_CTRL"
+		(at 165.1 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "758546bf-4356-4a7e-a733-58e1a2811b89")
 	)
 	(label "UART_RX"
 		(at 165.1 43.18 180)
@@ -8009,7 +8051,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "22nF"
+		(property "Value" "22uF"
 			(at 152.654 31.242 0)
 			(effects
 				(font
@@ -8195,8 +8237,8 @@
 		)
 	)
 	(sheet
-		(at 114.3 113.03)
-		(size 15.24 31.75)
+		(at 90.17 105.41)
+		(size 36.83 33.02)
 		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
@@ -8207,7 +8249,7 @@
 		)
 		(uuid "062d581b-50d9-43c1-b486-56ca17b43f51")
 		(property "Sheetname" "Epaper_Driver"
-			(at 114.3 112.3184 0)
+			(at 90.17 104.6984 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8216,7 +8258,7 @@
 			)
 		)
 		(property "Sheetfile" "epaper_driver.kicad_sch"
-			(at 114.3 145.3646 0)
+			(at 90.17 139.0146 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8233,7 +8275,7 @@
 		)
 	)
 	(sheet
-		(at 25.4 158.75)
+		(at 132.08 105.41)
 		(size 36.83 33.02)
 		(fields_autoplaced yes)
 		(stroke
@@ -8245,7 +8287,7 @@
 		)
 		(uuid "6626f702-51b6-4b1f-836e-d6234bc91af1")
 		(property "Sheetname" "Audio"
-			(at 25.4 158.0384 0)
+			(at 132.08 104.6984 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8254,7 +8296,7 @@
 			)
 		)
 		(property "Sheetfile" "audio.kicad_sch"
-			(at 25.4 192.3546 0)
+			(at 132.08 139.0146 0)
 			(effects
 				(font
 					(size 1.27 1.27)
