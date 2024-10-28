@@ -9848,7 +9848,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "live-caption-badge:BH-18650-B1BA002"
 			(at 50.8 49.276 90)
 			(effects
 				(font
