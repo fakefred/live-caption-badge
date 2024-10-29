@@ -6876,7 +6876,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_Audio:Jack_3.5mm_PJ320D_Horizontal"
 			(at 158.75 129.54 0)
 			(effects
 				(font
