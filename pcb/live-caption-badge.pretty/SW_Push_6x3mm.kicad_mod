@@ -1,0 +1,258 @@
+(footprint "SW_Push_6x3mm"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(descr "http://www.alps.com/prod/info/E/HTML/Tact/SurfaceMount/SKRK/SKRKAHE020.html")
+	(tags "SMD SMT button")
+	(property "Reference" "SW1"
+		(at 0 3 0)
+		(layer "F.SilkS")
+		(uuid "e54bdfde-ade6-42b2-9db6-d8d79a5d092a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SW_Push"
+		(at 0 2.5 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "4b2c113b-8826-4e64-b48c-2309c02d06fb")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" "SW_Push_6x3mm"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0f0d9577-5d60-4e84-9b35-91b43863ada0")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "3da2873b-b153-4bbb-9023-4df8416f318e")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "Push button switch, generic, two pins"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "158ce9e7-9f4d-4352-949d-de99db240a31")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -3 -1.85)
+		(end 3 -1.85)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "448cfd9e-b42c-429f-ab70-965e5904117a")
+	)
+	(fp_line
+		(start -3 -1.55)
+		(end -3 -1.85)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f4807d65-4b91-476c-96a6-14cf65657272")
+	)
+	(fp_line
+		(start -3 1.85)
+		(end -3 1.55)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "d7760974-56cc-42b8-b115-e42e0078b726")
+	)
+	(fp_line
+		(start 3 -1.85)
+		(end 3 -1.55)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8a7bfb6b-b285-4de1-8034-f218e8cf8401")
+	)
+	(fp_line
+		(start 3 1.55)
+		(end 3 1.85)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ee83953b-4c89-4991-9d46-e269b19fb73c")
+	)
+	(fp_line
+		(start 3 1.85)
+		(end -3 1.85)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "95b44537-14e8-4e8b-8ae1-1211f7a4bd66")
+	)
+	(fp_line
+		(start -4.8 -2)
+		(end 4.8 -2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "3a1ffa8b-35dd-4a89-af7f-3dbf41813c66")
+	)
+	(fp_line
+		(start -4.8 2)
+		(end -4.8 -2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "aff1c2a5-4a07-4a3e-a579-a38c12751f6d")
+	)
+	(fp_line
+		(start 4.8 -2)
+		(end 4.8 2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "85348f9d-6a98-402b-a181-fc96be94bd30")
+	)
+	(fp_line
+		(start 4.8 2)
+		(end -4.8 2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "ab107780-f846-4892-ad09-314d0e22254a")
+	)
+	(fp_line
+		(start -1.95 -1.45)
+		(end 1.95 -1.45)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "87006b88-f52e-4d93-b5ae-bcc62443f3e0")
+	)
+	(fp_line
+		(start -1.95 1.45)
+		(end -1.95 -1.45)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9ea2bdf8-d6a2-4b89-9487-15f520adfa69")
+	)
+	(fp_line
+		(start 1.95 -1.45)
+		(end 1.95 1.45)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "8f2b02f5-969b-4885-be8e-b20bbc6ac6ea")
+	)
+	(fp_line
+		(start 1.95 1.45)
+		(end -1.95 1.45)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "e2445717-5001-4db1-be17-3dbf87555529")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 1 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "ccc6df67-195d-415a-9bc1-b67746aac9ca")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "3ef59a8c-e310-4621-b4a1-082b420139b9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -3.25 0)
+		(size 2.5 1.5)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(uuid "c0f420d6-9d97-4e82-9c70-af5e6a49d48b")
+	)
+	(pad "2" smd roundrect
+		(at 3.25 -0.025)
+		(size 2.5 1.45)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(uuid "b4c2be6c-7c23-456c-9b34-ab65f9f2373b")
+	)
+	(model "${KICAD8_3DMODEL_DIR}/Button_Switch_SMD.3dshapes/SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS.wrl"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

@@ -4,6 +4,10 @@
 	(generator_version "8.0")
 	(uuid "cf4248a2-7644-47b4-bd93-a913cff40fda")
 	(paper "A4")
+	(title_block
+		(title "Live Caption Badge - Audio Subsystem")
+		(date "2024-10-29")
+	)
 	(lib_symbols
 		(symbol "Connector_Audio:AudioJack4"
 			(exclude_from_sim no)
@@ -6876,7 +6880,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Audio:Jack_3.5mm_PJ320D_Horizontal"
+		(property "Footprint" "live-caption-badge:Jack_3.5mm_PJ320D_Horizontal"
 			(at 158.75 129.54 0)
 			(effects
 				(font
