@@ -4108,10 +4108,6 @@
 		(uuid "49f4eb8c-2cdf-4fad-bc23-66ad5675e3f3")
 	)
 	(no_connect
-		(at 124.46 45.72)
-		(uuid "5cc11047-042d-495e-b233-6235b7b1bd67")
-	)
-	(no_connect
 		(at 124.46 55.88)
 		(uuid "62d8e045-63df-4cda-b74c-3ae50e122548")
 	)
@@ -4148,6 +4144,10 @@
 		(uuid "9be0b217-0891-462c-b4b7-c1efa9896333")
 	)
 	(no_connect
+		(at 154.94 81.28)
+		(uuid "ada9e10b-3656-44e3-a838-64aabf2ce68f")
+	)
+	(no_connect
 		(at 154.94 55.88)
 		(uuid "afcead5e-6cb3-424d-8ced-696a01e2dec2")
 	)
@@ -4156,8 +4156,8 @@
 		(uuid "b40a7755-d46d-439f-b3cf-43ea2c86e3d0")
 	)
 	(no_connect
-		(at 124.46 50.8)
-		(uuid "eb536750-192b-4b8e-975b-bb623768b005")
+		(at 154.94 86.36)
+		(uuid "d21b6e83-8de7-4082-b5e3-250197736e7a")
 	)
 	(no_connect
 		(at 124.46 60.96)
@@ -4565,7 +4565,7 @@
 	)
 	(wire
 		(pts
-			(xy 154.94 86.36) (xy 165.1 86.36)
+			(xy 124.46 50.8) (xy 114.3 50.8)
 		)
 		(stroke
 			(width 0)
@@ -4935,7 +4935,7 @@
 	)
 	(wire
 		(pts
-			(xy 154.94 81.28) (xy 165.1 81.28)
+			(xy 124.46 45.72) (xy 114.3 45.72)
 		)
 		(stroke
 			(width 0)
@@ -5653,13 +5653,13 @@
 		(uuid "027fbf0f-fdc8-4c01-a528-543942e832f6")
 	)
 	(label "ADC_INT"
-		(at 165.1 81.28 180)
+		(at 114.3 45.72 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
 		(uuid "19b66732-00e6-4531-ae97-58ed8dcd3100")
 	)
@@ -5884,13 +5884,13 @@
 		(uuid "74df8144-4443-42e2-a786-2abbe96d4150")
 	)
 	(label "AMP_CTRL"
-		(at 165.1 86.36 180)
+		(at 114.3 50.8 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
 		(uuid "758546bf-4356-4a7e-a733-58e1a2811b89")
 	)
