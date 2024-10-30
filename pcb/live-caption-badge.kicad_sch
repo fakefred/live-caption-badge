@@ -4690,6 +4690,16 @@
 	)
 	(wire
 		(pts
+			(xy 66.04 128.27) (xy 71.12 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01d9a296-297c-4b85-810b-42821a49ce43")
+	)
+	(wire
+		(pts
 			(xy 96.52 119.38) (xy 96.52 120.65)
 		)
 		(stroke
@@ -5470,6 +5480,16 @@
 	)
 	(wire
 		(pts
+			(xy 71.12 128.27) (xy 71.12 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8a2db200-76fd-467a-bc3a-3f9cdfa56e55")
+	)
+	(wire
+		(pts
 			(xy 66.04 135.89) (xy 66.04 139.7)
 		)
 		(stroke
@@ -5507,6 +5527,16 @@
 			(type default)
 		)
 		(uuid "9089d3fb-8494-4382-9e61-2c14e8cb5089")
+	)
+	(wire
+		(pts
+			(xy 71.12 69.85) (xy 71.12 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9238acb5-1c0e-4faf-829e-624f42e09a6d")
 	)
 	(wire
 		(pts
@@ -5727,6 +5757,16 @@
 			(type default)
 		)
 		(uuid "bfb9d3bf-4b02-404b-aabf-3a8fdb0a3db4")
+	)
+	(wire
+		(pts
+			(xy 71.12 73.66) (xy 66.04 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c0aea276-289d-4dbd-8927-3f2dd8c2c56a")
 	)
 	(wire
 		(pts
@@ -6130,7 +6170,7 @@
 	)
 	(rectangle
 		(start 25.4 25.4)
-		(end 76.2 177.8)
+		(end 82.55 177.8)
 		(stroke
 			(width 0)
 			(type default)
@@ -6153,7 +6193,7 @@
 		(uuid 6ed14bb0-8e58-42f1-9744-954b3d93e25f)
 	)
 	(rectangle
-		(start 90.17 104.14)
+		(start 88.9 104.14)
 		(end 127 177.8)
 		(stroke
 			(width 0)
@@ -6311,7 +6351,7 @@
 		(uuid "027fbf0f-fdc8-4c01-a528-543942e832f6")
 	)
 	(label "I2S_SDOUT"
-		(at 193.04 140.97 0)
+		(at 193.04 138.43 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6377,7 +6417,7 @@
 		(uuid "23c28581-8440-49e1-8599-953272f3405e")
 	)
 	(label "I2S_SDIN"
-		(at 193.04 138.43 0)
+		(at 193.04 140.97 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -11114,6 +11154,72 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 71.12 124.46 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c40ee5ba-543f-4fb6-a3af-9e9da644af79")
+		(property "Reference" "TP3"
+			(at 70.866 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 70.866 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
+			(at 76.2 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 76.2 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 71.12 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "16ff2866-81b6-4273-a601-7c11777b749d")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "TP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:Battery_Cell")
 		(at 35.56 43.18 0)
 		(unit 1)
@@ -11276,7 +11382,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
 			(at 39.37 165.1 0)
 			(effects
 				(font
@@ -11532,6 +11638,72 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
 					(reference "#PWR031")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 71.12 69.85 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e9ef8aa1-8795-4f3e-9581-e759fefaa200")
+		(property "Reference" "TP2"
+			(at 70.866 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint"
+			(at 70.866 63.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
+			(at 76.2 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 76.2 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "test point"
+			(at 71.12 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "28d596df-18ed-42a2-ab27-abb8c38c15ec")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "TP2")
 					(unit 1)
 				)
 			)
