@@ -1652,19 +1652,21 @@
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "U6"
-				(at 15.24 8.8586 0)
+				(at -0.3459 -7.62 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
 			(property "Value" "IS31AP2005"
-				(at 15.24 6.3186 0)
+				(at -0.3459 -10.16 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify left)
 				)
 			)
 			(property "Footprint" "Package_SO:MSOP-8_3x3mm_P0.65mm"
@@ -1805,7 +1807,7 @@
 						)
 					)
 				)
-				(pin passive line
+				(pin no_connect line
 					(at 0 -7.62 90)
 					(length 5.08) hide
 					(name "NC"
@@ -3903,7 +3905,7 @@
 				)
 			)
 		)
-		(property "Value" "2.2k"
+		(property "Value" "150k"
 			(at 78.232 141.224 90)
 			(effects
 				(font
@@ -5119,7 +5121,7 @@
 				)
 			)
 		)
-		(property "Value" "2.2k"
+		(property "Value" "150k"
 			(at 78.232 136.144 90)
 			(effects
 				(font
