@@ -8394,7 +8394,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "1M"
+		(property "Value" "150k"
 			(at 73.66 160.0199 0)
 			(effects
 				(font
@@ -10886,7 +10886,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "5.1k"
 			(at 62.23 170.1799 0)
 			(effects
 				(font
@@ -12386,7 +12386,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "2M"
+		(property "Value" "300k"
 			(at 73.66 170.1799 0)
 			(effects
 				(font
