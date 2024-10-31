@@ -4264,6 +4264,12 @@
 		(uuid "0b8893ab-d887-4aa3-951b-dd1edf6f38a7")
 	)
 	(junction
+		(at 71.12 163.83)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "18999e2e-cd48-4970-83ce-2b5ff716a8f1")
+	)
+	(junction
 		(at 228.6 53.34)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4414,10 +4420,6 @@
 		(uuid "87243834-f4c6-4709-81bb-8b65c09ed648")
 	)
 	(no_connect
-		(at 124.46 53.34)
-		(uuid "8d1b7551-9d8d-4e9b-8614-07caf3351dd6")
-	)
-	(no_connect
 		(at 154.94 58.42)
 		(uuid "92b212a7-4b51-49b0-bd49-c897e48031db")
 	)
@@ -4524,6 +4526,16 @@
 			(type default)
 		)
 		(uuid "0b4396a4-77da-47ee-a27c-1ba5958a070a")
+	)
+	(wire
+		(pts
+			(xy 71.12 165.1) (xy 71.12 163.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0e25a9f0-6700-42ae-aede-5914f6f862ab")
 	)
 	(wire
 		(pts
@@ -5367,6 +5379,16 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 165.1) (xy 59.69 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94eef7e3-9944-4b55-9304-73e875e39397")
+	)
+	(wire
+		(pts
 			(xy 154.94 66.04) (xy 165.1 66.04)
 		)
 		(stroke
@@ -5394,6 +5416,16 @@
 			(type default)
 		)
 		(uuid "98216697-9ec0-4a7d-aed8-bafb50a3d1c6")
+	)
+	(wire
+		(pts
+			(xy 71.12 163.83) (xy 81.28 163.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9baf154a-a9df-4f2c-a6f1-a9205120a498")
 	)
 	(wire
 		(pts
@@ -5544,6 +5576,16 @@
 			(type default)
 		)
 		(uuid "bbab3531-31ce-401f-8308-8613389a53c8")
+	)
+	(wire
+		(pts
+			(xy 114.3 53.34) (xy 124.46 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be0a274f-5508-4db6-b743-ff7b1ee48ea8")
 	)
 	(wire
 		(pts
@@ -5947,6 +5989,16 @@
 	)
 	(wire
 		(pts
+			(xy 71.12 163.83) (xy 71.12 162.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f5d75e94-8d25-4625-a837-f9c8b97b381e")
+	)
+	(wire
+		(pts
 			(xy 114.3 63.5) (xy 124.46 63.5)
 		)
 		(stroke
@@ -6094,7 +6146,7 @@
 	)
 	(text "Power\nindicator"
 		(exclude_from_sim no)
-		(at 53.086 154.178 0)
+		(at 49.276 154.178 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6417,6 +6469,17 @@
 			(justify right bottom)
 		)
 		(uuid "4b57177b-3801-45ec-9208-67a2698d6e99")
+	)
+	(label "BATT_ADC"
+		(at 81.28 163.83 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "4bed066e-969e-4d86-9c10-605a7a9302e6")
 	)
 	(label "BTN3"
 		(at 165.1 76.2 180)
@@ -6748,6 +6811,17 @@
 		)
 		(uuid "c4310872-c401-423f-9825-569da02e3faf")
 	)
+	(label "BATT_ADC"
+		(at 114.3 53.34 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c5530da0-431b-4131-9070-d9c910dc8ee6")
+	)
 	(label "BTN3"
 		(at 254 101.6 0)
 		(fields_autoplaced yes)
@@ -7052,6 +7126,72 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
 					(reference "R5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 71.12 172.72 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "070c0b8f-0d56-4630-822d-9b0ae3758612")
+		(property "Reference" "#PWR054"
+			(at 71.12 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 71.12 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 71.12 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 71.12 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 71.12 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6c939573-5fae-49cb-919c-d9ef78d97fd8")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "#PWR054")
 					(unit 1)
 				)
 			)
@@ -7631,7 +7771,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 63.5 170.18 0)
+		(at 59.69 172.72 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7640,7 +7780,7 @@
 		(fields_autoplaced yes)
 		(uuid "200f012a-3257-4b9d-9870-4bb56a3324fc")
 		(property "Reference" "#PWR028"
-			(at 63.5 176.53 0)
+			(at 59.69 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7649,7 +7789,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 63.5 175.26 0)
+			(at 59.69 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7657,7 +7797,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 63.5 170.18 0)
+			(at 59.69 172.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7666,7 +7806,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 63.5 170.18 0)
+			(at 59.69 172.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7675,7 +7815,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 63.5 170.18 0)
+			(at 59.69 172.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8230,6 +8370,76 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
 					(reference "R3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 71.12 158.75 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3ab68bae-49f2-4bf1-8036-b7d93952436d")
+		(property "Reference" "R15"
+			(at 73.66 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "1M"
+			(at 73.66 160.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 70.104 158.496 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 71.12 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 71.12 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "918d211c-681e-47f2-ae01-66a6471f28d6")
+		)
+		(pin "2"
+			(uuid "6266f5bc-ce8a-499a-9b2a-662bf406a326")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "R15")
 					(unit 1)
 				)
 			)
@@ -9444,6 +9654,73 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+BATT")
+		(at 71.12 154.94 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "82cacbb3-eea0-4df1-8024-664728b89635")
+		(property "Reference" "#PWR053"
+			(at 71.12 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+BATT"
+			(at 71.12 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 71.12 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 71.12 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+BATT\""
+			(at 71.12 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e4d8a21-d542-4c49-81fa-84b15d1e9693")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "#PWR053")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C_Small")
 		(at 208.28 106.68 0)
 		(unit 1)
@@ -9704,7 +9981,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 63.5 154.94 0)
+		(at 59.69 154.94 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -9713,7 +9990,7 @@
 		(fields_autoplaced yes)
 		(uuid "86130d7d-821f-4dc0-a4c2-4fc6372f656a")
 		(property "Reference" "#PWR051"
-			(at 63.5 158.75 0)
+			(at 59.69 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9722,7 +9999,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 63.5 149.86 0)
+			(at 59.69 149.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9730,7 +10007,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 63.5 154.94 0)
+			(at 59.69 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9739,7 +10016,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 63.5 154.94 0)
+			(at 59.69 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9748,7 +10025,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 63.5 154.94 0)
+			(at 59.69 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10592,7 +10869,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_US")
-		(at 63.5 166.37 180)
+		(at 59.69 168.91 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10601,7 +10878,7 @@
 		(fields_autoplaced yes)
 		(uuid "a0f4b322-8594-4a64-8a7d-b96c10bc96be")
 		(property "Reference" "R6"
-			(at 66.04 165.0999 0)
+			(at 62.23 167.6399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10610,7 +10887,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 66.04 167.6399 0)
+			(at 62.23 170.1799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10619,7 +10896,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 62.484 166.116 90)
+			(at 58.674 168.656 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10628,7 +10905,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 63.5 166.37 0)
+			(at 59.69 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10637,7 +10914,7 @@
 			)
 		)
 		(property "Description" "Resistor, US symbol"
-			(at 63.5 166.37 0)
+			(at 59.69 168.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11750,7 +12027,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 63.5 158.75 90)
+		(at 59.69 158.75 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11759,7 +12036,7 @@
 		(fields_autoplaced yes)
 		(uuid "c5bd3d5d-b31b-40ad-9e03-c0af59fa2bad")
 		(property "Reference" "D1"
-			(at 67.31 159.0674 90)
+			(at 63.5 159.0674 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11768,7 +12045,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 67.31 161.6074 90)
+			(at 63.5 161.6074 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11777,7 +12054,7 @@
 			)
 		)
 		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 63.5 158.75 0)
+			(at 59.69 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11786,7 +12063,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 63.5 158.75 0)
+			(at 59.69 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11795,7 +12072,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 63.5 158.75 0)
+			(at 59.69 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12085,6 +12362,76 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
 					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_US")
+		(at 71.12 168.91 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dbfae6a4-0d1e-4fb3-b17a-9c1b0db12e5e")
+		(property "Reference" "R16"
+			(at 73.66 167.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "2M"
+			(at 73.66 170.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 70.104 168.656 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 71.12 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, US symbol"
+			(at 71.12 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "055c4024-2f94-41a8-8b18-855098ce12d9")
+		)
+		(pin "2"
+			(uuid "4cfadc76-963e-46cf-8c92-0a95e9bbdddc")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905"
+					(reference "R16")
 					(unit 1)
 				)
 			)
