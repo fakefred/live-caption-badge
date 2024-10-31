@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "C&K sub miniature slide switch, JS series, DPDT, right angle, http://www.ckswitches.com/media/1422/js.pdf")
 	(tags "switch DPDT")
-	(property "Reference" "REF**"
+	(property "Reference" "SW1"
 		(at 2.2 -3 0)
 		(layer "F.SilkS")
-		(uuid "c1a55e12-be32-44db-8f12-4021e6f25e14")
+		(uuid "c78f7143-4b1a-4f19-8428-999f4fdb5ad2")
 		(effects
 			(font
 				(size 1 1)
@@ -16,10 +16,10 @@
 			)
 		)
 	)
-	(property "Value" "SW_DPDT_SLW-867569-4A-N-D"
+	(property "Value" "SW_DPDT_x2"
 		(at 3.1 6.2 0)
 		(layer "F.Fab")
-		(uuid "ae9f00c0-8b3d-4fce-8313-835654ea16e9")
+		(uuid "8de092fb-96f4-44f9-bc7c-b4a969f257f1")
 		(effects
 			(font
 				(size 1 1)
@@ -27,12 +27,12 @@
 			)
 		)
 	)
-	(property "Footprint" ""
+	(property "Footprint" "live-caption-badge:SW_DPDT_SLW-867569-4A-N-D"
 		(at 0 0 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "dae95b74-4c51-40ed-bead-631e8828e5c5")
+		(uuid "9ef0665b-ee48-462c-b6c4-ea49b6bb7e78")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -45,7 +45,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "431352f5-f1ec-4e9a-a91d-d0e0b0c9ca81")
+		(uuid "c8441961-6edb-4c11-b5d3-037a14538c2c")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -53,12 +53,12 @@
 			)
 		)
 	)
-	(property "Description" ""
+	(property "Description" "Switch, dual pole double throw, separate symbols"
 		(at 0 0 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "f60924b0-1455-4555-bfdc-61b8364c90c7")
+		(uuid "347ca606-95b4-46b1-b92c-b8b1a64f9d0e")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -77,7 +77,7 @@
 		)
 		(fill solid)
 		(layer "F.SilkS")
-		(uuid "f26963a1-3e0e-4406-abdd-b1c1c503c046")
+		(uuid "c1bc1df8-576d-4dd1-ad3b-29a2a9a0282a")
 	)
 	(fp_rect
 		(start -2.6 -2.2)
@@ -88,7 +88,7 @@
 		)
 		(fill none)
 		(layer "F.CrtYd")
-		(uuid "85822b77-2715-4657-9a8f-a9b12a32e26a")
+		(uuid "ddca47d9-f11d-4ae2-86d5-eb2fc8bda55e")
 	)
 	(fp_line
 		(start -1.25 3.5)
@@ -98,7 +98,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "09c01495-9f36-43cf-80b5-5df2c8c868d4")
+		(uuid "13f04817-30bc-4ca0-96a0-d15acc1c36b8")
 	)
 	(fp_line
 		(start 0.25 -0.75)
@@ -108,7 +108,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "b8137818-7ad7-4f9d-ba92-46afe4fbeba7")
+		(uuid "6ac859b1-8584-4d3f-891c-1e712228f66a")
 	)
 	(fp_line
 		(start 0.25 -0.75)
@@ -118,7 +118,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "ef1be669-60c5-452c-88e7-4a5fb47d50d4")
+		(uuid "ecccf106-764f-46b2-a93a-6b20fb2d3270")
 	)
 	(fp_line
 		(start 5.4 -0.75)
@@ -128,7 +128,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "c53533fa-51ce-4b14-8d2d-3c119592dbb0")
+		(uuid "55e4a5dd-7c46-405d-ba14-61c5db0646dc")
 	)
 	(fp_line
 		(start 5.4 3.5)
@@ -138,12 +138,12 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "ecb5e41e-e630-4adf-9973-81f5b5f5dbfd")
+		(uuid "fd868729-d2e1-40b9-93a2-e126a987f2dc")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 2.5 1.65 0)
 		(layer "F.Fab")
-		(uuid "d00448ee-7e38-4feb-91d0-93aff894fbba")
+		(uuid "6a6011bf-5cfa-4f97-ae86-94bd090f5e81")
 		(effects
 			(font
 				(size 1 1)
@@ -155,15 +155,15 @@
 		(at -2.1 1.25)
 		(size 1.6 2.6)
 		(drill oval 0.8 1.8)
-		(layers "F&B.Cu" "*.Mask")
-		(uuid "884fb5b2-c4f3-4a5f-a253-43a84bbfc616")
+		(layers "*.Cu" "*.Mask")
+		(uuid "9d12f7de-a0b7-4aed-adba-fa8536412e05")
 	)
 	(pad "" np_thru_hole oval
 		(at 6.1 1.25)
 		(size 1.6 2.6)
 		(drill oval 0.8 1.8)
-		(layers "F&B.Cu" "*.Mask")
-		(uuid "3c52ae59-90e3-4ccd-aaaf-b9e317ce0c9a")
+		(layers "*.Cu" "*.Mask")
+		(uuid "3c248e25-0329-4702-b835-b400bd12dbce")
 	)
 	(pad "1" thru_hole roundrect
 		(at 0 0)
@@ -172,15 +172,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(roundrect_rratio 0.1785714286)
-		(uuid "73421228-c812-4927-8661-e333dac21414")
-	)
-	(pad "1" thru_hole circle
-		(at 4 2.5)
-		(size 1.6 1.6)
-		(drill 1)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-		(uuid "0b620c60-32bc-4aa5-abff-eff99cecee76")
+		(uuid "251d6e19-a3ae-480e-821c-230b34ccc730")
 	)
 	(pad "2" thru_hole circle
 		(at 2 0)
@@ -188,7 +180,7 @@
 		(drill 1)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "02f1c38d-7236-4518-a78b-d3d327841222")
+		(uuid "453cd33d-1af0-47b6-96be-7b5ba544dabe")
 	)
 	(pad "3" thru_hole circle
 		(at 4 0)
@@ -196,7 +188,15 @@
 		(drill 1)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "5abf7ffb-b382-4ef2-a28a-f23ad19d712b")
+		(uuid "1f53bda5-741b-476b-8a17-094d73500ae8")
+	)
+	(pad "4" thru_hole circle
+		(at 4 2.5)
+		(size 1.6 1.6)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "122cb170-e921-4edc-a3f2-8b3bf704fc73")
 	)
 	(pad "5" thru_hole circle
 		(at 2 2.5)
@@ -204,7 +204,7 @@
 		(drill 1)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "6c3726b5-0abc-48f4-8827-ed5b58320f39")
+		(uuid "9ecb9881-b61d-4c5c-86b1-d1bdb204d7e9")
 	)
 	(pad "6" thru_hole circle
 		(at 0 2.5)
@@ -212,7 +212,7 @@
 		(drill 1)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "80d923ad-b5ae-4c95-8b6b-4a18add45a1a")
+		(uuid "e5089bad-0fea-4fdd-b634-f04410018bee")
 	)
 	(model "${KICAD8_3DMODEL_DIR}/Button_Switch_THT.3dshapes/SW_CK_JS202011CQN_DPDT_Straight.wrl"
 		(offset
