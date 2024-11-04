@@ -37,7 +37,8 @@ def stream_audio():
     # Save the audio data to a .wav file
     filename = save_audio(data, requested_sample_rate, bits, channels)
     print(f"Saved audio file: {filename}")
-
+    wf = wave.open(filename, "rb")
+    data = wf.readframes(4000) # may need to change 4000
     if rec.AcceptWaveform(data):
         print(rec.Result())
     else:
