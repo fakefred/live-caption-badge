@@ -9,9 +9,9 @@ import json
 
 app = Flask(__name__)
 model = Model(lang="en-us")
-device_info = sd.query_devices(None, "input")
-sample_rate = int(device_info["default_samplerate"])
-rec = KaldiRecognizer(model, sample_rate)
+#device_info = sd.query_devices(None, "input")
+#sample_rate = int(device_info["default_samplerate"])
+#rec = KaldiRecognizer(model, sample_rate)
 
 # Helper function to save audio data to a .wav file
 def save_audio(data, sample_rate, bits, channels):
@@ -23,11 +23,11 @@ def save_audio(data, sample_rate, bits, channels):
     return filename
 
 
-@app.route('/stream', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def stream_audio():
 
     # Fetch audio metadata from headers
-    requested_sample_rate = int(request.headers.get('x-audio-sample-rates', sample_rate))
+    requested_sample_rate = int(request.headers.get('x-audio-sample-rates',16000))
     bits = int(request.headers.get('x-audio-bits', 16))
     channels = int(request.headers.get('x-audio-channel', 1))
 
@@ -38,13 +38,19 @@ def stream_audio():
     filename = save_audio(data, requested_sample_rate, bits, channels)
     print(f"Saved audio file: {filename}")
     wf = wave.open(filename, "rb")
-    data = wf.readframes(4000) # may need to change 4000
-    if rec.AcceptWaveform(data):
-        print(rec.Result())
-    else:
-        print(rec.PartialResult())
+    rec = KaldiRecognizer(model, wf.getframerate())
+    rec.SetWords(True)
+    rec.SetPartialWords(True)
+    while True:
+        data = wf.readframes(4000)
+        if len(data) == 0:
+            break
+        if rec.AcceptWaveform(data):
+            print(rec.Result())
+        else:
+            print(rec.PartialResult())
     print("Received audio data")
-    return "Audio received", 200
+    return "Audio received", 200 # need regular expression to parse rec.Result()
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.199", port=8080)
+    app.run(host="127.0.0.1", port=8000)
