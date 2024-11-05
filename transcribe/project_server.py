@@ -38,9 +38,11 @@ def stream_audio():
     filename = save_audio(data, requested_sample_rate, bits, channels)
     print(f"Saved audio file: {filename}")
     wf = wave.open(filename, "rb")
+
     rec = KaldiRecognizer(model, wf.getframerate())
     rec.SetWords(True)
     rec.SetPartialWords(True)
+
     while True:
         data = wf.readframes(4000)
         if len(data) == 0:
@@ -49,8 +51,10 @@ def stream_audio():
             print(rec.Result())
         else:
             print(rec.PartialResult())
+    finalResult = json.loads(rec.FinalResult())
+    print("result: ", finalResult['text'])
     print("Received audio data")
-    return "Audio received", 200 # need regular expression to parse rec.Result()
+    return finalResult['text'], 200 
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8000)
