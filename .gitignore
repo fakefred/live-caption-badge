@@ -10,6 +10,10 @@ pcb/#auto_saved_files#
 pcb/_autosave*
 pcb/fp-info-cache
 pcb/~*
+# esp-idf
+build/
+sdkconfig
+sdkconfig.old
 # misc
 *~
 *.wav
