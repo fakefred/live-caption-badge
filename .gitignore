@@ -12,3 +12,4 @@ pcb/fp-info-cache
 pcb/~*
 # misc
 *~
+*.wav
