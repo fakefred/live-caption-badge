@@ -28,28 +28,37 @@
 #
 ******************************************************************************/
 #include "DEV_Config.h"
+#include "driver/gpio.h"
+#include "esp_log.h"
 #include "hal/gpio_types.h"
 
-void GPIO_Config(void) {
-	gpio_set_direction(EPD_BUSY_PIN, GPIO_MODE_INPUT);
-	gpio_set_direction(EPD_RST_PIN, GPIO_MODE_OUTPUT);
-	gpio_set_direction(EPD_DC_PIN, GPIO_MODE_OUTPUT);
+#define TAG "DEV_Config"
 
-	gpio_set_direction(EPD_SCK_PIN, GPIO_MODE_OUTPUT);
-	gpio_set_direction(EPD_MOSI_PIN, GPIO_MODE_OUTPUT);
-	gpio_set_direction(EPD_CS_PIN, GPIO_MODE_OUTPUT);
+void GPIO_Config(void) {
+	gpio_config_t input_config = {
+	    .pin_bit_mask = 1ULL << EPD_BUSY_PIN,
+	    .mode = GPIO_MODE_INPUT,
+	    .pull_up_en = GPIO_PULLUP_DISABLE,
+	    .pull_down_en = GPIO_PULLDOWN_DISABLE,
+	    .intr_type = GPIO_INTR_DISABLE,
+	};
+	gpio_config(&input_config);
+
+	gpio_config_t output_config = {
+	    .pin_bit_mask = (1ULL << EPD_RST_PIN) | (1ULL << EPD_DC_PIN) |
+	                    (1ULL << EPD_SCK_PIN) | (1ULL << EPD_MOSI_PIN) |
+	                    (1ULL << EPD_CS_PIN),
+	    .mode = GPIO_MODE_OUTPUT,
+	    .pull_up_en = GPIO_PULLUP_DISABLE,
+	    .pull_down_en = GPIO_PULLDOWN_DISABLE,
+	    .intr_type = GPIO_INTR_DISABLE,
+	};
+	gpio_config(&output_config);
 
 	gpio_set_level(EPD_CS_PIN, HIGH);
 	gpio_set_level(EPD_SCK_PIN, LOW);
 }
 
-void GPIO_Mode(UWORD GPIO_Pin, UWORD Mode) {
-	if (Mode == 0) {
-		gpio_set_direction(GPIO_Pin, GPIO_MODE_INPUT);
-	} else {
-		gpio_set_direction(GPIO_Pin, GPIO_MODE_OUTPUT);
-	}
-}
 /******************************************************************************
 function:	Module Initialize, the BCM2835 library and initialize the pins,
 SPI protocol parameter: Info:
@@ -96,7 +105,7 @@ void DEV_SPI_WriteByte(UBYTE data) {
 
 UBYTE DEV_SPI_ReadByte() {
 	UBYTE j = 0xff;
-	GPIO_Mode(EPD_MOSI_PIN, 0);
+	gpio_set_direction(EPD_MOSI_PIN, GPIO_MODE_INPUT);
 	gpio_set_level(EPD_CS_PIN, GPIO_PIN_RESET);
 	for (int i = 0; i < 8; i++) {
 		j = j << 1;
@@ -109,7 +118,7 @@ UBYTE DEV_SPI_ReadByte() {
 		gpio_set_level(EPD_SCK_PIN, GPIO_PIN_RESET);
 	}
 	gpio_set_level(EPD_CS_PIN, GPIO_PIN_SET);
-	GPIO_Mode(EPD_MOSI_PIN, 1);
+	gpio_set_direction(EPD_MOSI_PIN, GPIO_MODE_OUTPUT);
 	return j;
 }
 

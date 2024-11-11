@@ -45,8 +45,8 @@
 /**
  * GPIO config
  **/
-#define EPD_SCK_PIN GPIO_NUM_15
-#define EPD_MOSI_PIN GPIO_NUM_16
+#define EPD_SCK_PIN GPIO_NUM_19
+#define EPD_MOSI_PIN GPIO_NUM_18
 #define EPD_CS_PIN GPIO_NUM_7
 #define EPD_RST_PIN GPIO_NUM_5
 #define EPD_DC_PIN GPIO_NUM_6
@@ -67,7 +67,7 @@
 /**
  * delay x ms
  **/
-#define DEV_Delay_ms(__xms) vTaskDelay(__xms / portTICK_PERIOD_MS);
+#define DEV_Delay_ms(__xms) vTaskDelay(pdMS_TO_TICKS(__xms))
 
 /*------------------------------------------------------------------------------------------------------*/
 UBYTE DEV_Module_Init(void);

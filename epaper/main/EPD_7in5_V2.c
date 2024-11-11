@@ -38,6 +38,7 @@ function :	Software reset
 parameter:
 ******************************************************************************/
 static void EPD_Reset(void) {
+	ESP_LOGI(TAG, "EPD_Reset");
 	DEV_Digital_Write(EPD_RST_PIN, 1);
 	DEV_Delay_ms(20);
 	DEV_Digital_Write(EPD_RST_PIN, 0);
@@ -104,6 +105,7 @@ function :	Initialize the e-Paper register
 parameter:
 ******************************************************************************/
 UBYTE EPD_7IN5_V2_Init(void) {
+	ESP_LOGI(TAG, "EPD_Init");
 	EPD_Reset();
 	EPD_SendCommand(0x01); // POWER SETTING
 	EPD_SendData(0x07);

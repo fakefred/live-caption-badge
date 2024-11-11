@@ -3,13 +3,7 @@
 #include "EPD_7in5_V2.h"
 #include "GUI_Paint.h"
 #include "ImageData.h"
-#include "esp_chip_info.h"
-#include "esp_flash.h"
 #include "esp_log.h"
-#include "esp_system.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "sdkconfig.h"
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +12,7 @@
 
 /* Entry point
  * ----------------------------------------------------------------*/
-void app_main() {
+void epaper_task(void *arg) {
 	printf("EPD_7IN5_V2_test Demo\r\n");
 	DEV_Module_Init();
 
@@ -132,11 +126,17 @@ void app_main() {
 #endif
 
 	printf("Clear...\r\n");
-	EPD_7IN5_V2_Init();
 	EPD_7IN5_V2_Clear();
+	DEV_Delay_ms(500);
 
 	printf("Goto Sleep...\r\n");
 	EPD_7IN5_V2_Sleep();
 	free(BlackImage);
 	BlackImage = NULL;
+	while (1);
+}
+
+void app_main() {
+	vTaskDelay(pdMS_TO_TICKS(100));
+	xTaskCreate(epaper_task, "epaper", 16 * 1024, NULL, 2, NULL);
 }
