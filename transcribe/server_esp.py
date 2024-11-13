@@ -9,7 +9,13 @@ import wave
 
 from vosk import Model, KaldiRecognizer
 
+global textBuffer, index
+textBuffer = []
+index = 0
+
+print("###########Start loading Vosk model###########")
 model = Model(lang="en-us")
+print("###########Finish loading model###########")
 
 if sys.version_info.major == 3:
     # Python3
@@ -54,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
+        global textBuffer, index
         if sys.version_info.major == 3:
             urlparts = parse.urlparse(self.path)
         else:
@@ -66,6 +73,9 @@ class Handler(BaseHTTPRequestHandler):
         print("Do Post......")
         if (request_file_path == 'upload'
             and self.headers.get('Transfer-Encoding', '').lower() == 'chunked'):
+            rec = KaldiRecognizer(model, 16000)
+            rec.SetWords(True)
+            rec.SetPartialWords(True)
             data = []
             sample_rates = self.headers.get('x-audio-sample-rates', '').lower()
             bits = self.headers.get('x-audio-bits', '').lower()
@@ -75,49 +85,66 @@ class Handler(BaseHTTPRequestHandler):
             print("Audio information, sample rates: {}, bits: {}, channel(s): {}".format(sample_rates, bits, channel))
             # https://stackoverflow.com/questions/24500752/how-can-i-read-exactly-one-response-chunk-with-pythons-http-client
             while True:
-                chunk_size = self._get_chunk_size()
+                chunk_size = self._get_chunk_size() #4096
                 total_bytes += chunk_size
                 print("Total bytes received: {}".format(total_bytes))
-                sys.stdout.write("\033[F")
+                sys.stdout.write("\033[F") #for live update.
                 if (chunk_size == 0):
                     break
                 else:
                     chunk_data = self._get_chunk_data(chunk_size)
-                    data += chunk_data
+                    #data += chunk_data
+                    if rec.AcceptWaveform(chunk_data):
+                        #print(rec.Result())
+                        pass
+                    else:
+                        #print(rec.PartialResult())
+                        partialResult = json.loads(rec.PartialResult())["partial"]
+                        '''
+                        tmp = partialResult.split()
+                        print(tmp)
+                        if not textBuffer:
+                            textBuffer = tmp
+                        else:
+                            comp = textBuffer[-1*len(tmp):]
 
-            filename = self._write_wav(data, int(sample_rates), int(bits), int(channel))
-            wf = wave.open(filename, "rb")
-
-            rec = KaldiRecognizer(model, wf.getframerate())
-            rec.SetWords(True)
-            rec.SetPartialWords(True)
-
-            while True:
-                data = wf.readframes(4000)
-                if len(data) == 0:
-                    break
-                if rec.AcceptWaveform(data):
-                    print(rec.Result())
-                else:
-                    print(rec.PartialResult())
-            finalResult = json.loads(rec.FinalResult())['text']
-            print("result: ", finalResult)
-            print("Received audio data")
-
+                            for i in range(min(len(comp), len(tmp))):
+                                if comp[i] != tmp[i]:
+                                    textBuffer.extend(tmp[i:])
+                                    break
+                            textBuffer.extend(tmp[i:])
+                        '''
+                        currLen = len(textBuffer)
+                        textBuffer.extend(partialResult.split()[currLen:])
+            print("____________")
+            print(len(textBuffer))
+            for i in range(len(textBuffer)):
+                print(textBuffer[i])
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
             #self.send_header("Content-Length", str(total_bytes))
-            self.send_header("Content-Length", len(finalResult))
+            self.send_header("Content-Length", len(partialResult))
             self.end_headers()
             #body = 'File {} was written, size {}'.format(filename, total_bytes)
-            body = finalResult
+            body = partialResult
             self.wfile.write(body.encode('utf-8'))
 
     def do_GET(self):
+        global textBuffer, index
         print("Do GET")
+        if not textBuffer:
+            body = "empty"
+        else:
+            if index < len(textBuffer):
+                body = textBuffer[index]
+                index += 1
+            else:
+                body = textBuffer[-1]
         self.send_response(200)
-        self.send_header('Content-type', "text/html;charset=utf-8")
+        self.send_header("Content-type", "text/html;charset=utf-8")
+        self.send_header("Content-Length", len(body))
         self.end_headers()
+        self.wfile.write(body.encode('utf-8'))
 
 def get_host_ip():
     # https://www.cnblogs.com/z-x-y/p/9529930.html
