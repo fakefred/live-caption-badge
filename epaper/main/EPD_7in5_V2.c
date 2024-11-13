@@ -62,10 +62,6 @@ parameter:
 static void EPD_SendCommand(UBYTE Reg) {
 	DEV_Digital_Write(EPD_DC_PIN, 0);
 	spi_write_byte(Reg);
-	//DEV_Digital_Write(EPD_CS_PIN, 0);
-	//DEV_SPI_WriteByte(Reg);
-	/* ESP_LOGI(TAG, "EPD_SendCommand %02x", Reg); */
-	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 /******************************************************************************
@@ -76,22 +72,11 @@ parameter:
 static void EPD_SendData(UBYTE Data) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
 	spi_write_byte(Data);
-	//DEV_Digital_Write(EPD_CS_PIN, 0);
-	//DEV_SPI_WriteByte(Data);
-	/* ESP_LOGI(TAG, "EPD_SendData %02x", Data); */
-	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 static void EPD_SendData2(UBYTE *pData, UDOUBLE len) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
 	spi_write_bytes(pData, len);
-	//DEV_Digital_Write(EPD_CS_PIN, 0);
-	//DEV_SPI_Write_nByte(pData, len);
-	/* ESP_LOGI(TAG, "EPD_SendData2 len=%u", (unsigned int)len); */
-	/* if (len <= 32) { */
-		/* ESP_LOG_BUFFER_HEXDUMP(TAG, pData, len, ESP_LOG_INFO); */
-	/* } */
-	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 /******************************************************************************
@@ -100,10 +85,6 @@ parameter:
 ******************************************************************************/
 static void EPD_WaitUntilIdle(void) {
 	ESP_LOGI(TAG, "e-Paper busy");
-	/*do {
-		DEV_Delay_ms(5);
-	} while (!(DEV_Digital_Read(EPD_BUSY_PIN)));
-	DEV_Delay_ms(5); */
 	int dummy = 0;
 	xQueueReceive(gpio_evt_queue, &dummy, portMAX_DELAY);
 
