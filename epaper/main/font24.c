@@ -38,6 +38,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "fonts.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 const uint8_t Font24_Table [] = 
 {
 	// @0 ' ' (17 pixels wide)
@@ -291,7 +295,7 @@ const uint8_t Font24_Table [] =
 	0x03, 0x80, 0x00, //       ###        
 	0x07, 0x00, 0x00, //      ###         
 	0x07, 0x00, 0x00, //      ###         
-	0x0F, 0x00, 0x00, //     ####         
+	0x0F, 0x00,
 	0x0E, 0x00, 0x00, //     ###          
 	0x1C, 0x00, 0x00, //    ###           
 	0x18, 0x00, 0x00, //    ##            
@@ -2516,5 +2520,9 @@ sFONT Font24 = {
   17, /* Width */
   24, /* Height */
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -106,8 +106,8 @@ void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate,
 	Paint.Scale = 2;
 	Paint.WidthByte = (Width % 8 == 0) ? (Width / 8) : (Width / 8 + 1);
 	Paint.HeightByte = Height;
-	//    printf("WidthByte = %d, HeightByte = %d\r\n", Paint.WidthByte,
-	//    Paint.HeightByte); printf(" EPD_WIDTH / 8 = %d\r\n",  122 / 8);
+	//    printf("WidthByte = %d, HeightByte = %d", Paint.WidthByte,
+	//    Paint.HeightByte); printf(" EPD_WIDTH / 8 = %d",  122 / 8);
 
 	Paint.Rotate = Rotate;
 	Paint.Mirror = MIRROR_NONE;
@@ -136,10 +136,10 @@ parameter:
 void Paint_SetRotate(UWORD Rotate) {
 	if (Rotate == ROTATE_0 || Rotate == ROTATE_90 || Rotate == ROTATE_180 ||
 	    Rotate == ROTATE_270) {
-		// ESP_LOGI(TAG, "Set image Rotate %d\r\n", Rotate);
+		// ESP_LOGI(TAG, "Set image Rotate %d", Rotate);
 		Paint.Rotate = Rotate;
 	} else {
-		ESP_LOGI(TAG, "rotate = 0, 90, 180, 270\r\n");
+		ESP_LOGI(TAG, "rotate = 0, 90, 180, 270");
 	}
 }
 
@@ -151,13 +151,13 @@ parameter:
 void Paint_SetMirroring(UBYTE mirror) {
 	if (mirror == MIRROR_NONE || mirror == MIRROR_HORIZONTAL ||
 	    mirror == MIRROR_VERTICAL || mirror == MIRROR_ORIGIN) {
-		// ESP_LOGI(TAG, "mirror image x:%s, y:%s\r\n",(mirror & 0x01)?
+		// ESP_LOGI(TAG, "mirror image x:%s, y:%s",(mirror & 0x01)?
 		// "mirror":"none", ((mirror >> 1) & 0x01)? "mirror":"none");
 		Paint.Mirror = mirror;
 	} else {
 		ESP_LOGI(TAG,
-		         "mirror should be MIRROR_NONE, MIRROR_HORIZONTAL, \
-        MIRROR_VERTICAL or MIRROR_ORIGIN\r\n");
+		         "mirror should be MIRROR_NONE, MIRROR_HORIZONTAL, "
+		         "MIRROR_VERTICAL or MIRROR_ORIGIN");
 	}
 }
 
@@ -178,8 +178,8 @@ void Paint_SetScale(UBYTE scale) {
 		                      ? (Paint.WidthMemory / 2)
 		                      : (Paint.WidthMemory / 2 + 1);
 	} else {
-		ESP_LOGI(TAG, "Set Scale Input parameter error\r\n");
-		ESP_LOGI(TAG, "Scale Only support: 2 4 7\r\n");
+		ESP_LOGI(TAG, "Set Scale Input parameter error");
+		ESP_LOGI(TAG, "Scale Only support: 2 4 7");
 	}
 }
 /******************************************************************************
@@ -191,7 +191,7 @@ parameter:
 ******************************************************************************/
 void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color) {
 	if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-		ESP_LOGI(TAG, "Exceeding display boundaries\r\n");
+		ESP_LOGI(TAG, "Exceeding display boundaries");
 		return;
 	}
 	UWORD X, Y;
@@ -234,7 +234,7 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color) {
 	}
 
 	if (X > Paint.WidthMemory || Y > Paint.HeightMemory) {
-		ESP_LOGI(TAG, "Exceeding display boundaries\r\n");
+		ESP_LOGI(TAG, "Exceeding display boundaries");
 		return;
 	}
 
@@ -259,7 +259,7 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color) {
 		    Rdata &
 		    (~(0xF0 >> ((X % 2) * 4))); // Clear first, then set value
 		Paint.Image[Addr] = Rdata | ((Color << 4) >> ((X % 2) * 4));
-		// printf("Add =  %d ,data = %d\r\n",Addr,Rdata);
+		// printf("Add =  %d ,data = %d",Addr,Rdata);
 	}
 }
 
@@ -328,7 +328,7 @@ void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
                      DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_Style) {
 	if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
 		ESP_LOGI(TAG, "Paint_DrawPoint Input exceeds the normal "
-		              "display range\r\n");
+		              "display range");
 		return;
 	}
 
@@ -340,7 +340,7 @@ void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
 				if (Xpoint + XDir_Num - Dot_Pixel < 0 ||
 				    Ypoint + YDir_Num - Dot_Pixel < 0)
 					break;
-				// printf("x = %d, y = %d\r\n", Xpoint +
+				// printf("x = %d, y = %d", Xpoint +
 				// XDir_Num - Dot_Pixel, Ypoint + YDir_Num -
 				// Dot_Pixel);
 				Paint_SetPixel(Xpoint + XDir_Num - Dot_Pixel,
@@ -374,7 +374,7 @@ void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
 	if (Xstart > Paint.Width || Ystart > Paint.Height ||
 	    Xend > Paint.Width || Yend > Paint.Height) {
 		ESP_LOGI(TAG, "Paint_DrawLine Input exceeds the normal display "
-		              "range\r\n");
+		              "range");
 		return;
 	}
 
@@ -395,7 +395,7 @@ void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
 		Dotted_Len++;
 		// Painted dotted line, 2 point is really virtual
 		if (Line_Style == LINE_STYLE_DOTTED && Dotted_Len % 3 == 0) {
-			// ESP_LOGI(TAG, "LINE_DOTTED\r\n");
+			// ESP_LOGI(TAG, "LINE_DOTTED");
 			Paint_DrawPoint(Xpoint, Ypoint, IMAGE_BACKGROUND,
 			                Line_width, DOT_STYLE_DFT);
 			Dotted_Len = 0;
@@ -434,7 +434,7 @@ void Paint_DrawRectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
                          DRAW_FILL Draw_Fill) {
 	if (Xstart > Paint.Width || Ystart > Paint.Height ||
 	    Xend > Paint.Width || Yend > Paint.Height) {
-		ESP_LOGI(TAG, "Input exceeds the normal display range\r\n");
+		ESP_LOGI(TAG, "Input exceeds the normal display range");
 		return;
 	}
 
@@ -471,7 +471,7 @@ void Paint_DrawCircle(UWORD X_Center, UWORD Y_Center, UWORD Radius, UWORD Color,
                       DOT_PIXEL Line_width, DRAW_FILL Draw_Fill) {
 	if (X_Center > Paint.Width || Y_Center >= Paint.Height) {
 		ESP_LOGI(TAG, "Paint_DrawCircle Input exceeds the normal "
-		              "display range\r\n");
+		              "display range");
 		return;
 	}
 
@@ -576,13 +576,19 @@ void Paint_DrawChar(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
 
 	if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
 		ESP_LOGI(TAG, "Paint_DrawChar Input exceeds the normal display "
-		              "range\r\n");
+		              "range");
 		return;
 	}
 
 	uint32_t Char_Offset = (Acsii_Char - ' ') * Font->Height *
 	                       (Font->Width / 8 + (Font->Width % 8 ? 1 : 0));
 	const unsigned char *ptr = &Font->table[Char_Offset];
+
+	// ESP_LOGI(TAG, "Char_Offset=%d", static_cast<int>(Char_Offset));
+	// for (size_t i = 0; i < 3 * 24; i++) {
+		// printf("%0x ", ptr[i]);
+	// }
+	// printf("\n");
 
 	for (Page = 0; Page < Font->Height; Page++) {
 		for (Column = 0; Column < Font->Width; Column++) {
@@ -643,7 +649,7 @@ void Paint_DrawString_EN(UWORD Xstart, UWORD Ystart, const char *pString,
 
 	if (Xstart > Paint.Width || Ystart > Paint.Height) {
 		ESP_LOGI(TAG, "Paint_DrawString_EN Input exceeds the normal "
-		              "display range\r\n");
+		              "display range");
 		return;
 	}
 
@@ -660,8 +666,8 @@ void Paint_DrawString_EN(UWORD Xstart, UWORD Ystart, const char *pString,
 			Xpoint = Xstart;
 			Ypoint = Ystart;
 		}
-		Paint_DrawChar(Xpoint, Ypoint, *pString, Font, Color_Background,
-		               Color_Foreground);
+		Paint_DrawChar(Xpoint, Ypoint, *pString, Font, Color_Foreground,
+		               Color_Background);
 
 		// The next character of the address
 		pString++;
@@ -683,6 +689,7 @@ parameter:
     Color_Foreground : Select the foreground color
     Color_Background : Select the background color
 ******************************************************************************/
+#if 0
 void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char *pString,
                          cFONT *font, UWORD Color_Foreground,
                          UWORD Color_Background) {
@@ -839,6 +846,7 @@ void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char *pString,
 		}
 	}
 }
+#endif
 
 /******************************************************************************
 function:	Display nummber
@@ -859,9 +867,8 @@ void Paint_DrawNum(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONT *Font,
 	uint8_t *pStr = Str_Array;
 
 	if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
-		ESP_LOGI(
-		    TAG,
-		    "Paint_DisNum Input exceeds the normal display range\r\n");
+		ESP_LOGI(TAG,
+		         "Paint_DisNum Input exceeds the normal display range");
 		return;
 	}
 

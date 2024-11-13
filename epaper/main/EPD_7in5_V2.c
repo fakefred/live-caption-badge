@@ -56,6 +56,7 @@ static void EPD_SendCommand(UBYTE Reg) {
 	DEV_Digital_Write(EPD_DC_PIN, 0);
 	DEV_Digital_Write(EPD_CS_PIN, 0);
 	DEV_SPI_WriteByte(Reg);
+	/* ESP_LOGI(TAG, "EPD_SendCommand %02x", Reg); */
 	DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
@@ -68,6 +69,7 @@ static void EPD_SendData(UBYTE Data) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
 	DEV_Digital_Write(EPD_CS_PIN, 0);
 	DEV_SPI_WriteByte(Data);
+	/* ESP_LOGI(TAG, "EPD_SendData %02x", Data); */
 	DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
@@ -75,6 +77,10 @@ static void EPD_SendData2(UBYTE *pData, UDOUBLE len) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
 	DEV_Digital_Write(EPD_CS_PIN, 0);
 	DEV_SPI_Write_nByte(pData, len);
+	/* ESP_LOGI(TAG, "EPD_SendData2 len=%u", (unsigned int)len); */
+	/* if (len <= 32) { */
+		/* ESP_LOG_BUFFER_HEXDUMP(TAG, pData, len, ESP_LOG_INFO); */
+	/* } */
 	DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
@@ -83,12 +89,12 @@ function :	Wait until the busy_pin goes LOW
 parameter:
 ******************************************************************************/
 static void EPD_WaitUntilIdle(void) {
-	ESP_LOGI(TAG, "e-Paper busy\r\n");
+	ESP_LOGI(TAG, "e-Paper busy");
 	do {
 		DEV_Delay_ms(5);
 	} while (!(DEV_Digital_Read(EPD_BUSY_PIN)));
 	DEV_Delay_ms(5);
-	ESP_LOGI(TAG, "e-Paper busy release\r\n");
+	ESP_LOGI(TAG, "e-Paper busy release");
 }
 /******************************************************************************
 function :	Turn On Display
@@ -280,6 +286,7 @@ void EPD_7IN5_V2_Display(UBYTE *blackimage) {
 	EPD_7IN5_V2_TurnOnDisplay();
 }
 
+// blackimage only contains pixels to be refreshed
 void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
                               UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end) {
 	UDOUBLE Width, Height;
@@ -297,14 +304,14 @@ void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
 	EPD_SendData(x_start / 256);
 	EPD_SendData(x_start % 256); // x-start
 
-	EPD_SendData(x_end / 256);
-	EPD_SendData(x_end % 256 - 1); // x-end
+	EPD_SendData((x_end - 1) / 256);
+	EPD_SendData((x_end - 1) % 256); // x-end
 
 	EPD_SendData(y_start / 256); //
 	EPD_SendData(y_start % 256); // y-start
 
-	EPD_SendData(y_end / 256);
-	EPD_SendData(y_end % 256 - 1); // y-end
+	EPD_SendData((y_end - 1) / 256);
+	EPD_SendData((y_end - 1) % 256); // y-end
 	EPD_SendData(0x01);
 
 	EPD_SendCommand(0x13);

@@ -6,7 +6,5 @@ idf_component_register(SRCS "epaper.c"
                             "font16.c"
                             "font20.c"
                             "font24.c"
-			    "font12CN.c"
-                            "font24CN.c"
                             "GUI_Paint.c"
                             "ImageData.c" INCLUDE_DIRS ".")

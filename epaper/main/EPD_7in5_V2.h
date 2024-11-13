@@ -39,6 +39,15 @@
 #define EPD_7IN5_V2_WIDTH 800
 #define EPD_7IN5_V2_HEIGHT 480
 
+#define EPD_Init EPD_7IN5_V2_Init
+#define EPD_Init_Fast EPD_7IN5_V2_Init_Fast
+#define EPD_Init_Part EPD_7IN5_V2_Init_Part
+#define EPD_Clear EPD_7IN5_V2_Clear
+#define EPD_ClearBlack EPD_7IN5_V2_ClearBlack
+#define EPD_Display EPD_7IN5_V2_Display
+#define EPD_Display_Part EPD_7IN5_V2_Display_Part
+#define EPD_Sleep EPD_7IN5_V2_Sleep
+
 UBYTE EPD_7IN5_V2_Init(void);
 UBYTE EPD_7IN5_V2_Init_Fast(void);
 UBYTE EPD_7IN5_V2_Init_Part(void);
@@ -47,6 +56,9 @@ void  EPD_7IN5_V2_ClearBlack(void);
 void  EPD_7IN5_V2_Display(UBYTE *blackimage);
 void  EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
                                UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end);
+void  EPD_7IN5_V2_Display_Part_In_Place(UBYTE *blackimage, UDOUBLE x_start,
+                                        UDOUBLE y_start, UDOUBLE x_end,
+                                        UDOUBLE y_end);
 void  EPD_7IN5_V2_Sleep(void);
 
 #endif
