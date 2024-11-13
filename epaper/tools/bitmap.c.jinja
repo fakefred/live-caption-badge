@@ -1,0 +1,27 @@
+/****************************************************
+ *             Generated with bitmap.py             *
+ ****************************************************/
+
+#include "fonts.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+const uint8_t {{ font_name }}_Table[] = {
+{% for char in chars %}
+  // '{{ char.char }}'
+{% for i in range(char.hex_lines | length) %}{{ char.hex_lines[i] }} // {{ char.hash_lines[i] }}
+{% endfor %}
+{% endfor %}
+};
+
+sFONT {{ font_name }} = {
+  {{ font_name }}_Table,
+  {{ char_width }}, /* Width */
+  {{ char_height }}, /* Height */
+};
+
+#ifdef __cplusplus
+}
+#endif
