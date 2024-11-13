@@ -174,7 +174,8 @@ UBYTE EPD_7IN5_V2_Init(void) {
 }
 
 UBYTE EPD_7IN5_V2_Init_Fast(void) {
-	
+	ESP_LOGI(TAG, "EPD_Init_Fast");
+
 	EPD_Reset();
 	EPD_SendCommand(0X00); // PANNEL SETTING
 	EPD_SendData(0x1F);    // KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
@@ -205,6 +206,7 @@ UBYTE EPD_7IN5_V2_Init_Fast(void) {
 }
 
 UBYTE EPD_7IN5_V2_Init_Part(void) {
+	ESP_LOGI(TAG, "EPD_Init_Part");
 	
 	EPD_Reset();
 
@@ -230,6 +232,8 @@ function :	Clear screen
 parameter:
 ******************************************************************************/
 void EPD_7IN5_V2_Clear(void) {
+	ESP_LOGI(TAG, "EPD_Clear");
+
 	UWORD Width, Height;
 	Width = (EPD_7IN5_V2_WIDTH % 8 == 0) ? (EPD_7IN5_V2_WIDTH / 8)
 	                                     : (EPD_7IN5_V2_WIDTH / 8 + 1);
@@ -257,6 +261,8 @@ void EPD_7IN5_V2_Clear(void) {
 }
 
 void EPD_7IN5_V2_ClearBlack(void) {
+	ESP_LOGI(TAG, "EPD_ClearBlack");
+
 	UWORD Width, Height;
 	Width = (EPD_7IN5_V2_WIDTH % 8 == 0) ? (EPD_7IN5_V2_WIDTH / 8)
 	                                     : (EPD_7IN5_V2_WIDTH / 8 + 1);
@@ -288,6 +294,8 @@ function :	Sends the image buffer in RAM to e-Paper and displays
 parameter:
 ******************************************************************************/
 void EPD_7IN5_V2_Display(UBYTE *blackimage) {
+	ESP_LOGI(TAG, "EPD_Display");
+
 	UDOUBLE Width, Height;
 	Width = (EPD_7IN5_V2_WIDTH % 8 == 0) ? (EPD_7IN5_V2_WIDTH / 8)
 	                                     : (EPD_7IN5_V2_WIDTH / 8 + 1);
@@ -313,6 +321,8 @@ void EPD_7IN5_V2_Display(UBYTE *blackimage) {
 // blackimage only contains pixels to be refreshed
 void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
                               UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end) {
+	ESP_LOGI(TAG, "EPD_Display_Part");
+
 	UDOUBLE Width, Height;
 	Width = ((x_end - x_start) % 8 == 0) ? ((x_end - x_start) / 8)
 	                                     : ((x_end - x_start) / 8 + 1);
@@ -350,6 +360,8 @@ function :	Enter sleep mode
 parameter:
 ******************************************************************************/
 void EPD_7IN5_V2_Sleep(void) {
+	ESP_LOGI(TAG, "EPD_Sleep");
+
 	EPD_SendCommand(0X02); // power off
 	EPD_WaitUntilIdle();
 	EPD_SendCommand(0X07); // deep sleep
