@@ -84,11 +84,8 @@ function :	Wait until the busy_pin goes LOW
 parameter:
 ******************************************************************************/
 static void EPD_WaitUntilIdle(void) {
-	ESP_LOGI(TAG, "e-Paper busy");
 	int dummy = 0;
 	xQueueReceive(gpio_evt_queue, &dummy, portMAX_DELAY);
-
-	ESP_LOGI(TAG, "e-Paper busy release");
 }
 /******************************************************************************
 function :	Turn On Display

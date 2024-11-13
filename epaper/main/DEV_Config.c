@@ -34,12 +34,7 @@
 
 #define TAG "DEV_Config"
 
-
-
 void GPIO_Config(void) {
-
-
-
 	gpio_config_t input_config = {
 	    .pin_bit_mask = 1ULL << EPD_BUSY_PIN,
 	    .mode = GPIO_MODE_INPUT,
@@ -69,67 +64,7 @@ function:	Module Initialize, the BCM2835 library and initialize the pins,
 SPI protocol parameter: Info:
 ******************************************************************************/
 UBYTE DEV_Module_Init(void) {
-	// gpio
 	GPIO_Config();
-
-	// serial printf
-	//  Serial.begin(115200);
-
-	// spi
-	// SPI.setDataMode(SPI_MODE0);
-	// SPI.setBitOrder(MSBFIRST);
-	// SPI.setClockDivider(SPI_CLOCK_DIV4);
-	// SPI.begin();
 	spi_init();
-	
-
 	return 0;
-}
-
-/******************************************************************************
-function:
-                        SPI read and write
-******************************************************************************/
-void DEV_SPI_WriteByte(UBYTE data) {
-	// SPI.beginTransaction(spi_settings);
-	gpio_set_level(EPD_CS_PIN, GPIO_PIN_RESET);
-
-	for (int i = 0; i < 8; i++) {
-		if ((data & 0x80) == 0)
-			gpio_set_level(EPD_MOSI_PIN, GPIO_PIN_RESET);
-		else
-			gpio_set_level(EPD_MOSI_PIN, GPIO_PIN_SET);
-
-		data <<= 1;
-		gpio_set_level(EPD_SCK_PIN, GPIO_PIN_SET);
-		gpio_set_level(EPD_SCK_PIN, GPIO_PIN_RESET);
-	}
-
-	// SPI.transfer(data);
-	gpio_set_level(EPD_CS_PIN, GPIO_PIN_SET);
-	// SPI.endTransaction();
-}
-
-UBYTE DEV_SPI_ReadByte() {
-	UBYTE j = 0xff;
-	gpio_set_direction(EPD_MOSI_PIN, GPIO_MODE_INPUT);
-	gpio_set_level(EPD_CS_PIN, GPIO_PIN_RESET);
-	for (int i = 0; i < 8; i++) {
-		j = j << 1;
-		if (gpio_get_level(EPD_MOSI_PIN))
-			j = j | 0x01;
-		else
-			j = j & 0xfe;
-
-		gpio_set_level(EPD_SCK_PIN, GPIO_PIN_SET);
-		gpio_set_level(EPD_SCK_PIN, GPIO_PIN_RESET);
-	}
-	gpio_set_level(EPD_CS_PIN, GPIO_PIN_SET);
-	gpio_set_direction(EPD_MOSI_PIN, GPIO_MODE_OUTPUT);
-	return j;
-}
-
-void DEV_SPI_Write_nByte(UBYTE *pData, UDOUBLE len) {
-	for (int i = 0; i < len; i++)
-		DEV_SPI_WriteByte(pData[i]);
 }
