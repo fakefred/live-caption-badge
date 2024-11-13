@@ -33,6 +33,13 @@
 
 #define TAG "EPD_7in5_V2"
 
+QueueHandle_t gpio_evt_queue;
+void IRAM_ATTR busy_isr_handler(void *arg) {
+	int dummy = 1;
+	xQueueSendFromISR(gpio_evt_queue, &dummy, NULL);
+}
+
+
 /******************************************************************************
 function :	Software reset
 parameter:
@@ -40,11 +47,11 @@ parameter:
 static void EPD_Reset(void) {
 	ESP_LOGI(TAG, "EPD_Reset");
 	DEV_Digital_Write(EPD_RST_PIN, 1);
-	DEV_Delay_ms(20);
+	DEV_Delay_ms(5);
 	DEV_Digital_Write(EPD_RST_PIN, 0);
-	DEV_Delay_ms(2);
+	DEV_Delay_ms(10);
 	DEV_Digital_Write(EPD_RST_PIN, 1);
-	DEV_Delay_ms(20);
+	DEV_Delay_ms(5);
 }
 
 /******************************************************************************
@@ -54,10 +61,11 @@ parameter:
 ******************************************************************************/
 static void EPD_SendCommand(UBYTE Reg) {
 	DEV_Digital_Write(EPD_DC_PIN, 0);
-	DEV_Digital_Write(EPD_CS_PIN, 0);
-	DEV_SPI_WriteByte(Reg);
+	spi_write_byte(Reg);
+	//DEV_Digital_Write(EPD_CS_PIN, 0);
+	//DEV_SPI_WriteByte(Reg);
 	/* ESP_LOGI(TAG, "EPD_SendCommand %02x", Reg); */
-	DEV_Digital_Write(EPD_CS_PIN, 1);
+	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 /******************************************************************************
@@ -67,21 +75,23 @@ parameter:
 ******************************************************************************/
 static void EPD_SendData(UBYTE Data) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
-	DEV_Digital_Write(EPD_CS_PIN, 0);
-	DEV_SPI_WriteByte(Data);
+	spi_write_byte(Data);
+	//DEV_Digital_Write(EPD_CS_PIN, 0);
+	//DEV_SPI_WriteByte(Data);
 	/* ESP_LOGI(TAG, "EPD_SendData %02x", Data); */
-	DEV_Digital_Write(EPD_CS_PIN, 1);
+	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 static void EPD_SendData2(UBYTE *pData, UDOUBLE len) {
 	DEV_Digital_Write(EPD_DC_PIN, 1);
-	DEV_Digital_Write(EPD_CS_PIN, 0);
-	DEV_SPI_Write_nByte(pData, len);
+	spi_write_bytes(pData, len);
+	//DEV_Digital_Write(EPD_CS_PIN, 0);
+	//DEV_SPI_Write_nByte(pData, len);
 	/* ESP_LOGI(TAG, "EPD_SendData2 len=%u", (unsigned int)len); */
 	/* if (len <= 32) { */
 		/* ESP_LOG_BUFFER_HEXDUMP(TAG, pData, len, ESP_LOG_INFO); */
 	/* } */
-	DEV_Digital_Write(EPD_CS_PIN, 1);
+	//DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
 /******************************************************************************
@@ -90,10 +100,13 @@ parameter:
 ******************************************************************************/
 static void EPD_WaitUntilIdle(void) {
 	ESP_LOGI(TAG, "e-Paper busy");
-	do {
+	/*do {
 		DEV_Delay_ms(5);
 	} while (!(DEV_Digital_Read(EPD_BUSY_PIN)));
-	DEV_Delay_ms(5);
+	DEV_Delay_ms(5); */
+	int dummy = 0;
+	xQueueReceive(gpio_evt_queue, &dummy, portMAX_DELAY);
+
 	ESP_LOGI(TAG, "e-Paper busy release");
 }
 /******************************************************************************
@@ -101,8 +114,9 @@ function :	Turn On Display
 parameter:
 ******************************************************************************/
 static void EPD_7IN5_V2_TurnOnDisplay(void) {
+	xQueueReset(gpio_evt_queue);
 	EPD_SendCommand(0x12); // DISPLAY REFRESH
-	DEV_Delay_ms(100); //!!!The delay here is necessary, 200uS at least!!!
+	DEV_Delay_ms(10); //!!!The delay here is necessary, 200uS at least!!!
 	EPD_WaitUntilIdle();
 }
 
@@ -110,8 +124,13 @@ static void EPD_7IN5_V2_TurnOnDisplay(void) {
 function :	Initialize the e-Paper register
 parameter:
 ******************************************************************************/
-UBYTE EPD_7IN5_V2_Init(void) {
+UBYTE EPD_7IN5_V2_Init(void) {	
 	ESP_LOGI(TAG, "EPD_Init");
+	gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
+	gpio_install_isr_service(0);
+	gpio_isr_handler_add(EPD_BUSY_PIN, busy_isr_handler, NULL);
+
+	
 	EPD_Reset();
 	EPD_SendCommand(0x01); // POWER SETTING
 	EPD_SendData(0x07);
@@ -126,8 +145,9 @@ UBYTE EPD_7IN5_V2_Init(void) {
 	EPD_SendData(0x28);
 	EPD_SendData(0x17);
 
+	xQueueReset(gpio_evt_queue);
 	EPD_SendCommand(0x04); // POWER ON
-	DEV_Delay_ms(100);
+	DEV_Delay_ms(10);
 	EPD_WaitUntilIdle(); // waiting for the electronic paper IC to release
 	                     // the idle signal
 
@@ -154,6 +174,7 @@ UBYTE EPD_7IN5_V2_Init(void) {
 }
 
 UBYTE EPD_7IN5_V2_Init_Fast(void) {
+	
 	EPD_Reset();
 	EPD_SendCommand(0X00); // PANNEL SETTING
 	EPD_SendData(0x1F);    // KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
@@ -162,8 +183,9 @@ UBYTE EPD_7IN5_V2_Init_Fast(void) {
 	EPD_SendData(0x10);
 	EPD_SendData(0x07);
 
+	xQueueReset(gpio_evt_queue);
 	EPD_SendCommand(0x04); // POWER ON
-	DEV_Delay_ms(100);
+	DEV_Delay_ms(10);
 	EPD_WaitUntilIdle(); // waiting for the electronic paper IC to release
 	                     // the idle signal
 
@@ -183,11 +205,13 @@ UBYTE EPD_7IN5_V2_Init_Fast(void) {
 }
 
 UBYTE EPD_7IN5_V2_Init_Part(void) {
+	
 	EPD_Reset();
 
 	EPD_SendCommand(0X00); // PANNEL SETTING
 	EPD_SendData(0x1F);    // KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
 
+	xQueueReset(gpio_evt_queue);
 	EPD_SendCommand(0x04); // POWER ON
 	DEV_Delay_ms(100);
 	EPD_WaitUntilIdle(); // waiting for the electronic paper IC to release

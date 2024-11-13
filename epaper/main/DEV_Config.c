@@ -34,13 +34,18 @@
 
 #define TAG "DEV_Config"
 
+
+
 void GPIO_Config(void) {
+
+
+
 	gpio_config_t input_config = {
 	    .pin_bit_mask = 1ULL << EPD_BUSY_PIN,
 	    .mode = GPIO_MODE_INPUT,
 	    .pull_up_en = GPIO_PULLUP_DISABLE,
 	    .pull_down_en = GPIO_PULLDOWN_DISABLE,
-	    .intr_type = GPIO_INTR_DISABLE,
+	    .intr_type = GPIO_INTR_POSEDGE,
 	};
 	gpio_config(&input_config);
 
@@ -75,6 +80,8 @@ UBYTE DEV_Module_Init(void) {
 	// SPI.setBitOrder(MSBFIRST);
 	// SPI.setClockDivider(SPI_CLOCK_DIV4);
 	// SPI.begin();
+	spi_init();
+	
 
 	return 0;
 }

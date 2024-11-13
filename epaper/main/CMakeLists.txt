@@ -1,4 +1,5 @@
 idf_component_register(SRCS "epaper.c"
+                            "SPI.c"
                             "DEV_Config.c"
                             "EPD_7in5_V2.c"
                             "font8.c"

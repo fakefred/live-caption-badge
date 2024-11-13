@@ -18,6 +18,7 @@
 /* Entry point
  * ----------------------------------------------------------------*/
 void epaper_task(void *arg) {
+	esp_log_level_set(SPI_TAG, ESP_LOG_NONE);
 	ESP_LOGI(TAG, "EPD demo begin");
 	DEV_Module_Init();
 	EPD_Init();
@@ -63,7 +64,10 @@ void epaper_task(void *arg) {
 			text_col = 0;
 			text_row++;
 			if (text_row == 8) {
-				break;
+				EPD_Init_Fast();
+				EPD_Clear();
+				EPD_Init_Part();
+				text_row = 0;
 			}
 		}
 
@@ -87,6 +91,10 @@ void epaper_task(void *arg) {
 		text_col += strlen(word) + 1;
 	}
 
+
+	DEV_Delay_ms(500);
+	EPD_Init_Fast();
+	EPD_Clear();
 	EPD_Sleep();
 	while (1) {
 		vTaskDelay(1000);
@@ -95,5 +103,5 @@ void epaper_task(void *arg) {
 
 void app_main() {
 	vTaskDelay(pdMS_TO_TICKS(100));
-	xTaskCreate(epaper_task, "epaper", 16 * 1024, NULL, 2, NULL);
+	xTaskCreatePinnedToCore(epaper_task, "epaper", 16 * 1024, NULL, 2, NULL, 0);
 }

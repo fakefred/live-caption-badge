@@ -32,6 +32,7 @@
 
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
+#include "SPI.h"
 #include <stdint.h>
 #include <stdio.h>
 
