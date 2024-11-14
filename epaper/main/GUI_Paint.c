@@ -86,6 +86,7 @@
 #define TAG "GUI_Paint"
 
 PAINT Paint;
+UBYTE *Image; // global full-screen frame buffer
 
 /******************************************************************************
 function: Create Image

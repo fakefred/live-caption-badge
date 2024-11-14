@@ -97,7 +97,9 @@ typedef struct {
 	UWORD  HeightByte;
 	UWORD  Scale;
 } PAINT;
+
 extern PAINT Paint;
+extern UBYTE *Image;
 
 /**
  * Display rotate
