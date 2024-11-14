@@ -1,4 +1,5 @@
 #include "epaper.h"
+#include "DEV_Config.h"
 #include "EPD_7in5_V2.h"
 #include "GUI_Paint.h"
 #include "esp_log.h"
@@ -13,12 +14,15 @@
 #define TAG "epaper"
 
 #define MSG_BUF_LEN 256
+#define MAX_WORD_LEN 32 // including null terminator
 
 MessageBufferHandle_t caption_buf = NULL;
 
 static caption_cfg_t caption_cfg;
+static UWORD text_row = 0, text_col = 0;
+static UWORD total_text_rows = 0, total_text_cols = 0; // # rows/cols we can display in the area
 
-static bool rect_is_valid(uint16_t x_start, uint16_t y_start, uint16_t x_end, uint16_t y_end) {
+static bool rect_is_valid(UWORD x_start, UWORD y_start, UWORD x_end, UWORD y_end) {
 	return (x_start < x_end) && (y_start < y_end) && (x_end <= EPD_7IN5_V2_WIDTH) &&
 	       (y_end <= EPD_7IN5_V2_HEIGHT);
 }
@@ -26,6 +30,19 @@ static bool rect_is_valid(uint16_t x_start, uint16_t y_start, uint16_t x_end, ui
 epaper_err_t caption_init(caption_cfg_t *cfg) {
 	if (!rect_is_valid(cfg->x_start, cfg->y_start, cfg->x_end, cfg->y_end)) {
 		ESP_LOGE(TAG, "caption_init: Invalid coordinates");
+		return EPAPER_ERR;
+	}
+
+	if (cfg->font == NULL) {
+		ESP_LOGE(TAG, "caption_init: Font must not be NULL");
+		return EPAPER_ERR;
+	}
+
+	UWORD rows = (cfg->y_end - cfg->y_start) / cfg->font->Height;
+	UWORD cols = (cfg->x_end - cfg->x_start) / cfg->font->Width;
+
+	if (cols < 8 || rows < 2) {
+		ESP_LOGE(TAG, "caption_init: Area too small");
 		return EPAPER_ERR;
 	}
 
@@ -40,8 +57,12 @@ epaper_err_t caption_init(caption_cfg_t *cfg) {
 	} else {
 		// clear buffer if it exists
 		xMessageBufferReset(caption_buf);
+		ESP_LOGI(TAG, "caption_init: Reset caption queue");
 	}
+
 	caption_cfg = *cfg;
+	total_text_rows = rows;
+	total_text_cols = cols;
 	return EPAPER_OK;
 }
 
@@ -55,11 +76,21 @@ epaper_err_t caption_clear() {
 	return EPAPER_OK;
 }
 
+epaper_err_t caption_clear_rows(UWORD from_row, UWORD to_row) {
+	Paint_ClearWindows(caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
+	                   caption_cfg.y_end, WHITE);
+	EPD_Init_Fast();
+	EPD_Display_Part(Image, caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
+	                 caption_cfg.y_end);
+	EPD_Init_Part();
+	return EPAPER_OK;
+}
+
 epaper_err_t caption_append(const char *string) {
 	const size_t string_len = strlen(string);
 
 	// split string into space-delimited words
-	char word[32];
+	char word[MAX_WORD_LEN];
 	size_t word_len = 0;
 
 	// TODO: handle overflow
@@ -90,21 +121,20 @@ epaper_err_t caption_append(const char *string) {
 }
 
 epaper_err_t caption_display() {
-	static UWORD text_row = 0, text_col = 0;
-
-	bool has_updated = false, has_error = false;
+	bool has_update = false, has_error = false;
 
 	// {min,max}_{x,y} will be updated to clamp to the updated area
-	uint16_t min_x = caption_cfg.x_end, max_x = caption_cfg.x_start, min_y = caption_cfg.y_end,
-	         max_y = caption_cfg.y_start;
+	UWORD min_x = caption_cfg.x_end, max_x = caption_cfg.x_start, min_y = caption_cfg.y_end,
+	      max_y = caption_cfg.y_start;
 
-	// TODO: edge case where word length > 32 (unlikely)
+	// TODO: edge case where word length > MAX_WORD_LEN (unlikely)
 	while (xMessageBufferIsEmpty(caption_buf) == pdFALSE) {
-		char word[32];
+		char word[MAX_WORD_LEN];
 
-		has_updated = true;
+		has_update = true;
 
-		size_t bytes_recv = xMessageBufferReceive(caption_buf, (void *)word, 32, 0);
+		size_t bytes_recv =
+		    xMessageBufferReceive(caption_buf, (void *)word, MAX_WORD_LEN, 0);
 		if (bytes_recv == 0) {
 			ESP_LOGE(TAG, "caption_display: Failed to receive word from buffer");
 			has_error = true;
@@ -114,20 +144,21 @@ epaper_err_t caption_display() {
 		ESP_LOGI(TAG, "caption_display: Received word \"%s\" (len=%u)", word,
 		         bytes_recv - 1);
 
-		UWORD word_width_px = strlen(word) * caption_cfg.font->Width;
+		size_t word_len = strlen(word);
 
-		if (text_col * caption_cfg.font->Width + word_width_px >= EPD_7IN5_V2_WIDTH) {
+		if (text_col + word_len >= total_text_cols) {
 			// wrap to next row
 			text_col = 0;
 			text_row++;
-			if (text_row == 8) {
+			if (text_row == total_text_rows) {
 				caption_clear();
 				text_row = 0;
 			}
 		}
 
-		UWORD word_start_x = text_col * caption_cfg.font->Width;
-		UWORD word_start_y = text_row * caption_cfg.font->Height;
+		UWORD word_width_px = word_len * caption_cfg.font->Width;
+		UWORD word_start_x = caption_cfg.x_start + text_col * caption_cfg.font->Width;
+		UWORD word_start_y = caption_cfg.y_start + text_row * caption_cfg.font->Height;
 		UWORD word_end_x = word_start_x + word_width_px;
 		UWORD word_end_y = word_start_y + caption_cfg.font->Height;
 
@@ -140,13 +171,11 @@ epaper_err_t caption_display() {
 		         word_start_x, word_end_x, word_start_y, word_end_y, text_col, text_row);
 
 		Paint_DrawString_EN(word_start_x, word_start_y, word, caption_cfg.font, BLACK, WHITE);
-		/* EPD_Display_Part(Image, word_start_x, word_start_y, word_end_x, */
-				 /* word_end_y); */
 
 		text_col += strlen(word) + 1;
 	}
 
-	if (has_updated) {
+	if (has_update) {
 		ESP_LOGI(TAG, "caption_display: updating screen area (%u, %u) -- (%u, %u)", min_x,
 		         min_y, max_x, max_y);
 		EPD_Display_Part(Image, min_x, min_y, max_x, max_y);

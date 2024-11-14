@@ -41,10 +41,10 @@ void app_main() {
 	DEV_Delay_ms(1000);
 
 	caption_cfg_t caption_cfg = {
-		.x_start = 0,
-		.y_start = 0,
-		.x_end = 800,
-		.y_end = 480,
+		.x_start = 100,
+		.y_start = 100,
+		.x_end = 700,
+		.y_end = 380,
 		.font = &Font48,
 	};
 

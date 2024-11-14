@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DEV_Config.h"
 #include "fonts.h"
 #include "freertos/idf_additions.h"
 #include <stdint.h>
@@ -13,7 +14,7 @@ typedef enum {
 
 typedef struct {
 	// bounding box position, in pixels
-	uint16_t x_start, y_start, x_end, y_end;
+	UWORD x_start, y_start, x_end, y_end;
 	sFONT *font;
 } caption_cfg_t;
 
