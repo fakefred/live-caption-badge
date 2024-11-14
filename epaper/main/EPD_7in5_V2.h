@@ -35,6 +35,8 @@
 
 #include "DEV_Config.h"
 
+#define EPD_TAG "EPD_7in5_V2"
+
 // Display resolution
 #define EPD_7IN5_V2_WIDTH 800
 #define EPD_7IN5_V2_WIDTH_BYTES 100

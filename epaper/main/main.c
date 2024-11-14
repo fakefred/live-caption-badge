@@ -17,6 +17,8 @@ void app_main() {
 	vTaskDelay(pdMS_TO_TICKS(100));
 
 	esp_log_level_set(SPI_TAG, ESP_LOG_NONE);
+	esp_log_level_set(EPD_TAG, ESP_LOG_NONE);
+
 	ESP_LOGI(TAG, "EPD demo begin");
 	DEV_Module_Init();
 	EPD_Init();
@@ -41,10 +43,10 @@ void app_main() {
 	DEV_Delay_ms(1000);
 
 	caption_cfg_t caption_cfg = {
-		.x_start = 100,
-		.y_start = 100,
-		.x_end = 700,
-		.y_end = 380,
+		.x_start = 50,
+		.y_start = 50,
+		.x_end = 750,
+		.y_end = 430,
 		.font = &Font48,
 	};
 

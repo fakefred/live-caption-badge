@@ -18,7 +18,8 @@
 
 MessageBufferHandle_t caption_buf = NULL;
 
-static caption_cfg_t caption_cfg;
+static caption_cfg_t cfg;
+
 static UWORD text_row = 0, text_col = 0;
 static UWORD total_text_rows = 0, total_text_cols = 0; // # rows/cols we can display in the area
 
@@ -27,19 +28,19 @@ static bool rect_is_valid(UWORD x_start, UWORD y_start, UWORD x_end, UWORD y_end
 	       (y_end <= EPD_7IN5_V2_HEIGHT);
 }
 
-epaper_err_t caption_init(caption_cfg_t *cfg) {
-	if (!rect_is_valid(cfg->x_start, cfg->y_start, cfg->x_end, cfg->y_end)) {
+epaper_err_t caption_init(caption_cfg_t *init_cfg) {
+	if (!rect_is_valid(init_cfg->x_start, init_cfg->y_start, init_cfg->x_end, init_cfg->y_end)) {
 		ESP_LOGE(TAG, "caption_init: Invalid coordinates");
 		return EPAPER_ERR;
 	}
 
-	if (cfg->font == NULL) {
+	if (init_cfg->font == NULL) {
 		ESP_LOGE(TAG, "caption_init: Font must not be NULL");
 		return EPAPER_ERR;
 	}
 
-	UWORD rows = (cfg->y_end - cfg->y_start) / cfg->font->Height;
-	UWORD cols = (cfg->x_end - cfg->x_start) / cfg->font->Width;
+	UWORD rows = (init_cfg->y_end - init_cfg->y_start) / init_cfg->font->Height;
+	UWORD cols = (init_cfg->x_end - init_cfg->x_start) / init_cfg->font->Width;
 
 	if (cols < 8 || rows < 2) {
 		ESP_LOGE(TAG, "caption_init: Area too small");
@@ -60,29 +61,19 @@ epaper_err_t caption_init(caption_cfg_t *cfg) {
 		ESP_LOGI(TAG, "caption_init: Reset caption queue");
 	}
 
-	caption_cfg = *cfg;
+	cfg = *init_cfg;
 	total_text_rows = rows;
 	total_text_cols = cols;
+	ESP_LOGI(TAG, "caption_init: Initialized caption area with %u columns, %u rows",
+	         total_text_cols, total_text_rows);
 	return EPAPER_OK;
 }
 
 epaper_err_t caption_clear() {
-	Paint_ClearWindows(caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
-	                   caption_cfg.y_end, WHITE);
+	Paint_ClearWindows(cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end, WHITE);
 	EPD_Init_Fast();
-	EPD_Display_Part(Image, caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
-	                 caption_cfg.y_end);
 	EPD_Init_Part();
-	return EPAPER_OK;
-}
-
-epaper_err_t caption_clear_rows(UWORD from_row, UWORD to_row) {
-	Paint_ClearWindows(caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
-	                   caption_cfg.y_end, WHITE);
-	EPD_Init_Fast();
-	EPD_Display_Part(Image, caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
-	                 caption_cfg.y_end);
-	EPD_Init_Part();
+	EPD_Display_Part(Image, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
 	return EPAPER_OK;
 }
 
@@ -90,7 +81,7 @@ epaper_err_t caption_append(const char *string) {
 	const size_t string_len = strlen(string);
 
 	// split string into space-delimited words
-	char word[MAX_WORD_LEN];
+	char   word[MAX_WORD_LEN];
 	size_t word_len = 0;
 
 	// TODO: handle overflow
@@ -104,8 +95,6 @@ epaper_err_t caption_append(const char *string) {
 			word[word_len] = '\0';
 			size_t bytes_sent =
 			    xMessageBufferSend(caption_buf, (void *)word, word_len + 1, 0);
-			ESP_LOGI(TAG, "caption_append: Appended word \"%s\" (len=%u)", word,
-			         word_len);
 			if (bytes_sent != word_len + 1) {
 				ESP_LOGE(TAG,
 				         "caption_append: Failed to send word \"%s\" to buffer "
@@ -115,17 +104,19 @@ epaper_err_t caption_append(const char *string) {
 			}
 			word_len = 0;
 		}
-
 	}
 	return EPAPER_OK;
 }
 
 epaper_err_t caption_display() {
-	bool has_update = false, has_error = false;
+	bool has_update = false, // there is new text to print
+	    has_error = false,   // an error was encountered
+	    need_clear = false;  // a part of the caption area needs to be cleared
 
 	// {min,max}_{x,y} will be updated to clamp to the updated area
-	UWORD min_x = caption_cfg.x_end, max_x = caption_cfg.x_start, min_y = caption_cfg.y_end,
-	      max_y = caption_cfg.y_start;
+	UWORD min_x = cfg.x_end, max_x = cfg.x_start, min_y = cfg.y_end, max_y = cfg.y_start;
+
+	UWORD clear_row_start = 0, clear_row_end = 0;
 
 	// TODO: edge case where word length > MAX_WORD_LEN (unlikely)
 	while (xMessageBufferIsEmpty(caption_buf) == pdFALSE) {
@@ -141,44 +132,63 @@ epaper_err_t caption_display() {
 			break;
 		}
 
-		ESP_LOGI(TAG, "caption_display: Received word \"%s\" (len=%u)", word,
-		         bytes_recv - 1);
-
 		size_t word_len = strlen(word);
 
 		if (text_col + word_len >= total_text_cols) {
 			// wrap to next row
 			text_col = 0;
-			text_row++;
-			if (text_row == total_text_rows) {
-				caption_clear();
-				text_row = 0;
+			text_row = (text_row + 1) % total_text_rows;
+
+			// erase area we are going to print on soon
+			if (text_row == total_text_rows / 2 - 1) {
+				clear_row_start = total_text_rows / 2;
+				clear_row_end = total_text_rows;
+				need_clear = true;
+			} else if (text_row == total_text_rows - 1) {
+				clear_row_start = 0;
+				clear_row_end = total_text_rows / 2 + 1;
+				need_clear = true;
 			}
 		}
 
-		UWORD word_width_px = word_len * caption_cfg.font->Width;
-		UWORD word_start_x = caption_cfg.x_start + text_col * caption_cfg.font->Width;
-		UWORD word_start_y = caption_cfg.y_start + text_row * caption_cfg.font->Height;
+		UWORD word_width_px = word_len * cfg.font->Width;
+		UWORD word_start_x = cfg.x_start + text_col * cfg.font->Width;
+		UWORD word_start_y = cfg.y_start + text_row * cfg.font->Height;
 		UWORD word_end_x = word_start_x + word_width_px;
-		UWORD word_end_y = word_start_y + caption_cfg.font->Height;
+		UWORD word_end_y = word_start_y + cfg.font->Height;
 
 		min_x = MIN(min_x, word_start_x);
 		min_y = MIN(min_y, word_start_y);
 		max_x = MAX(max_x, word_end_x);
 		max_y = MAX(max_y, word_end_y);
 
-		ESP_LOGI(TAG, "caption_display: Drawing \"%s\" (x=%d:%d, y=%d:%d, col=%d, row=%d)", word,
-		         word_start_x, word_end_x, word_start_y, word_end_y, text_col, text_row);
+		ESP_LOGI(TAG, "caption_display: Drawing \"%s\" (x=%d:%d, y=%d:%d, col=%d, row=%d)",
+		         word, word_start_x, word_end_x, word_start_y, word_end_y, text_col,
+		         text_row);
 
-		Paint_DrawString_EN(word_start_x, word_start_y, word, caption_cfg.font, BLACK, WHITE);
+		Paint_DrawString_EN(word_start_x, word_start_y, word, cfg.font, BLACK, WHITE);
 
 		text_col += strlen(word) + 1;
+
+		if (need_clear) {
+			break;
+		}
 	}
 
+	UWORD clear_y_start = cfg.y_start + clear_row_start * cfg.font->Height,
+	      clear_y_end = cfg.y_start + clear_row_end * cfg.font->Height;
+
 	if (has_update) {
-		ESP_LOGI(TAG, "caption_display: updating screen area (%u, %u) -- (%u, %u)", min_x,
-		         min_y, max_x, max_y);
-		EPD_Display_Part(Image, min_x, min_y, max_x, max_y);
+		if (need_clear) {
+			ESP_LOGI(TAG, "caption_display: Updating entire caption area");
+			Paint_ClearWindows(cfg.x_start, clear_y_start, cfg.x_end, clear_y_end,
+			                   WHITE);
+			EPD_Display_Part(Image, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
+		} else {
+			ESP_LOGI(TAG, "caption_display: Updating screen area (%u, %u) -- (%u, %u)",
+			         min_x, min_y, max_x, max_y);
+			EPD_Display_Part(Image, min_x, min_y, max_x, max_y);
+		}
 	}
 
 	if (has_error) {
@@ -191,6 +201,6 @@ epaper_err_t caption_display() {
 void epaper_task(void *arg) {
 	while (true) {
 		caption_display();
-		vTaskDelay(pdMS_TO_TICKS(500));
+		vTaskDelay(pdMS_TO_TICKS(100));
 	}
 }
