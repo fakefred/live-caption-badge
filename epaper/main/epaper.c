@@ -2,6 +2,7 @@
 #include "EPD_7in5_V2.h"
 #include "GUI_Paint.h"
 #include "esp_log.h"
+#include "fonts.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
@@ -91,18 +92,23 @@ epaper_err_t caption_append(const char *string) {
 epaper_err_t caption_display() {
 	static UWORD text_row = 0, text_col = 0;
 
-	char word[32];
+	bool has_updated = false, has_error = false;
 
-	bool has_updated = false;
+	// {min,max}_{x,y} will be updated to clamp to the updated area
+	uint16_t min_x = caption_cfg.x_end, max_x = caption_cfg.x_start, min_y = caption_cfg.y_end,
+	         max_y = caption_cfg.y_start;
 
 	// TODO: edge case where word length > 32 (unlikely)
 	while (xMessageBufferIsEmpty(caption_buf) == pdFALSE) {
+		char word[32];
+
 		has_updated = true;
 
 		size_t bytes_recv = xMessageBufferReceive(caption_buf, (void *)word, 32, 0);
 		if (bytes_recv == 0) {
 			ESP_LOGE(TAG, "caption_display: Failed to receive word from buffer");
-			return EPAPER_ERR;
+			has_error = true;
+			break;
 		}
 
 		ESP_LOGI(TAG, "caption_display: Received word \"%s\" (len=%u)", word,
@@ -125,6 +131,11 @@ epaper_err_t caption_display() {
 		UWORD word_end_x = word_start_x + word_width_px;
 		UWORD word_end_y = word_start_y + caption_cfg.font->Height;
 
+		min_x = MIN(min_x, word_start_x);
+		min_y = MIN(min_y, word_start_y);
+		max_x = MAX(max_x, word_end_x);
+		max_y = MAX(max_y, word_end_y);
+
 		ESP_LOGI(TAG, "caption_display: Drawing \"%s\" (x=%d:%d, y=%d:%d, col=%d, row=%d)", word,
 		         word_start_x, word_end_x, word_start_y, word_end_y, text_col, text_row);
 
@@ -136,9 +147,15 @@ epaper_err_t caption_display() {
 	}
 
 	if (has_updated) {
-		EPD_Display_Part(Image, caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
-		                 caption_cfg.y_end);
+		ESP_LOGI(TAG, "caption_display: updating screen area (%u, %u) -- (%u, %u)", min_x,
+		         min_y, max_x, max_y);
+		EPD_Display_Part(Image, min_x, min_y, max_x, max_y);
 	}
+
+	if (has_error) {
+		return EPAPER_ERR;
+	}
+
 	return EPAPER_OK;
 }
 
