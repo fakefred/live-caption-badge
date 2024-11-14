@@ -8,5 +8,4 @@ idf_component_register(SRCS "epaper.c"
                             "font20.c"
                             "font24.c"
                             "font48.c"
-                            "GUI_Paint.c"
-                            "ImageData.c" INCLUDE_DIRS ".")
+                            "GUI_Paint.c" INCLUDE_DIRS ".")

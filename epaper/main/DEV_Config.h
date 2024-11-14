@@ -48,6 +48,7 @@
  **/
 #define EPD_SCK_PIN GPIO_NUM_19
 #define EPD_MOSI_PIN GPIO_NUM_18
+#define EPD_MISO_PIN GPIO_NUM_23 // unused
 #define EPD_CS_PIN GPIO_NUM_7
 #define EPD_RST_PIN GPIO_NUM_5
 #define EPD_DC_PIN GPIO_NUM_6

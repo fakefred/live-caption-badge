@@ -1,16 +1,15 @@
 #include "SPI.h"
+#include "DEV_Config.h"
 
 esp_err_t           ret;
 spi_device_handle_t spi;
 
 void spi_init(void) {
-	gpio_set_direction(PIN_SPI_CS, GPIO_MODE_OUTPUT); // CS Pin set to output mode
-
 	spi_bus_config_t spi_bus_cfg = {
 	    // Set SPI pins
-	    .miso_io_num = PIN_SPI_MISO,
-	    .mosi_io_num = PIN_SPI_MOSI,
-	    .sclk_io_num = PIN_SPI_CLK,
+	    .miso_io_num = EPD_MISO_PIN,
+	    .mosi_io_num = EPD_MOSI_PIN,
+	    .sclk_io_num = EPD_SCK_PIN,
 
 	    // NOT using quad spi
 	    .quadhd_io_num = -1,
@@ -24,16 +23,16 @@ void spi_init(void) {
 	    // configure device_structure
 	    .clock_speed_hz = 2 * 1000 * 1000, // Clock out at 12 MHz
 	    .mode = 0,                         // SPI mode 0: CPOL:-0 and CPHA:-0
-	    .spics_io_num = PIN_SPI_CS,        // Set CS pin
+	    .spics_io_num = EPD_CS_PIN,
 	    .queue_size = 7, // We want to be able to queue 7 transactions at a time
 	};
 
 	// Initialize the SPI bus
-	ret = spi_bus_initialize(ESP_HOST, &spi_bus_cfg, SPI_DMA_CH_AUTO);
+	ret = spi_bus_initialize(SPI_HOST, &spi_bus_cfg, SPI_DMA_CH_AUTO);
 	ESP_ERROR_CHECK(ret);
 
 	// Attach the Slave device to the SPI bus
-	ret = spi_bus_add_device(ESP_HOST, &spi_dev_cfg, &spi);
+	ret = spi_bus_add_device(SPI_HOST, &spi_dev_cfg, &spi);
 	ESP_ERROR_CHECK(ret);
 }
 

@@ -10,12 +10,7 @@
 
 #define SPI_TRANS_SIZE 2048 // 2048 bytes per transacton
 
-#define PIN_SPI_MISO GPIO_NUM_23 // Wont really need this
-#define PIN_SPI_MOSI GPIO_NUM_18
-#define PIN_SPI_CLK GPIO_NUM_19
-#define PIN_SPI_CS GPIO_NUM_7
-
-#define ESP_HOST SPI2_HOST
+#define SPI_HOST SPI2_HOST
 
 void spi_init(void);
 void spi_write_byte(uint8_t byte);
