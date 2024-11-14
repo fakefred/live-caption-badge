@@ -37,6 +37,9 @@ void epaper_task(void *arg) {
 		return;
 	}
 
+	Paint_NewImage(image, EPD_7IN5_V2_WIDTH, EPD_7IN5_V2_HEIGHT, ROTATE_0, WHITE);
+	Paint_Clear(WHITE);
+
 	EPD_Init_Fast();
 	EPD_Init_Part();
 	DEV_Delay_ms(1000);
@@ -64,6 +67,7 @@ void epaper_task(void *arg) {
 			text_col = 0;
 			text_row++;
 			if (text_row == 8) {
+				Paint_Clear(WHITE);
 				EPD_Init_Fast();
 				EPD_Clear();
 				EPD_Init_Part();
@@ -81,10 +85,7 @@ void epaper_task(void *arg) {
 		         word, word_start_x, word_end_x, word_start_y,
 		         word_end_y, text_col, text_row);
 
-		Paint_NewImage(image, word_width_px, FONT.Height, 0, WHITE);
-		Paint_SelectImage(image);
-		Paint_Clear(WHITE);
-		Paint_DrawString_EN(0, 0, word, &FONT, BLACK, WHITE);
+		Paint_DrawString_EN(word_start_x, word_start_y, word, &FONT, BLACK, WHITE);
 		EPD_Display_Part(image, word_start_x, word_start_y, word_end_x,
 		                 word_end_y);
 

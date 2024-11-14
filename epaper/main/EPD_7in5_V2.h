@@ -38,6 +38,7 @@
 
 // Display resolution
 #define EPD_7IN5_V2_WIDTH 800
+#define EPD_7IN5_V2_WIDTH_BYTES 100
 #define EPD_7IN5_V2_HEIGHT 480
 
 #define EPD_Init EPD_7IN5_V2_Init
@@ -57,9 +58,6 @@ void  EPD_7IN5_V2_ClearBlack(void);
 void  EPD_7IN5_V2_Display(UBYTE *blackimage);
 void  EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
                                UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end);
-void  EPD_7IN5_V2_Display_Part_In_Place(UBYTE *blackimage, UDOUBLE x_start,
-                                        UDOUBLE y_start, UDOUBLE x_end,
-                                        UDOUBLE y_end);
 void  EPD_7IN5_V2_Sleep(void);
 
 #endif

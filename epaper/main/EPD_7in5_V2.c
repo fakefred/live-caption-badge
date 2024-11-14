@@ -29,7 +29,9 @@
 #
 ******************************************************************************/
 #include "EPD_7in5_V2.h"
+#include "DEV_Config.h"
 #include "esp_log.h"
+#include "freertos/idf_additions.h"
 
 #define TAG "EPD_7in5_V2"
 
@@ -269,7 +271,7 @@ void EPD_7IN5_V2_ClearBlack(void) {
 
 /******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and displays
-parameter:
+parameter:	blackimage: full-screen image buffer
 ******************************************************************************/
 void EPD_7IN5_V2_Display(UBYTE *blackimage) {
 	ESP_LOGI(TAG, "EPD_Display");
@@ -296,39 +298,68 @@ void EPD_7IN5_V2_Display(UBYTE *blackimage) {
 	EPD_7IN5_V2_TurnOnDisplay();
 }
 
-// blackimage only contains pixels to be refreshed
+/******************************************************************************
+function :	Sends rectangular area from image buffer in RAM to e-Paper and
+		displays. Coordinates are start-inclusive, end-exclusive.
+parameter:	blackimage: full-screen image buffer
+******************************************************************************/
 void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
                               UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end) {
 	ESP_LOGI(TAG, "EPD_Display_Part");
 
-	UDOUBLE Width, Height;
-	Width = ((x_end - x_start) % 8 == 0) ? ((x_end - x_start) / 8)
-	                                     : ((x_end - x_start) / 8 + 1);
-	Height = y_end - y_start;
+	if (x_start >= x_end) {
+		ESP_LOGE(TAG, "EPD_Display_Part: x_start (%u) must be less than x_end (%u)",
+		         (unsigned int)x_start, (unsigned int)x_end);
+		return;
+	}
+
+	if (y_start >= y_end) {
+		ESP_LOGE(TAG, "EPD_Display_Part: y_start (%u) must be less than y_end (%u)",
+		         (unsigned int)y_start, (unsigned int)y_end);
+		return;
+	}
+
+	if (x_end >= EPD_7IN5_V2_WIDTH || y_end >= EPD_7IN5_V2_HEIGHT) {
+		ESP_LOGE(TAG, "EPD_Display_Part: (x_end=%u, y_end=%u) exceeds display range",
+		         (unsigned int)x_end, (unsigned int)y_end);
+		return;
+	}
+
+	// Because SPI transmissions are in bytes, the screen only accepts x coordinates that are
+	// multiples of 8. Unlike in software, the range that the hardware accepts is inclusive on
+	// both ends. Therefore, x_tx_start must be 0bxxxxxxx000, and x_tx_end must be 0bxxxxxxx111.
+	x_start &= ~0x7;
+	x_end |= 0x7;
+
+	// There are no limitations on y_start and y_end.
 
 	EPD_SendCommand(0x50);
 	EPD_SendData(0xA9);
 	EPD_SendData(0x07);
 
-	EPD_SendCommand(
-	    0x91); // This command makes the display enter partial mode
+	EPD_SendCommand(0x91); // enter partial mode
 	EPD_SendCommand(0x90); // resolution setting
+
 	EPD_SendData(x_start / 256);
-	EPD_SendData(x_start % 256); // x-start
+	EPD_SendData(x_start % 256);
 
 	EPD_SendData((x_end - 1) / 256);
-	EPD_SendData((x_end - 1) % 256); // x-end
+	EPD_SendData((x_end - 1) % 256);
 
-	EPD_SendData(y_start / 256); //
-	EPD_SendData(y_start % 256); // y-start
+	EPD_SendData(y_start / 256);
+	EPD_SendData(y_start % 256);
 
 	EPD_SendData((y_end - 1) / 256);
-	EPD_SendData((y_end - 1) % 256); // y-end
+	EPD_SendData((y_end - 1) % 256);
+
 	EPD_SendData(0x01);
 
 	EPD_SendCommand(0x13);
-	for (UDOUBLE j = 0; j < Height; j++) {
-		EPD_SendData2((UBYTE *)(blackimage + j * Width), Width);
+
+	UDOUBLE rect_width_bytes = (x_end - x_start + 1) / 8;
+	for (UDOUBLE y = y_start; y < y_end; y++) {
+		EPD_SendData2((UBYTE *)(blackimage + y * EPD_7IN5_V2_WIDTH_BYTES + x_start / 8),
+		              rect_width_bytes);
 	}
 	EPD_7IN5_V2_TurnOnDisplay();
 }
