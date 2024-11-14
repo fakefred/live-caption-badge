@@ -91,15 +91,14 @@ epaper_err_t caption_append(const char *string) {
 epaper_err_t caption_display() {
 	static UWORD text_row = 0, text_col = 0;
 
-	if (xMessageBufferIsEmpty(caption_buf) == pdTRUE) {
-		ESP_LOGI(TAG, "caption_display: buffer is empty");
-		return EPAPER_OK;
-	}
-
 	char word[32];
 
+	bool has_updated = false;
+
 	// TODO: edge case where word length > 32 (unlikely)
-	while (true) {
+	while (xMessageBufferIsEmpty(caption_buf) == pdFALSE) {
+		has_updated = true;
+
 		size_t bytes_recv = xMessageBufferReceive(caption_buf, (void *)word, 32, 0);
 		if (bytes_recv == 0) {
 			ESP_LOGE(TAG, "caption_display: Failed to receive word from buffer");
@@ -130,10 +129,15 @@ epaper_err_t caption_display() {
 		         word_start_x, word_end_x, word_start_y, word_end_y, text_col, text_row);
 
 		Paint_DrawString_EN(word_start_x, word_start_y, word, caption_cfg.font, BLACK, WHITE);
-		EPD_Display_Part(Image, word_start_x, word_start_y, word_end_x,
-		                 word_end_y);
+		/* EPD_Display_Part(Image, word_start_x, word_start_y, word_end_x, */
+				 /* word_end_y); */
 
 		text_col += strlen(word) + 1;
+	}
+
+	if (has_updated) {
+		EPD_Display_Part(Image, caption_cfg.x_start, caption_cfg.y_start, caption_cfg.x_end,
+		                 caption_cfg.y_end);
 	}
 	return EPAPER_OK;
 }

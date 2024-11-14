@@ -319,19 +319,19 @@ void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
 		return;
 	}
 
-	if (x_end >= EPD_7IN5_V2_WIDTH || y_end >= EPD_7IN5_V2_HEIGHT) {
+	if (x_end > EPD_7IN5_V2_WIDTH || y_end > EPD_7IN5_V2_HEIGHT) {
 		ESP_LOGE(TAG, "EPD_Display_Part: (x_end=%u, y_end=%u) exceeds display range",
 		         (unsigned int)x_end, (unsigned int)y_end);
 		return;
 	}
 
 	// Because SPI transmissions are in bytes, the screen only accepts x coordinates that are
-	// multiples of 8. Unlike in software, the range that the hardware accepts is inclusive on
-	// both ends. Therefore, x_tx_start must be 0bxxxxxxx000, and x_tx_end must be 0bxxxxxxx111.
-	x_start &= ~0x7;
-	x_end |= 0x7;
+	// multiples of 8.
+	x_start = x_start / 8 * 8;
+	x_end = (x_end + 7) / 8 * 8;
 
-	// There are no limitations on y_start and y_end.
+	ESP_LOGI(TAG, "EPD_Display_Part: Drawing (%u, %u) -- (%u, %u)", (unsigned int)x_start,
+	         (unsigned int)y_start, (unsigned int)x_end, (unsigned int)y_end);
 
 	EPD_SendCommand(0x50);
 	EPD_SendData(0xA9);
@@ -343,6 +343,8 @@ void EPD_7IN5_V2_Display_Part(UBYTE *blackimage, UDOUBLE x_start,
 	EPD_SendData(x_start / 256);
 	EPD_SendData(x_start % 256);
 
+	// Unlike in software, the range that the hardware accepts is inclusive on
+	// both ends. Therefore, the end coordinate must be a multiple of 8 minus 1.
 	EPD_SendData((x_end - 1) / 256);
 	EPD_SendData((x_end - 1) % 256);
 
