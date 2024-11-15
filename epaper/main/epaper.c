@@ -146,7 +146,7 @@ epaper_err_t caption_display() {
 				need_clear = true;
 			} else if (text_row == total_text_rows - 1) {
 				clear_row_start = 0;
-				clear_row_end = total_text_rows / 2 + 1;
+				clear_row_end = total_text_rows / 2;
 				need_clear = true;
 			}
 		}
