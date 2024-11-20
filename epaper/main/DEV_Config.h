@@ -46,13 +46,14 @@
 /**
  * GPIO config
  **/
-#define EPD_SCK_PIN GPIO_NUM_19
-#define EPD_MOSI_PIN GPIO_NUM_18
-#define EPD_MISO_PIN GPIO_NUM_23 // unused
-#define EPD_CS_PIN GPIO_NUM_7
-#define EPD_RST_PIN GPIO_NUM_5
-#define EPD_DC_PIN GPIO_NUM_6
-#define EPD_BUSY_PIN GPIO_NUM_4
+#define EPD_SCK_PIN GPIO_NUM_13
+#define EPD_MOSI_PIN GPIO_NUM_14
+#define EPD_MISO_PIN GPIO_NUM_48 // unused
+#define EPD_CS_PIN GPIO_NUM_15
+#define EPD_RST_PIN GPIO_NUM_12
+#define EPD_DC_PIN GPIO_NUM_11
+#define EPD_BUSY_PIN GPIO_NUM_47
+#define EPD_PWR_PIN GPIO_NUM_7
 
 #define GPIO_PIN_SET 1
 #define GPIO_PIN_RESET 0
