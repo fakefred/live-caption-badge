@@ -13,6 +13,14 @@
 
 #define TAG "epaper"
 
+#ifndef MIN
+#define MIN(a, b) (a < b ? a : b)
+#endif
+
+#ifndef MAX
+#define MAX(a, b) (a > b ? a : b)
+#endif
+
 #define MSG_BUF_LEN 256
 #define MAX_WORD_LEN 32 // including null terminator
 

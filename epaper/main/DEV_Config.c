@@ -47,7 +47,7 @@ void GPIO_Config(void) {
 	gpio_config_t output_config = {
 	    .pin_bit_mask = (1ULL << EPD_RST_PIN) | (1ULL << EPD_DC_PIN) |
 	                    (1ULL << EPD_SCK_PIN) | (1ULL << EPD_MOSI_PIN) |
-	                    (1ULL << EPD_CS_PIN),
+	                    (1ULL << EPD_CS_PIN) | (1ULL << EPD_PWR_PIN),
 	    .mode = GPIO_MODE_OUTPUT,
 	    .pull_up_en = GPIO_PULLUP_DISABLE,
 	    .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -57,6 +57,9 @@ void GPIO_Config(void) {
 
 	gpio_set_level(EPD_CS_PIN, HIGH);
 	gpio_set_level(EPD_SCK_PIN, LOW);
+	gpio_set_level(EPD_PWR_PIN, LOW);
+	DEV_Delay_ms(500);
+	gpio_set_level(EPD_PWR_PIN, HIGH);
 }
 
 /******************************************************************************

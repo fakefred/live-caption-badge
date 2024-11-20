@@ -17,7 +17,7 @@ void app_main() {
 	vTaskDelay(pdMS_TO_TICKS(100));
 
 	esp_log_level_set(SPI_TAG, ESP_LOG_NONE);
-	esp_log_level_set(EPD_TAG, ESP_LOG_NONE);
+	/* esp_log_level_set(EPD_TAG, ESP_LOG_NONE); */
 
 	ESP_LOGI(TAG, "EPD demo begin");
 	DEV_Module_Init();

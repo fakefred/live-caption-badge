@@ -41,9 +41,9 @@ void spi_write_byte(uint8_t byte) {
 
 	ret = spi_device_transmit(spi, &trans);
 	if (ret != ESP_OK) {
-		ESP_LOGE(SPI_TAG, "SPI Write Operation Failed :(\n");
+		ESP_LOGE(SPI_TAG, "SPI Write Operation Failed :(");
 	} else {
-		ESP_LOGI(SPI_TAG, "Sent a byte! :D\n\n");
+		ESP_LOGI(SPI_TAG, "Sent a byte! :D");
 	}
 }
 
@@ -52,8 +52,8 @@ void spi_write_bytes(uint8_t *data, uint16_t len) {
 
 	ret = spi_device_transmit(spi, &trans);
 	if (ret != ESP_OK) {
-		ESP_LOGE(SPI_TAG, "SPI Write Operation Failed :(\n");
+		ESP_LOGE(SPI_TAG, "SPI Write Operation Failed :(");
 	} else {
-		ESP_LOGI(SPI_TAG, "Sent %d bytes! :D\n\n", len);
+		ESP_LOGI(SPI_TAG, "Sent %d bytes! :D", len);
 	}
 }
