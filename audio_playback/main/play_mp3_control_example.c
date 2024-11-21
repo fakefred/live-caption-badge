@@ -10,6 +10,7 @@
 */
 
 #include "audio_hal.h"
+#include "driver/gpio.h"
 #include "es8311.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -158,9 +159,7 @@ void app_main(void) {
 	set_next_file_marker();
 	audio_pipeline_run(pipeline);
 
-	
-	ESP_LOGI(TAG, "Vol: %d", player_volume);
-	audio_hal_set_volume(board_handle->audio_hal, 100);
+	audio_hal_set_volume(board_handle->audio_hal, 70);
 	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
 	ESP_LOGI(TAG, "Vol: %d", player_volume);
 
