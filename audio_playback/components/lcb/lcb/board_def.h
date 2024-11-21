@@ -53,6 +53,7 @@
 #define BUTTON_ID_2 41
 #define BUTTON_ID_3 40
 
+extern audio_hal_func_t AUDIO_CODEC_ES7210_DEFAULT_HANDLE;
 extern audio_hal_func_t AUDIO_CODEC_ES8311_DEFAULT_HANDLE;
 
 #define AUDIO_CODEC_DEFAULT_CONFIG()                                           \
