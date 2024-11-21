@@ -65,7 +65,7 @@ extern audio_hal_func_t AUDIO_CODEC_ES8311_DEFAULT_HANDLE;
 	        {                                                              \
 	            .mode = AUDIO_HAL_MODE_SLAVE,                              \
 	            .fmt = AUDIO_HAL_I2S_NORMAL,                               \
-	            .samples = AUDIO_HAL_48K_SAMPLES,                          \
+	            .samples = AUDIO_HAL_16K_SAMPLES,                          \
 	            .bits = AUDIO_HAL_BIT_LENGTH_16BITS,                       \
 	        },                                                             \
 	};

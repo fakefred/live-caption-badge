@@ -10,6 +10,9 @@
 */
 
 #include "audio_hal.h"
+#include "driver/i2c.h"
+#include "driver/i2s_common.h"
+#include "driver/i2s_types.h"
 #include "freertos/task.h"
 #include <string.h>
 
@@ -24,50 +27,27 @@
 #include "wav_decoder.h"
 #include "periph_button.h"
 
-static const char *TAG = "PLAY_FLASH_MP3_CONTROL";
+static const char *TAG = "ECHO";
 
-static struct marker {
-	int            pos;
-	const uint8_t *start;
-	const uint8_t *end;
-} file_marker;
-
-extern const uint8_t wav_start[] asm("_binary_audio_wav_start");
-extern const uint8_t wav_end[] asm("_binary_audio_wav_end");
-
-static void set_next_file_marker() {
-	file_marker.start = wav_start;
-	file_marker.end = wav_end;
-	file_marker.pos = 0;
-}
-
-int wav_music_read_cb(audio_element_handle_t el, char *buf, int len, TickType_t wait_time,
-                      void *ctx) {
-	int read_size = file_marker.end - file_marker.start - file_marker.pos;
-	if (read_size == 0) {
-		return AEL_IO_DONE;
-	} else if (len < read_size) {
-		read_size = len;
-	}
-	memcpy(buf, file_marker.start + file_marker.pos, read_size);
-	file_marker.pos += read_size;
-	return read_size;
-}
+#define AUDIO_SAMPLE_RATE 16000
+#define AUDIO_BITS 16
+#define AUDIO_CHANNELS 1
 
 void app_main(void) {
-	audio_pipeline_handle_t dac_pipeline, adc_pipeline;
-	audio_element_handle_t  i2s_stream_writer, wav_decoder;
+	audio_pipeline_handle_t dac_pipeline;
+	audio_element_handle_t  adc_i2s, dac_i2s;
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 	esp_log_level_set(TAG, ESP_LOG_INFO);
 
 	ESP_LOGI(TAG, "[ 1 ] Start audio codec chip");
 	audio_board_handle_t board_handle = audio_board_init();
-	audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_BOTH,
+	audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_DECODE,
+	                     AUDIO_HAL_CTRL_START);
+	audio_hal_ctrl_codec(board_handle->adc_hal, AUDIO_HAL_CODEC_MODE_ENCODE,
 	                     AUDIO_HAL_CTRL_START);
 
-	int player_volume;
-	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
+	int player_volume, mic_volume;
 
 	ESP_LOGI(TAG, "[ 2 ] Create audio pipeline, add all elements to "
 	              "pipeline, and subscribe pipeline event");
@@ -75,28 +55,24 @@ void app_main(void) {
 	dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
 	mem_assert(dac_pipeline);
 
-	audio_pipeline_cfg_t adc_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-	adc_pipeline = audio_pipeline_init(&adc_pipeline_cfg);
-	mem_assert(adc_pipeline);
-
-	ESP_LOGI(TAG, "[2.1] Create wav decoder to decode wav file and set "
-	              "custom read callback");
-	wav_decoder_cfg_t wav_cfg = DEFAULT_WAV_DECODER_CONFIG();
-	wav_decoder = wav_decoder_init(&wav_cfg);
-	audio_element_set_read_cb(wav_decoder, wav_music_read_cb, NULL);
+	ESP_LOGI(TAG, "[2.1] Create i2s stream to read data from ADC chip");
+	i2s_stream_cfg_t adc_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+	adc_i2s_cfg.type = AUDIO_STREAM_READER;
+	adc_i2s = i2s_stream_init(&adc_i2s_cfg);
+	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
 
 	ESP_LOGI(TAG, "[2.2] Create i2s stream to write data to codec chip");
-	i2s_stream_cfg_t i2s_cfg = I2S_STREAM_CFG_DEFAULT();
-	i2s_cfg.type = AUDIO_STREAM_WRITER;
-	i2s_stream_writer = i2s_stream_init(&i2s_cfg);
+	i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+	dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
+	dac_i2s = i2s_stream_init(&dac_i2s_cfg);
+	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
 
 	ESP_LOGI(TAG, "[2.3] Register all elements to audio pipeline");
-	audio_pipeline_register(dac_pipeline, wav_decoder, "wav");
-	audio_pipeline_register(dac_pipeline, i2s_stream_writer, "i2s");
+	audio_pipeline_register(dac_pipeline, adc_i2s, "adc");
+	audio_pipeline_register(dac_pipeline, dac_i2s, "dac");
 
-	ESP_LOGI(TAG, "[2.4] Link it together "
-	              "[wav_music_read_cb]-->wav_decoder-->i2s_stream-->[codec_chip]");
-	const char *link_tag[2] = {"wav", "i2s"};
+	ESP_LOGI(TAG, "[2.4] Link it together");
+	const char *link_tag[2] = {"adc", "dac"};
 	audio_pipeline_link(dac_pipeline, &link_tag[0], 2);
 
 	ESP_LOGI(TAG, "[ 3 ] Initialize peripherals");
@@ -116,35 +92,21 @@ void app_main(void) {
 	ESP_LOGI(TAG, "[4.2] Listening event from peripherals");
 	audio_event_iface_set_listener(esp_periph_set_get_event_iface(set), evt);
 
-	ESP_LOGW(TAG, "[ 5 ] Tap touch buttons to control music player:");
-	ESP_LOGW(TAG, "      [Play] to start, pause and resume, [Set] to stop.");
-	ESP_LOGW(TAG, "      [Vol-] or [Vol+] to adjust volume.");
-
-	ESP_LOGI(TAG, "[ 5.1 ] Start audio_pipeline");
-	set_next_file_marker();
-	audio_pipeline_run(dac_pipeline);
-
 	audio_hal_set_volume(board_handle->audio_hal, 100);
 	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
 	ESP_LOGI(TAG, "Vol: %d", player_volume);
+
+	audio_hal_set_volume(board_handle->adc_hal, 100);
+	/* audio_hal_get_volume(board_handle->adc_hal, &mic_volume); */
+	/* ESP_LOGI(TAG, "Vol: %d", mic_volume); */
+
+	ESP_LOGI(TAG, "[ 5 ] Start audio_pipeline");
+	audio_pipeline_run(dac_pipeline);
 
 	while (1) {
 		audio_event_iface_msg_t msg;
 		esp_err_t               ret = audio_event_iface_listen(evt, &msg, portMAX_DELAY);
 		if (ret != ESP_OK) {
-			continue;
-		}
-
-		if (msg.source_type == AUDIO_ELEMENT_TYPE_ELEMENT &&
-		    msg.source == (void *)wav_decoder && msg.cmd == AEL_MSG_CMD_REPORT_MUSIC_INFO) {
-			audio_element_info_t music_info = {0};
-			audio_element_getinfo(wav_decoder, &music_info);
-			ESP_LOGI(TAG,
-			         "[ * ] Receive music info from wav decoder, "
-			         "sample_rates=%d, bits=%d, ch=%d",
-			         music_info.sample_rates, music_info.bits, music_info.channels);
-			i2s_stream_set_clk(i2s_stream_writer, music_info.sample_rates,
-			                   music_info.bits, music_info.channels);
 			continue;
 		}
 
@@ -158,7 +120,7 @@ void app_main(void) {
 			if ((int)msg.data == BUTTON_ID_1) {
 				ESP_LOGI(TAG, "[ * ] [Play] event");
 				audio_element_state_t el_state =
-				    audio_element_get_state(i2s_stream_writer);
+				    audio_element_get_state(dac_i2s);
 				switch (el_state) {
 				case AEL_STATE_INIT:
 					ESP_LOGI(TAG, "[ * ] Starting audio pipeline");
@@ -177,7 +139,6 @@ void app_main(void) {
 					audio_pipeline_reset_ringbuffer(dac_pipeline);
 					audio_pipeline_reset_elements(dac_pipeline);
 					audio_pipeline_change_state(dac_pipeline, AEL_STATE_INIT);
-					set_next_file_marker();
 					audio_pipeline_run(dac_pipeline);
 					break;
 				default:
@@ -194,7 +155,6 @@ void app_main(void) {
 				audio_pipeline_terminate(dac_pipeline);
 				audio_pipeline_reset_ringbuffer(dac_pipeline);
 				audio_pipeline_reset_elements(dac_pipeline);
-				set_next_file_marker();
 			        audio_pipeline_run(dac_pipeline);
 			}
 		}
@@ -204,8 +164,8 @@ void app_main(void) {
 	audio_pipeline_stop(dac_pipeline);
 	audio_pipeline_wait_for_stop(dac_pipeline);
 	audio_pipeline_terminate(dac_pipeline);
-	audio_pipeline_unregister(dac_pipeline, wav_decoder);
-	audio_pipeline_unregister(dac_pipeline, i2s_stream_writer);
+	audio_pipeline_unregister(dac_pipeline, adc_i2s);
+	audio_pipeline_unregister(dac_pipeline, dac_i2s);
 
 	/* Terminate the pipeline before removing the listener */
 	audio_pipeline_remove_listener(dac_pipeline);
@@ -216,6 +176,6 @@ void app_main(void) {
 
 	/* Release all resources */
 	audio_pipeline_deinit(dac_pipeline);
-	audio_element_deinit(i2s_stream_writer);
-	audio_element_deinit(wav_decoder);
+	audio_element_deinit(adc_i2s);
+	audio_element_deinit(dac_i2s);
 }
