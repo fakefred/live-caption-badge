@@ -1,4 +1,4 @@
-/* Play mp3 file by audio pipeline
+/* Play wav file by audio pipeline
    with possibility to start, stop, pause and resume playback
    as well as adjust volume
 
@@ -26,7 +26,7 @@
 #include "esp_log.h"
 #include "esp_peripherals.h"
 #include "i2s_stream.h"
-#include "mp3_decoder.h"
+#include "wav_decoder.h"
 #include "periph_adc_button.h"
 #include "periph_button.h"
 #include "periph_touch.h"
@@ -39,44 +39,16 @@ static struct marker {
 	const uint8_t *end;
 } file_marker;
 
-// low rate mp3 audio
-extern const uint8_t lr_mp3_start[] asm("_binary_music_16b_2c_8000hz_mp3_start");
-extern const uint8_t lr_mp3_end[] asm("_binary_music_16b_2c_8000hz_mp3_end");
-
-// medium rate mp3 audio
-extern const uint8_t mr_mp3_start[] asm("_binary_music_16b_2c_22050hz_mp3_start");
-extern const uint8_t mr_mp3_end[] asm("_binary_music_16b_2c_22050hz_mp3_end");
-
-// high rate mp3 audio
-extern const uint8_t hr_mp3_start[] asm("_binary_music_16b_2c_44100hz_mp3_start");
-extern const uint8_t hr_mp3_end[] asm("_binary_music_16b_2c_44100hz_mp3_end");
+extern const uint8_t mr_wav_start[] asm("_binary_audio_wav_start");
+extern const uint8_t mr_wav_end[] asm("_binary_audio_wav_end");
 
 static void set_next_file_marker() {
-	static int idx = 0;
-
-	switch (idx) {
-	case 0:
-		file_marker.start = lr_mp3_start;
-		file_marker.end = lr_mp3_end;
-		break;
-	case 1:
-		file_marker.start = mr_mp3_start;
-		file_marker.end = mr_mp3_end;
-		break;
-	case 2:
-		file_marker.start = hr_mp3_start;
-		file_marker.end = hr_mp3_end;
-		break;
-	default:
-		ESP_LOGE(TAG, "[ * ] Not supported index = %d", idx);
-	}
-	if (++idx > 2) {
-		idx = 0;
-	}
+	file_marker.start = mr_wav_start;
+	file_marker.end = mr_wav_end;
 	file_marker.pos = 0;
 }
 
-int mp3_music_read_cb(audio_element_handle_t el, char *buf, int len, TickType_t wait_time,
+int wav_music_read_cb(audio_element_handle_t el, char *buf, int len, TickType_t wait_time,
                       void *ctx) {
 	int read_size = file_marker.end - file_marker.start - file_marker.pos;
 	if (read_size == 0) {
@@ -91,7 +63,7 @@ int mp3_music_read_cb(audio_element_handle_t el, char *buf, int len, TickType_t 
 
 void app_main(void) {
 	audio_pipeline_handle_t pipeline;
-	audio_element_handle_t  i2s_stream_writer, mp3_decoder;
+	audio_element_handle_t  i2s_stream_writer, wav_decoder;
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 	esp_log_level_set(TAG, ESP_LOG_INFO);
@@ -110,11 +82,11 @@ void app_main(void) {
 	pipeline = audio_pipeline_init(&pipeline_cfg);
 	mem_assert(pipeline);
 
-	ESP_LOGI(TAG, "[2.1] Create mp3 decoder to decode mp3 file and set "
+	ESP_LOGI(TAG, "[2.1] Create wav decoder to decode wav file and set "
 	              "custom read callback");
-	mp3_decoder_cfg_t mp3_cfg = DEFAULT_MP3_DECODER_CONFIG();
-	mp3_decoder = mp3_decoder_init(&mp3_cfg);
-	audio_element_set_read_cb(mp3_decoder, mp3_music_read_cb, NULL);
+	wav_decoder_cfg_t wav_cfg = DEFAULT_WAV_DECODER_CONFIG();
+	wav_decoder = wav_decoder_init(&wav_cfg);
+	audio_element_set_read_cb(wav_decoder, wav_music_read_cb, NULL);
 
 	ESP_LOGI(TAG, "[2.2] Create i2s stream to write data to codec chip");
 #if defined CONFIG_ESP32_C3_LYRA_V2_BOARD
@@ -126,12 +98,12 @@ void app_main(void) {
 	i2s_stream_writer = i2s_stream_init(&i2s_cfg);
 
 	ESP_LOGI(TAG, "[2.3] Register all elements to audio pipeline");
-	audio_pipeline_register(pipeline, mp3_decoder, "mp3");
+	audio_pipeline_register(pipeline, wav_decoder, "wav");
 	audio_pipeline_register(pipeline, i2s_stream_writer, "i2s");
 
 	ESP_LOGI(TAG, "[2.4] Link it together "
-	              "[mp3_music_read_cb]-->mp3_decoder-->i2s_stream-->[codec_chip]");
-	const char *link_tag[2] = {"mp3", "i2s"};
+	              "[wav_music_read_cb]-->wav_decoder-->i2s_stream-->[codec_chip]");
+	const char *link_tag[2] = {"wav", "i2s"};
 	audio_pipeline_link(pipeline, &link_tag[0], 2);
 
 	ESP_LOGI(TAG, "[ 3 ] Initialize peripherals");
@@ -159,7 +131,7 @@ void app_main(void) {
 	set_next_file_marker();
 	audio_pipeline_run(pipeline);
 
-	audio_hal_set_volume(board_handle->audio_hal, 70);
+	audio_hal_set_volume(board_handle->audio_hal, 90);
 	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
 	ESP_LOGI(TAG, "Vol: %d", player_volume);
 
@@ -171,11 +143,11 @@ void app_main(void) {
 		}
 
 		if (msg.source_type == AUDIO_ELEMENT_TYPE_ELEMENT &&
-		    msg.source == (void *)mp3_decoder && msg.cmd == AEL_MSG_CMD_REPORT_MUSIC_INFO) {
+		    msg.source == (void *)wav_decoder && msg.cmd == AEL_MSG_CMD_REPORT_MUSIC_INFO) {
 			audio_element_info_t music_info = {0};
-			audio_element_getinfo(mp3_decoder, &music_info);
+			audio_element_getinfo(wav_decoder, &music_info);
 			ESP_LOGI(TAG,
-			         "[ * ] Receive music info from mp3 decoder, "
+			         "[ * ] Receive music info from wav decoder, "
 			         "sample_rates=%d, bits=%d, ch=%d",
 			         music_info.sample_rates, music_info.bits, music_info.channels);
 			i2s_stream_set_clk(i2s_stream_writer, music_info.sample_rates,
@@ -232,23 +204,6 @@ void app_main(void) {
 				set_next_file_marker();
 			        audio_pipeline_run(pipeline);
 			}
-
-			/* else if ((int)msg.data == get_input_volup_id()) {
-			 *         ESP_LOGI(TAG, "[ * ] [Vol+] touch tap event");
-			 *         player_volume += 10;
-			 *         if (player_volume > 100) {
-			 *                 player_volume = 100;
-			 *         }
-			 *         audio_hal_set_volume(board_handle->audio_hal, player_volume);
-			 *         ESP_LOGI(TAG, "[ * ] Volume set to %d %%", player_volume);
-			 * } else if ((int)msg.data == get_input_voldown_id()) {
-			 *         ESP_LOGI(TAG, "[ * ] [Vol-] touch tap event");
-			 *         player_volume -= 10;
-			 *         if (player_volume < 0) {
-			 *                 player_volume = 0;
-			 *         }
-			 *         ESP_LOGI(TAG, "[ * ] Volume set to %d %%", player_volume);
-			 * } */
 		}
 	}
 
@@ -256,7 +211,7 @@ void app_main(void) {
 	audio_pipeline_stop(pipeline);
 	audio_pipeline_wait_for_stop(pipeline);
 	audio_pipeline_terminate(pipeline);
-	audio_pipeline_unregister(pipeline, mp3_decoder);
+	audio_pipeline_unregister(pipeline, wav_decoder);
 	audio_pipeline_unregister(pipeline, i2s_stream_writer);
 
 	/* Terminate the pipeline before removing the listener */
@@ -269,5 +224,5 @@ void app_main(void) {
 	/* Release all resources */
 	audio_pipeline_deinit(pipeline);
 	audio_element_deinit(i2s_stream_writer);
-	audio_element_deinit(mp3_decoder);
+	audio_element_deinit(wav_decoder);
 }
