@@ -9,6 +9,8 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 
+#include "audio_hal.h"
+#include "es8311.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <string.h>
@@ -90,7 +92,7 @@ void app_main(void) {
 	audio_pipeline_handle_t pipeline;
 	audio_element_handle_t  i2s_stream_writer, mp3_decoder;
 
-	esp_log_level_set("*", ESP_LOG_WARN);
+	esp_log_level_set("*", ESP_LOG_INFO);
 	esp_log_level_set(TAG, ESP_LOG_INFO);
 
 	ESP_LOGI(TAG, "[ 1 ] Start audio codec chip");
@@ -156,7 +158,11 @@ void app_main(void) {
 	set_next_file_marker();
 	audio_pipeline_run(pipeline);
 
+	
+	ESP_LOGI(TAG, "Vol: %d", player_volume);
 	audio_hal_set_volume(board_handle->audio_hal, 100);
+	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
+	ESP_LOGI(TAG, "Vol: %d", player_volume);
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -177,6 +183,10 @@ void app_main(void) {
 			                   music_info.bits, music_info.channels);
 			continue;
 		}
+
+#define BUTTON_ID_1 42
+#define BUTTON_ID_2 41
+#define BUTTON_ID_3 40
 
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			ESP_LOGI(TAG, "Button %d pressed", (int)msg.data);

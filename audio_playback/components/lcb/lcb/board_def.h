@@ -25,6 +25,8 @@
 #ifndef _AUDIO_BOARD_DEFINITION_H_
 #define _AUDIO_BOARD_DEFINITION_H_
 
+#include "audio_hal.h"
+
 #define SDCARD_OPEN_FILE_NUM_MAX  5
 
 #define BOARD_PA_GAIN             (10) /* Power amplifier gain defined by board (dB) */
@@ -51,7 +53,7 @@
 #define BUTTON_ID_2 41
 #define BUTTON_ID_3 40
 
-extern audio_hal_func_t AUDIO_NEW_CODEC_DEFAULT_HANDLE;
+extern audio_hal_func_t AUDIO_CODEC_ES8311_DEFAULT_HANDLE;
 
 #define AUDIO_CODEC_DEFAULT_CONFIG()                                           \
 	{                                                                      \

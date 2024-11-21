@@ -27,6 +27,7 @@
 #include "audio_mem.h"
 
 #include "periph_button.h"
+#include <stdint.h>
 
 static const char *TAG = "AUDIO_BOARD";
 
@@ -38,6 +39,7 @@ audio_board_handle_t audio_board_init(void)
         ESP_LOGW(TAG, "The board has already been initialized!");
         return board_handle;
     }
+    ESP_LOGW(TAG, "audio_board_init");
     board_handle = (audio_board_handle_t) audio_calloc(1, sizeof(struct audio_board_handle));
     AUDIO_MEM_CHECK(TAG, board_handle, return NULL);
     board_handle->audio_hal = audio_board_codec_init();
@@ -47,8 +49,9 @@ audio_board_handle_t audio_board_init(void)
 
 audio_hal_handle_t audio_board_codec_init(void)
 {
+    ESP_LOGW(TAG, "audio_board_codec_init");
     audio_hal_codec_config_t audio_codec_cfg = AUDIO_CODEC_DEFAULT_CONFIG();
-    audio_hal_handle_t codec_hal = audio_hal_init(&audio_codec_cfg, &AUDIO_NEW_CODEC_DEFAULT_HANDLE);
+    audio_hal_handle_t codec_hal = audio_hal_init(&audio_codec_cfg, &AUDIO_CODEC_ES8311_DEFAULT_HANDLE);
     AUDIO_NULL_CHECK(TAG, codec_hal, return NULL);
     return codec_hal;
 }
@@ -78,4 +81,12 @@ esp_err_t audio_board_deinit(audio_board_handle_t audio_board)
     free(audio_board);
     board_handle = NULL;
     return ret;
+}
+
+int8_t get_pa_enable_gpio() {
+	return GPIO_NUM_2;
+}
+
+int8_t get_es8311_mclk_src() {
+	return 0;
 }
