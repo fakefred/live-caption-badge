@@ -323,6 +323,142 @@
 				)
 			)
 		)
+		(symbol "Device:C"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0.635 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "C"
+				(at 0.635 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0.9652 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Unpolarized capacitor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "cap capacitor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "C_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 -0.762) (xy 2.032 -0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 0.762) (xy 2.032 0.762)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 2.794)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 2.794)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Device:C_Small"
 			(pin_numbers hide)
 			(pin_names
@@ -2445,6 +2581,10 @@
 		(uuid "f8eecdf8-ef70-4969-b8a1-56902e50f4d8")
 	)
 	(no_connect
+		(at 96.52 142.24)
+		(uuid "0939e2fb-cc25-4806-99b3-65c51dcaf8d8")
+	)
+	(no_connect
 		(at 60.96 58.42)
 		(uuid "2ea36289-281b-41c3-b24d-0e206912a0fb")
 	)
@@ -2491,16 +2631,6 @@
 	(no_connect
 		(at 104.14 66.04)
 		(uuid "fe44da37-2398-40ac-bda4-086dfb37574f")
-	)
-	(wire
-		(pts
-			(xy 107.95 142.24) (xy 107.95 147.32)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "00439d05-0da8-4373-bee3-6b832ee684fd")
 	)
 	(wire
 		(pts
@@ -2814,16 +2944,6 @@
 	)
 	(wire
 		(pts
-			(xy 96.52 142.24) (xy 107.95 142.24)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "43b093b6-05f9-483a-a1ce-f9a71cb6a429")
-	)
-	(wire
-		(pts
 			(xy 144.78 38.1) (xy 149.86 38.1)
 		)
 		(stroke
@@ -2951,6 +3071,16 @@
 			(type default)
 		)
 		(uuid "6ddcff76-0a13-4af3-baa9-8ba981455c49")
+	)
+	(wire
+		(pts
+			(xy 106.68 137.16) (xy 118.11 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6f3d8255-707c-4c22-b9b2-d8294da63059")
 	)
 	(wire
 		(pts
@@ -3474,7 +3604,7 @@
 	)
 	(wire
 		(pts
-			(xy 96.52 137.16) (xy 107.95 137.16)
+			(xy 96.52 137.16) (xy 99.06 137.16)
 		)
 		(stroke
 			(width 0)
@@ -3810,7 +3940,7 @@
 		(uuid "2c1c46ff-fc35-4543-a664-5d367ac543ac")
 	)
 	(label "AUDIO_OUT"
-		(at 107.95 137.16 180)
+		(at 118.11 137.16 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4580,13 +4710,12 @@
 		(dnp no)
 		(uuid "12d97c28-7064-4968-971a-40cb4c3bf1db")
 		(property "Reference" "C16"
-			(at 152.4 34.2962 0)
+			(at 147.828 29.718 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "1uF"
@@ -4833,6 +4962,73 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
 					(reference "#PWR034")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 102.87 137.16 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3c2599e0-2526-49fc-b45a-1b65064c90e2")
+		(property "Reference" "C6"
+			(at 102.87 130.81 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47uF"
+			(at 102.87 133.35 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 106.68 136.1948 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 102.87 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 102.87 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3486c963-a134-4a87-8c5c-e0ff449060ed")
+		)
+		(pin "2"
+			(uuid "0a6a4fae-db53-4d6a-a07e-8e50165e940c")
+		)
+		(instances
+			(project ""
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
+					(reference "C6")
 					(unit 1)
 				)
 			)
@@ -5119,13 +5315,12 @@
 		(dnp no)
 		(uuid "5abf5977-5012-4541-b713-af1e553b523f")
 		(property "Reference" "C14"
-			(at 142.24 34.2962 0)
+			(at 137.668 29.718 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "0.1uF"
@@ -5174,72 +5369,6 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
 					(reference "C14")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GNDA")
-		(at 107.95 147.32 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6013b95f-6e4c-4053-ac5f-5c5e2a3314b4")
-		(property "Reference" "#PWR048"
-			(at 107.95 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GNDA"
-			(at 107.95 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 107.95 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 107.95 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 107.95 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "dc5f4239-867f-4322-b959-a27021d3fbdb")
-		)
-		(instances
-			(project "live-caption-badge"
-				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
-					(reference "#PWR048")
 					(unit 1)
 				)
 			)
@@ -5785,13 +5914,12 @@
 		(dnp no)
 		(uuid "9c0c31aa-7987-46af-9074-a8a6b4b05b00")
 		(property "Reference" "C15"
-			(at 147.32 34.2962 0)
+			(at 142.748 29.718 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "0.1uF"
@@ -6018,13 +6146,12 @@
 		(dnp no)
 		(uuid "a1607720-cf2e-4dc6-a004-074402017e1b")
 		(property "Reference" "C32"
-			(at 74.93 119.3862 0)
+			(at 68.326 118.872 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "1uF"
@@ -6777,13 +6904,12 @@
 		(dnp no)
 		(uuid "d80b9e95-4f09-4d83-8833-79c74ffd37ef")
 		(property "Reference" "C33"
-			(at 81.28 119.3862 0)
+			(at 78.994 118.872 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "0.1uF"
@@ -7614,16 +7740,14 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "f941ca1b-3da3-4d36-a099-935038cd356b")
 		(property "Reference" "C24"
-			(at 179.07 82.5562 0)
+			(at 172.212 85.852 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(justify left)
-				(hide yes)
 			)
 		)
 		(property "Value" "1uF"
