@@ -78,6 +78,17 @@ audio_hal_handle_t audio_board_adc_init(void);
 esp_err_t audio_board_key_init(esp_periph_set_handle_t set);
 
 /**
+ * @brief Initialize wifi peripheral, delays until connected
+ *
+ * @param set The handle of esp_periph_set_handle_t
+ *
+ * @return
+ *     - ESP_OK, success
+ *     - Others, fail
+ */
+esp_err_t audio_board_wifi_init(esp_periph_set_handle_t set);
+
+/**
  * @brief Initialize sdcard peripheral
  *
  * @param set The handle of esp_periph_set_handle_t

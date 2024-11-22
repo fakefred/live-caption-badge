@@ -22,11 +22,13 @@
  *
  */
 
+#include "esp_err.h"
 #include "esp_log.h"
 #include "board.h"
 #include "audio_mem.h"
 
 #include "periph_button.h"
+#include "periph_wifi.h"
 #include <stdint.h>
 
 static const char *TAG = "AUDIO_BOARD";
@@ -76,6 +78,19 @@ esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
     AUDIO_NULL_CHECK(TAG, btn_handle, return ESP_ERR_ADF_MEMORY_LACK);
     ret = esp_periph_start(set, btn_handle);
     return ret;
+}
+
+esp_err_t audio_board_wifi_init(esp_periph_set_handle_t set) {
+	esp_err_t ret = ESP_OK;
+	periph_wifi_cfg_t wifi_cfg = {
+	    .wifi_config.sta.ssid = CONFIG_WIFI_SSID,
+	    .wifi_config.sta.password = CONFIG_WIFI_PASSWORD,
+	};
+
+	esp_periph_handle_t wifi_handle = periph_wifi_init(&wifi_cfg);
+	ret = esp_periph_start(set, wifi_handle);
+	periph_wifi_wait_for_connected(wifi_handle, portMAX_DELAY);
+	return ret;
 }
 
 audio_board_handle_t audio_board_get_handle(void)
