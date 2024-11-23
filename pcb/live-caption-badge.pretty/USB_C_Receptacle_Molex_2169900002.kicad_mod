@@ -119,16 +119,6 @@
 		(layer "F.SilkS")
 		(uuid "ad395c26-9ca1-4404-ab46-394b92e14243")
 	)
-	(fp_line
-		(start -4 3.13)
-		(end 4 3.13)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "Dwgs.User")
-		(uuid "7683063b-7d67-4752-9976-39ccc3304d35")
-	)
 	(fp_rect
 		(start -5.3 -6.155)
 		(end 5.3 3.805)
@@ -141,8 +131,8 @@
 		(uuid "bae2b54e-1260-491b-92f8-fa4d22b7bc65")
 	)
 	(fp_line
-		(start -4.6 -6)
-		(end -4.6 3.31)
+		(start -6.5 -6.155)
+		(end -6.5 4)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -151,8 +141,8 @@
 		(uuid "b4c7f52b-02c2-40cf-ae30-6a8b613209d9")
 	)
 	(fp_line
-		(start -4.6 -6)
-		(end 4.5 -6)
+		(start -6.5 -6.155)
+		(end 6.5 -6.155)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -161,8 +151,8 @@
 		(uuid "c8109dff-0dca-4be6-adee-d433803f5dbf")
 	)
 	(fp_line
-		(start -4.6 3.31)
-		(end 4.5 3.31)
+		(start -6.5 4)
+		(end 6.5 4)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -171,26 +161,14 @@
 		(uuid "972d0eca-dcb5-48a2-aa9b-47e49f0c15be")
 	)
 	(fp_line
-		(start 4.5 3.31)
-		(end 4.5 -6)
+		(start 6.5 4)
+		(end 6.5 -6.155)
 		(stroke
 			(width 0.1)
 			(type solid)
 		)
 		(layer "F.Fab")
 		(uuid "ba63e263-1a5c-4b67-b660-6490bbad5b18")
-	)
-	(fp_text user "PCB Edge"
-		(at 0 2.68 0)
-		(unlocked yes)
-		(layer "Dwgs.User")
-		(uuid "239cd3db-8f2a-4a04-be37-edc38742b3e0")
-		(effects
-			(font
-				(size 0.5 0.5)
-				(thickness 0.125)
-			)
-		)
 	)
 	(fp_text user "${REFERENCE}"
 		(at 0 0.315 0)
@@ -331,34 +309,6 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(uuid "7095be15-0950-440f-af16-a858e81a7393")
-	)
-	(zone
-		(net 0)
-		(net_name "")
-		(layers "F.Cu" "Dwgs.User")
-		(uuid "1f610c13-3f72-4f0d-91a7-9759d87d5367")
-		(hatch full 0.508)
-		(connect_pads
-			(clearance 0)
-		)
-		(min_thickness 0.254)
-		(filled_areas_thickness no)
-		(keepout
-			(tracks not_allowed)
-			(vias not_allowed)
-			(pads not_allowed)
-			(copperpour not_allowed)
-			(footprints not_allowed)
-		)
-		(fill
-			(thermal_gap 0.508)
-			(thermal_bridge_width 0.508)
-		)
-		(polygon
-			(pts
-				(xy 3.5 3.13) (xy -3.5 3.13) (xy -3.5 -3.5) (xy 3.5 -3.5)
-			)
-		)
 	)
 	(model "${KICAD8_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step"
 		(offset
