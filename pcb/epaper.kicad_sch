@@ -3242,7 +3242,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "live-caption-badge:L_Bourns-SDEE0406A"
 			(at 147.32 76.2 0)
 			(effects
 				(font
@@ -4786,7 +4786,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "live-caption-badge:FPC05024-13200_1x24-1MP_P0.50_Horizontal"
 			(at 100.33 66.04 0)
 			(effects
 				(font

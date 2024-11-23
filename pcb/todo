@@ -2,15 +2,15 @@ test:
 [ ] FPC
 
 design:
-[s] usb cutout
-[ ] uart rts, io0
+[x] usb cutout
+[x] uart rts, io0
 [ ] charging
-[s] epaper ribbon
-[s] amp out
-[s] more gnd testpoints
+[x] epaper ribbon
+[x] amp out
+[x] more gnd testpoints
 
 buy:
 [c] esp32
 [ ] bms
 [ ] 0.47R
-[ ] batt boxes
+[ ] batt boxes?
