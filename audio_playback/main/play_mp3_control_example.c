@@ -20,6 +20,7 @@
 #include "esp_log.h"
 #include "esp_peripherals.h"
 #include "esp_wifi.h"
+#include "freertos/projdefs.h"
 #include "freertos/task.h"
 #include "http_stream.h"
 #include "i2s_stream.h"
@@ -130,7 +131,7 @@ void app_main(void) {
 
 	ESP_LOGI(TAG, "Start audio codec chip");
 	audio_board_handle_t board_handle = audio_board_init();
-	audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_BOTH,
+	audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_DECODE,
 	                     AUDIO_HAL_CTRL_START);
 	audio_hal_ctrl_codec(board_handle->adc_hal, AUDIO_HAL_CODEC_MODE_ENCODE,
 			     AUDIO_HAL_CTRL_START);
@@ -198,6 +199,11 @@ void app_main(void) {
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline"); */
 	/* audio_pipeline_run(dac_pipeline); */
+
+	audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
+	audio_pipeline_run(adc_pipeline);
+	vTaskDelay(pdMS_TO_TICKS(5000));
+	audio_element_set_ringbuf_done(adc_i2s);
 
 	while (1) {
 		audio_event_iface_msg_t msg;
