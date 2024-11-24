@@ -6071,7 +6071,7 @@
 		(uuid "23c28581-8440-49e1-8599-953272f3405e")
 	)
 	(label "SPI_~{CS}"
-		(at 95.25 95.25 0)
+		(at 95.25 92.71 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6368,13 +6368,13 @@
 		(uuid "992b4744-c651-4459-a210-6adc7b9fab96")
 	)
 	(label "SPI_SCK"
-		(at 146.05 69.85 180)
+		(at 95.25 90.17 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
 		(uuid "9ba4ed57-7dbb-4863-89c1-7e480bafb182")
 	)
@@ -6390,18 +6390,18 @@
 		(uuid "9bd17b6f-7d9c-4499-beca-f203b8cd805d")
 	)
 	(label "EPD_~{BUSY}"
-		(at 95.25 87.63 0)
+		(at 146.05 97.79 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right bottom)
 		)
 		(uuid "9f8ca325-67e9-4e72-97f4-56d44941d455")
 	)
 	(label "EPD_DC"
-		(at 95.25 92.71 0)
+		(at 95.25 95.25 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6522,13 +6522,13 @@
 		(uuid "cff94856-d2b1-4bf0-bb4c-1c63e498490e")
 	)
 	(label "SPI_MOSI"
-		(at 146.05 97.79 180)
+		(at 95.25 87.63 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right bottom)
+			(justify left bottom)
 		)
 		(uuid "d56d8de2-4dfc-49eb-9246-d33af80b0064")
 	)
@@ -6577,13 +6577,13 @@
 		(uuid "ef5a8dd7-1f79-4366-a0a1-9c2726c4a63b")
 	)
 	(label "EPD_~{RST}"
-		(at 95.25 90.17 0)
+		(at 146.05 69.85 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right bottom)
 		)
 		(uuid "efccdd33-1cff-4f21-85d8-885b2d59619a")
 	)

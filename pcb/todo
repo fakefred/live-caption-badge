@@ -5,7 +5,7 @@ design:
 [x] usb cutout
 [x] uart rts, io0
 [ ] charging
-[x] epaper ribbon
+[ ] epaper ribbon (mirror)
 [x] amp out
 [x] more gnd testpoints
 
