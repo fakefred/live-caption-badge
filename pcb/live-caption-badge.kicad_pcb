@@ -15293,26 +15293,6 @@
 		(sheetfile "live-caption-badge.kicad_sch")
 		(attr smd)
 		(fp_line
-			(start -9.2 -12.9)
-			(end -9.2 -6.7)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "a458ec35-c2a7-4143-8f57-2bc393a50af1")
-		)
-		(fp_line
-			(start -9.2 -12.9)
-			(end 9.2 -12.9)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "9fead5b7-35dd-4334-9991-42c92f3a7a5d")
-		)
-		(fp_line
 			(start -9.2 11.95)
 			(end -9.2 12.95)
 			(stroke
@@ -15331,16 +15311,6 @@
 			)
 			(layer "F.SilkS")
 			(uuid "96d26da2-0fc7-46f7-ba1e-344da2663aa8")
-		)
-		(fp_line
-			(start 9.2 -12.9)
-			(end 9.2 -6.7)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "29474597-baeb-4935-9bd1-612a0e2cb17a")
 		)
 		(fp_line
 			(start 9.2 12.95)
@@ -34011,7 +33981,7 @@
 		)
 	)
 	(gr_text ":3"
-		(at 132.3 99.6 0)
+		(at 105.25 104.5 0)
 		(layer "F.SilkS")
 		(uuid "8e5ad2b7-e5a7-46d8-b736-5a964f510b4a")
 		(effects
@@ -34019,7 +33989,7 @@
 				(size 0.8 0.8)
 				(thickness 0.15)
 			)
-			(justify left bottom)
+			(justify bottom)
 		)
 	)
 	(gr_text "I2S"
