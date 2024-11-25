@@ -5,17 +5,17 @@
       "Application": "Pcbnew",
       "Version": "8.0.6"
     },
-    "CreationDate": "2024-10-30T23:15:20-04:00"
+    "CreationDate": "2024-11-25T17:46:05-05:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "live-caption-badge",
       "GUID": "6c697665-2d63-4617-9074-696f6e2d6261",
-      "Revision": "rev?"
+      "Revision": "2"
     },
     "Size": {
       "X": 170.2,
-      "Y": 100.2355
+      "Y": 105.2711
     },
     "LayerNumber": 4,
     "BoardThickness": 1.6,
@@ -24,8 +24,8 @@
   "DesignRules": [
     {
       "Layers": "Outer",
-      "PadToPad": 0.15,
-      "PadToTrack": 0.15,
+      "PadToPad": 0.1,
+      "PadToTrack": 0.1,
       "TrackToTrack": 0.2,
       "MinLineWidth": 0.2,
       "TrackToRegion": 0.5,
