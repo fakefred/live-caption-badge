@@ -2958,6 +2958,17 @@
 		)
 		(uuid "c1a7694f-a9de-4010-b534-a0d8b46625a1")
 	)
+	(text "Insert ribbon cable\n<-- this way"
+		(exclude_from_sim no)
+		(at 103.378 61.976 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3efd6fc-4c4f-4d16-8360-d8e32634f2a6")
+	)
 	(label "VSS"
 		(at 62.23 78.74 0)
 		(fields_autoplaced yes)

@@ -2810,6 +2810,16 @@
 	)
 	(wire
 		(pts
+			(xy 185.42 135.89) (xy 185.42 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "149a593e-ec16-43e1-8eb9-091ca881f827")
+	)
+	(wire
+		(pts
 			(xy 62.23 142.24) (xy 69.85 142.24)
 		)
 		(stroke
@@ -2930,7 +2940,7 @@
 	)
 	(wire
 		(pts
-			(xy 182.88 129.54) (xy 182.88 139.7)
+			(xy 179.07 129.54) (xy 179.07 139.7)
 		)
 		(stroke
 			(width 0)
@@ -3000,7 +3010,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 127) (xy 176.53 127)
+			(xy 167.64 127) (xy 185.42 127)
 		)
 		(stroke
 			(width 0)
@@ -3570,6 +3580,16 @@
 	)
 	(wire
 		(pts
+			(xy 185.42 127) (xy 185.42 130.81)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7eec089-626a-4b5e-a9c7-06db1dac3253")
+	)
+	(wire
+		(pts
 			(xy 194.31 71.12) (xy 198.12 71.12)
 		)
 		(stroke
@@ -3690,7 +3710,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 129.54) (xy 182.88 129.54)
+			(xy 163.83 129.54) (xy 179.07 129.54)
 		)
 		(stroke
 			(width 0)
@@ -4073,7 +4093,7 @@
 		(uuid "db570e00-1330-467d-aa56-b6b1b9ea4fe7")
 	)
 	(label "MIC_IN"
-		(at 176.53 127 180)
+		(at 185.42 127 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -5650,7 +5670,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDA")
-		(at 182.88 139.7 0)
+		(at 179.07 139.7 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5659,7 +5679,7 @@
 		(fields_autoplaced yes)
 		(uuid "51ee2a5f-86be-4a02-95e7-4404cebeaca2")
 		(property "Reference" "#PWR046"
-			(at 182.88 146.05 0)
+			(at 179.07 146.05 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5668,7 +5688,7 @@
 			)
 		)
 		(property "Value" "GNDA"
-			(at 182.88 144.78 0)
+			(at 179.07 144.78 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5676,7 +5696,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 182.88 139.7 0)
+			(at 179.07 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5685,7 +5705,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 182.88 139.7 0)
+			(at 179.07 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5694,7 +5714,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 182.88 139.7 0)
+			(at 179.07 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7009,6 +7029,72 @@
 			(project "live-caption-badge"
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
 					(reference "#PWR036")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDA")
+		(at 185.42 139.7 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b7bcbd0d-515d-4ea4-8aa0-9e0d8e3c8d91")
+		(property "Reference" "#PWR049"
+			(at 185.42 146.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GNDA"
+			(at 185.42 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 185.42 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 185.42 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
+			(at 185.42 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aa42dd5b-256e-4d7c-a7b8-45b87c3eccba")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
+					(reference "#PWR049")
 					(unit 1)
 				)
 			)
@@ -8336,6 +8422,76 @@
 			(project ""
 				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
 					(reference "TP12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C_Small")
+		(at 185.42 133.35 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e71e3734-ebac-4d15-b085-dd689a719231")
+		(property "Reference" "C48"
+			(at 187.96 132.0862 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22pF"
+			(at 187.96 134.6262 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 185.42 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 185.42 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 185.42 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "23ac3531-d53e-4e8b-ae3f-ccfbc62e0f29")
+		)
+		(pin "2"
+			(uuid "416144fd-46f9-4dda-9202-eb06636371bb")
+		)
+		(instances
+			(project "live-caption-badge"
+				(path "/3b930924-1452-4d23-815e-09afbcdc5905/6626f702-51b6-4b1f-836e-d6234bc91af1"
+					(reference "C48")
 					(unit 1)
 				)
 			)

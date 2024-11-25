@@ -1,11 +1,11 @@
 test:
-[ ] FPC
+[x] FPC
 
 design:
 [x] usb cutout
 [x] uart rts, io0
 [ ] charging
-[ ] epaper ribbon (mirror)
+[x] epaper ribbon (mirror)
 [x] amp out
 [x] more gnd testpoints
 
