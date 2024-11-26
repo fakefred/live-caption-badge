@@ -16,10 +16,13 @@
 #include "audio_pipeline.h"
 #include "board.h"
 #include "board_def.h"
+#include "es7210.h"
+#include "es8311.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
 #include "esp_peripherals.h"
 #include "esp_wifi.h"
+#include "esxxx_common.h"
 #include "freertos/projdefs.h"
 #include "freertos/task.h"
 #include "http_stream.h"
@@ -45,7 +48,7 @@ esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg) {
 	if (msg->event_id == HTTP_STREAM_PRE_REQUEST) {
 		// set header
 		ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_PRE_REQUEST, length=%d",
-		         msg->buffer_len);
+			 msg->buffer_len);
 		esp_http_client_set_method(http, HTTP_METHOD_POST);
 		char dat[10] = {0};
 		snprintf(dat, sizeof(dat), "%d", AUDIO_SAMPLE_RATE);
@@ -79,7 +82,7 @@ esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg) {
 
 	if (msg->event_id == HTTP_STREAM_POST_REQUEST) {
 		ESP_LOGI(TAG,
-		         "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
+			 "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
 		if (esp_http_client_write(http, "0\r\n\r\n", 5) <= 0) {
 			return ESP_FAIL;
 		}
@@ -136,15 +139,24 @@ void app_main(void) {
 	audio_hal_ctrl_codec(board_handle->adc_hal, AUDIO_HAL_CODEC_MODE_ENCODE,
 			     AUDIO_HAL_CTRL_START);
 
-	int player_volume, mic_volume;
-
+	int player_volume, mic_gain;
 	audio_hal_set_volume(board_handle->audio_hal, 100);
 	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
 	ESP_LOGI(TAG, "DAC volume: %d", player_volume);
 
-	audio_hal_set_volume(board_handle->adc_hal, 100);
-	/* audio_hal_get_volume(board_handle->adc_hal, &mic_volume); */
-	/* ESP_LOGI(TAG, "Vol: %d", mic_volume); */
+	if (es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain) != ESP_OK) {
+		ESP_LOGE(TAG, "Failed to get mic gain");
+	}
+	ESP_LOGW(TAG, "Mic gain was: %d", mic_gain);
+	if (es7210_adc_set_gain(ES7210_INPUT_MIC1, GAIN_37_5DB) != ESP_OK) {
+		ESP_LOGE(TAG, "Failed to set mic gain");
+	}
+	if (es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain) != ESP_OK) {
+		ESP_LOGE(TAG, "Failed to get mic gain");
+	}
+	ESP_LOGW(TAG, "Mic gain is: %d", mic_gain);
+	
+	es7210_read_all();
 
 	/* ADC */
 
@@ -161,6 +173,7 @@ void app_main(void) {
 	adc_i2s = i2s_stream_init(&adc_i2s_cfg);
 	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
 	audio_pipeline_register(adc_pipeline, adc_i2s, "adc");
+
 
 	ESP_LOGI(TAG, "Create HTTP stream");
 	http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
@@ -185,25 +198,28 @@ void app_main(void) {
 
 	/* DAC */
 
-	ESP_LOGI(TAG, "Create DAC pipeline");
-	audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-	dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
-	mem_assert(dac_pipeline);
+	es8311_stop(ES_MODULE_DAC);
+	es8311_pa_power(false);
 
-	ESP_LOGI(TAG, "Create DAC i2s stream");
-	i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
-	dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
-	dac_i2s = i2s_stream_init(&dac_i2s_cfg);
-	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
-	audio_pipeline_register(dac_pipeline, dac_i2s, "dac");
+/*         ESP_LOGI(TAG, "Create DAC pipeline");
+ *         audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+ *         dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
+ *         mem_assert(dac_pipeline);
+ *
+ *         ESP_LOGI(TAG, "Create DAC i2s stream");
+ *         i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+ *         dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
+ *         dac_i2s = i2s_stream_init(&dac_i2s_cfg);
+ *         i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
+ *         audio_pipeline_register(dac_pipeline, dac_i2s, "dac"); */
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline"); */
 	/* audio_pipeline_run(dac_pipeline); */
 
-	audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
-	audio_pipeline_run(adc_pipeline);
-	vTaskDelay(pdMS_TO_TICKS(5000));
-	audio_element_set_ringbuf_done(adc_i2s);
+	/* audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
+	 * audio_pipeline_run(adc_pipeline);
+	 * vTaskDelay(pdMS_TO_TICKS(5000));
+	 * audio_element_set_ringbuf_done(adc_i2s); */
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -255,8 +271,8 @@ void app_main(void) {
 
 	/* Release all resources */
 	audio_pipeline_deinit(adc_pipeline);
-	audio_pipeline_deinit(dac_pipeline);
+	/* audio_pipeline_deinit(dac_pipeline); */
 	audio_element_deinit(adc_i2s);
 	audio_element_deinit(http_stream_writer);
-	audio_element_deinit(dac_i2s);
+	/* audio_element_deinit(dac_i2s); */
 }
