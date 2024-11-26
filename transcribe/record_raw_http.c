@@ -38,18 +38,74 @@
 #endif
 
 static const char *TAG = "REC_RAW_HTTP";
-
+char* currentText;
 
 #define EXAMPLE_AUDIO_SAMPLE_RATE  (16000)
 #define EXAMPLE_AUDIO_BITS         (16)
 #define EXAMPLE_AUDIO_CHANNELS     (1)
 
 #define DEMO_EXIT_BIT (BIT0)
+
+#define REQUEST_INTERVAL_MS 1000
+#define PRINT_TEXT_INTERVAL_MS 1000
+#define BUFFER_SIZE 50
+#define MAX_HTTP_RECV_BUFFER 2048
+static esp_http_client_handle_t client;
+
 static EventGroupHandle_t EXIT_FLAG;
 
 audio_pipeline_handle_t pipeline;
 audio_element_handle_t i2s_stream_reader;
 audio_element_handle_t http_stream_writer;
+
+void print_current_text(void *pvParameters){
+    while(1){
+        ESP_LOGI(TAG, "current text stored in buffer: %s", currentText);
+        vTaskDelay(pdMS_TO_TICKS(PRINT_TEXT_INTERVAL_MS));  // Delay for the specified interval
+    }
+}
+
+
+void http_get_task(void *pvParameters)
+{
+    while(1){
+        char *buffer = malloc(MAX_HTTP_RECV_BUFFER + 1);
+        if (buffer == NULL) {
+            ESP_LOGE(TAG, "Cannot malloc http receive buffer");
+            return;
+        }
+        esp_http_client_config_t config = {
+            .url = "http://172.20.10.2:8000",
+        };
+        esp_http_client_handle_t client = esp_http_client_init(&config);
+        esp_err_t errGet;
+        if ((errGet = esp_http_client_open(client, 0)) != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to open HTTP connection: %s", esp_err_to_name(errGet));
+            free(buffer);
+            return;
+        }
+        int content_length =  esp_http_client_fetch_headers(client);
+        int total_read_len = 0, read_len;
+        if (total_read_len < content_length && content_length <= MAX_HTTP_RECV_BUFFER) {
+            read_len = esp_http_client_read(client, buffer, content_length);
+            if (read_len <= 0) {
+                ESP_LOGE(TAG, "Error read data");
+            }
+            buffer[read_len] = 0;
+            ESP_LOGI(TAG, "read_len = %d", read_len);
+        }
+        ESP_LOGI(TAG, "buffer: %s", buffer);
+        memcpy(currentText, buffer, strlen(buffer));
+        currentText[strlen(buffer)] = 0;
+        ESP_LOGI(TAG, "HTTP Stream reader Status = %d, content_length = %"PRId64,
+                        esp_http_client_get_status_code(client),
+                        esp_http_client_get_content_length(client));
+        esp_http_client_close(client);
+        esp_http_client_cleanup(client);
+        free(buffer);
+        vTaskDelay(pdMS_TO_TICKS(REQUEST_INTERVAL_MS));  // Delay for the specified interval
+    }
+}
 
 esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg)
 {
@@ -231,8 +287,13 @@ void app_main(void)
 
     i2s_stream_set_clk(i2s_stream_reader, EXAMPLE_AUDIO_SAMPLE_RATE, EXAMPLE_AUDIO_BITS, EXAMPLE_AUDIO_CHANNELS);
 
+    ESP_LOGI(TAG, "[3.5] Setup the task to send HTTP GET Request periodically");
+    currentText = (char*)calloc(20, 1);
+    xTaskCreate(&http_get_task, "http_get_task", 4096, NULL, 5, NULL);
+    xTaskCreate(&print_current_text, "print_current_text", 4096, NULL, 5, NULL);
+
     ESP_LOGI(TAG, "[ 4 ] Press [Rec] button to record, Press [Mode] to exit");
-    xEventGroupWaitBits(EXIT_FLAG, DEMO_EXIT_BIT, true, false, portMAX_DELAY);
+    xEventGroupWaitBits(EXIT_FLAG, DEMO_EXIT_BIT, true, false, portMAX_DELAY); // wait for interrupt for reset or exit.
 
     ESP_LOGI(TAG, "[ 5 ] Stop audio_pipeline");
     audio_pipeline_stop(pipeline);
