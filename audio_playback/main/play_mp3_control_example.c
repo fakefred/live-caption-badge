@@ -175,9 +175,6 @@ void app_main(void) {
 	 * http_stream_writer = http_stream_init(&http_cfg);
 	 * audio_pipeline_register(adc_pipeline, http_stream_writer, "http"); */
 
-	/* ESP_LOGI(TAG, "Link ADC pipeline");
-	 * const char *link_tag[2] = {"adc", "http"};
-	 * audio_pipeline_link(adc_pipeline, &link_tag[0], 2); */
 
 
 	/* DAC */
@@ -194,6 +191,10 @@ void app_main(void) {
 	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
         /* audio_pipeline_register(dac_pipeline, dac_i2s, "dac"); */
 	audio_pipeline_register(adc_pipeline, dac_i2s, "dac");
+
+	ESP_LOGI(TAG, "Link ADC pipeline");
+	const char *link_tag[2] = {"adc", "dac"};
+	audio_pipeline_link(adc_pipeline, &link_tag[0], 2);
 
 	ESP_LOGI(TAG, "Set up ADC event listener");
 	audio_event_iface_cfg_t    evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
