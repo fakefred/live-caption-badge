@@ -149,8 +149,6 @@ void app_main(void) {
 	ESP_ERROR_CHECK(es7210_adc_set_gain(ES7210_INPUT_MIC1, GAIN_37_5DB));
 	ESP_ERROR_CHECK(es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain));
 	ESP_LOGW(TAG, "Mic gain is: %d", mic_gain);
-	
-	/* es7210_read_all(); */
 
 	/* ADC */
 
@@ -174,8 +172,6 @@ void app_main(void) {
 	 * http_cfg.event_handle = _http_stream_event_handle;
 	 * http_stream_writer = http_stream_init(&http_cfg);
 	 * audio_pipeline_register(adc_pipeline, http_stream_writer, "http"); */
-
-
 
 	/* DAC */
 
