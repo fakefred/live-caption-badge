@@ -73,7 +73,7 @@ epaper_err_t caption_clear() {
 	Paint_ClearWindows(cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end, WHITE);
 	EPD_Init_Fast();
 	EPD_Init_Part();
-	EPD_Display_Part(Image, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
+	EPD_Display_Part(framebuffer, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
 	return EPAPER_OK;
 }
 
@@ -183,11 +183,11 @@ epaper_err_t caption_display() {
 			ESP_LOGI(TAG, "caption_display: Updating entire caption area");
 			Paint_ClearWindows(cfg.x_start, clear_y_start, cfg.x_end, clear_y_end,
 			                   WHITE);
-			EPD_Display_Part(Image, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
+			EPD_Display_Part(framebuffer, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
 		} else {
 			ESP_LOGI(TAG, "caption_display: Updating screen area (%u, %u) -- (%u, %u)",
 			         min_x, min_y, max_x, max_y);
-			EPD_Display_Part(Image, min_x, min_y, max_x, max_y);
+			EPD_Display_Part(framebuffer, min_x, min_y, max_x, max_y);
 		}
 	}
 

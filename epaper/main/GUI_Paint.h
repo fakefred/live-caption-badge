@@ -99,7 +99,7 @@ typedef struct {
 } PAINT;
 
 extern PAINT Paint;
-extern UBYTE *Image;
+extern UBYTE *framebuffer;
 
 /**
  * Display rotate

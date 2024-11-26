@@ -5,6 +5,14 @@
 #include "freertos/idf_additions.h"
 #include <stdint.h>
 
+#ifndef MIN
+#define MIN(a, b) (a < b ? a : b)
+#endif
+
+#ifndef MAX
+#define MAX(a, b) (a > b ? a : b)
+#endif
+
 extern MessageBufferHandle_t caption_buf;
 
 typedef enum {
@@ -12,11 +20,24 @@ typedef enum {
 	EPAPER_ERR,
 } epaper_err_t;
 
+typedef enum {
+	EPAPER_STATE_UNINITIALIZED,
+	EPAPER_STATE_IDLE,
+	EPAPER_STATE_CAPTION,
+	EPAPER_STATE_SHUTDOWN,
+} epaper_state_t;
+
+extern epaper_state_t epaper_state;
+
 typedef struct {
 	// bounding box position, in pixels
 	UWORD x_start, y_start, x_end, y_end;
 	sFONT *font;
 } caption_cfg_t;
+
+epaper_err_t epaper_init(void);
+epaper_err_t epaper_set_state(epaper_state_t new_state);
+epaper_err_t epaper_shutdown(void);
 
 /*
  * Resets data structures for caption.
