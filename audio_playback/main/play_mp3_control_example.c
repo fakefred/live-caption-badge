@@ -18,6 +18,7 @@
 #include "board_def.h"
 #include "es7210.h"
 #include "es8311.h"
+#include "esp_err.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
 #include "esp_peripherals.h"
@@ -40,73 +41,79 @@ static const char *TAG = "ECHO";
 #define BUTTON_ID_2 41
 #define BUTTON_ID_3 40
 
-esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg) {
-	esp_http_client_handle_t http = (esp_http_client_handle_t)msg->http_client;
-	char                     len_buf[16];
-	static int               total_write = 0;
-
-	if (msg->event_id == HTTP_STREAM_PRE_REQUEST) {
-		// set header
-		ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_PRE_REQUEST, length=%d",
-			 msg->buffer_len);
-		esp_http_client_set_method(http, HTTP_METHOD_POST);
-		char dat[10] = {0};
-		snprintf(dat, sizeof(dat), "%d", AUDIO_SAMPLE_RATE);
-		esp_http_client_set_header(http, "x-audio-sample-rates", dat);
-		memset(dat, 0, sizeof(dat));
-		snprintf(dat, sizeof(dat), "%d", AUDIO_BITS);
-		esp_http_client_set_header(http, "x-audio-bits", dat);
-		memset(dat, 0, sizeof(dat));
-		snprintf(dat, sizeof(dat), "%d", AUDIO_CHANNELS);
-		esp_http_client_set_header(http, "x-audio-channel", dat);
-		total_write = 0;
-		return ESP_OK;
-	}
-
-	if (msg->event_id == HTTP_STREAM_ON_REQUEST) {
-		// write data
-		int wlen = sprintf(len_buf, "%x\r\n", msg->buffer_len);
-		if (esp_http_client_write(http, len_buf, wlen) <= 0) {
-			return ESP_FAIL;
-		}
-		if (esp_http_client_write(http, msg->buffer, msg->buffer_len) <= 0) {
-			return ESP_FAIL;
-		}
-		if (esp_http_client_write(http, "\r\n", 2) <= 0) {
-			return ESP_FAIL;
-		}
-		total_write += msg->buffer_len;
-		printf("\033[A\33[2K\rTotal bytes written: %d\n", total_write);
-		return msg->buffer_len;
-	}
-
-	if (msg->event_id == HTTP_STREAM_POST_REQUEST) {
-		ESP_LOGI(TAG,
-			 "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
-		if (esp_http_client_write(http, "0\r\n\r\n", 5) <= 0) {
-			return ESP_FAIL;
-		}
-		return ESP_OK;
-	}
-
-	if (msg->event_id == HTTP_STREAM_FINISH_REQUEST) {
-		ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_FINISH_REQUEST");
-		char *buf = calloc(1, 64);
-		assert(buf);
-		int read_len = esp_http_client_read(http, buf, 64);
-		if (read_len <= 0) {
-			free(buf);
-			return ESP_FAIL;
-		}
-		buf[read_len] = 0;
-		ESP_LOGI(TAG, "Got HTTP Response = %s", (char *)buf);
-		free(buf);
-		return ESP_OK;
-	}
-	return ESP_OK;
-}
+/* esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg) {
+ *         esp_http_client_handle_t http = (esp_http_client_handle_t)msg->http_client;
+ *         char                     len_buf[16];
+ *         static int               total_write = 0;
+ *
+ *         if (msg->event_id == HTTP_STREAM_PRE_REQUEST) {
+ *                 // set header
+ *                 ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_PRE_REQUEST, length=%d",
+ *                          msg->buffer_len);
+ *                 esp_http_client_set_method(http, HTTP_METHOD_POST);
+ *                 char dat[10] = {0};
+ *                 snprintf(dat, sizeof(dat), "%d", AUDIO_SAMPLE_RATE);
+ *                 esp_http_client_set_header(http, "x-audio-sample-rates", dat);
+ *                 memset(dat, 0, sizeof(dat));
+ *                 snprintf(dat, sizeof(dat), "%d", AUDIO_BITS);
+ *                 esp_http_client_set_header(http, "x-audio-bits", dat);
+ *                 memset(dat, 0, sizeof(dat));
+ *                 snprintf(dat, sizeof(dat), "%d", AUDIO_CHANNELS);
+ *                 esp_http_client_set_header(http, "x-audio-channel", dat);
+ *                 total_write = 0;
+ *                 return ESP_OK;
+ *         }
+ *
+ *         if (msg->event_id == HTTP_STREAM_ON_REQUEST) {
+ *                 // write data
+ *                 int wlen = sprintf(len_buf, "%x\r\n", msg->buffer_len);
+ *                 if (esp_http_client_write(http, len_buf, wlen) <= 0) {
+ *                         return ESP_FAIL;
+ *                 }
+ *                 if (esp_http_client_write(http, msg->buffer, msg->buffer_len) <= 0) {
+ *                         return ESP_FAIL;
+ *                 }
+ *                 if (esp_http_client_write(http, "\r\n", 2) <= 0) {
+ *                         return ESP_FAIL;
+ *                 }
+ *                 total_write += msg->buffer_len;
+ *                 printf("\033[A\33[2K\rTotal bytes written: %d\n", total_write);
+ *                 return msg->buffer_len;
+ *         }
+ *
+ *         if (msg->event_id == HTTP_STREAM_POST_REQUEST) {
+ *                 ESP_LOGI(TAG,
+ *                          "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
+ *                 if (esp_http_client_write(http, "0\r\n\r\n", 5) <= 0) {
+ *                         return ESP_FAIL;
+ *                 }
+ *                 return ESP_OK;
+ *         }
+ *
+ *         if (msg->event_id == HTTP_STREAM_FINISH_REQUEST) {
+ *                 ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_FINISH_REQUEST");
+ *                 char *buf = calloc(1, 64);
+ *                 assert(buf);
+ *                 int read_len = esp_http_client_read(http, buf, 64);
+ *                 if (read_len <= 0) {
+ *                         free(buf);
+ *                         return ESP_FAIL;
+ *                 }
+ *                 buf[read_len] = 0;
+ *                 ESP_LOGI(TAG, "Got HTTP Response = %s", (char *)buf);
+ *                 free(buf);
+ *                 return ESP_OK;
+ *         }
+ *         return ESP_OK;
+ * } */
 
 void app_main(void) {
+	// Print verbose log except wifi
+	esp_log_level_set("*", ESP_LOG_INFO);
+	esp_log_level_set("wifi", ESP_LOG_ERROR);
+	esp_log_level_set(TAG, ESP_LOG_INFO);
+
+	// Initialize a bunch of system-level stuff
 	esp_err_t err = nvs_flash_init();
 	if (err == ESP_ERR_NVS_NO_FREE_PAGES) {
 		// NVS partition was truncated and needs to be erased
@@ -117,22 +124,15 @@ void app_main(void) {
 
 	ESP_ERROR_CHECK(esp_netif_init());
 
-	audio_pipeline_handle_t dac_pipeline, adc_pipeline;
-	audio_element_handle_t  adc_i2s, dac_i2s, http_stream_writer;
-
-	esp_log_level_set("*", ESP_LOG_INFO);
-	esp_log_level_set("wifi", ESP_LOG_ERROR);
-	esp_log_level_set(TAG, ESP_LOG_INFO);
-
 	ESP_LOGI(TAG, "Initialize peripherals");
 	esp_periph_config_t     periph_cfg = DEFAULT_ESP_PERIPH_SET_CONFIG();
 	esp_periph_set_handle_t set = esp_periph_set_init(&periph_cfg);
 
-	ESP_LOGI(TAG, "Initialize buttons & connect to Wi-Fi");
 	audio_board_key_init(set);
-	audio_board_wifi_init(set);
+	/* audio_board_wifi_init(set); */
 
-	ESP_LOGI(TAG, "Start audio codec chip");
+	// Initialize ES8311 and ES7210
+	ESP_LOGI(TAG, "Start audio codec chips");
 	audio_board_handle_t board_handle = audio_board_init();
 	audio_hal_ctrl_codec(board_handle->audio_hal, AUDIO_HAL_CODEC_MODE_DECODE,
 	                     AUDIO_HAL_CTRL_START);
@@ -140,29 +140,23 @@ void app_main(void) {
 			     AUDIO_HAL_CTRL_START);
 
 	int player_volume, mic_gain;
-	audio_hal_set_volume(board_handle->audio_hal, 100);
+	ESP_ERROR_CHECK(audio_hal_set_volume(board_handle->audio_hal, 100));
 	audio_hal_get_volume(board_handle->audio_hal, &player_volume);
-	ESP_LOGI(TAG, "DAC volume: %d", player_volume);
+	ESP_LOGW(TAG, "DAC volume is: %d", player_volume);
 
-	if (es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain) != ESP_OK) {
-		ESP_LOGE(TAG, "Failed to get mic gain");
-	}
+	ESP_ERROR_CHECK(es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain));
 	ESP_LOGW(TAG, "Mic gain was: %d", mic_gain);
-	if (es7210_adc_set_gain(ES7210_INPUT_MIC1, GAIN_37_5DB) != ESP_OK) {
-		ESP_LOGE(TAG, "Failed to set mic gain");
-	}
-	if (es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain) != ESP_OK) {
-		ESP_LOGE(TAG, "Failed to get mic gain");
-	}
+	ESP_ERROR_CHECK(es7210_adc_set_gain(ES7210_INPUT_MIC1, GAIN_37_5DB));
+	ESP_ERROR_CHECK(es7210_adc_get_gain(ES7210_INPUT_MIC1, &mic_gain));
 	ESP_LOGW(TAG, "Mic gain is: %d", mic_gain);
 	
-	es7210_read_all();
+	/* es7210_read_all(); */
 
 	/* ADC */
 
 	ESP_LOGI(TAG, "Create ADC pipeline");
 	audio_pipeline_cfg_t adc_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-	adc_pipeline = audio_pipeline_init(&adc_pipeline_cfg);
+	audio_pipeline_handle_t adc_pipeline = audio_pipeline_init(&adc_pipeline_cfg);
 	mem_assert(adc_pipeline);
 
 	ESP_LOGI(TAG, "Create ADC i2s stream");
@@ -170,60 +164,53 @@ void app_main(void) {
 	    (i2s_port_t)0, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_STREAM_READER, AUDIO_CHANNELS);
 	adc_i2s_cfg.type = AUDIO_STREAM_READER;
 	adc_i2s_cfg.out_rb_size = 64 * 1024;
-	adc_i2s = i2s_stream_init(&adc_i2s_cfg);
+	audio_element_handle_t adc_i2s = i2s_stream_init(&adc_i2s_cfg);
 	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
 	audio_pipeline_register(adc_pipeline, adc_i2s, "adc");
 
+	/* ESP_LOGI(TAG, "Create HTTP stream");
+	 * http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
+	 * http_cfg.type = AUDIO_STREAM_WRITER;
+	 * http_cfg.event_handle = _http_stream_event_handle;
+	 * http_stream_writer = http_stream_init(&http_cfg);
+	 * audio_pipeline_register(adc_pipeline, http_stream_writer, "http"); */
 
-	ESP_LOGI(TAG, "Create HTTP stream");
-	http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
-	http_cfg.type = AUDIO_STREAM_WRITER;
-	http_cfg.event_handle = _http_stream_event_handle;
-	http_stream_writer = http_stream_init(&http_cfg);
-	audio_pipeline_register(adc_pipeline, http_stream_writer, "http");
+	/* ESP_LOGI(TAG, "Link ADC pipeline");
+	 * const char *link_tag[2] = {"adc", "http"};
+	 * audio_pipeline_link(adc_pipeline, &link_tag[0], 2); */
 
-	ESP_LOGI(TAG, "Link ADC pipeline");
-	const char *link_tag[2] = {"adc", "http"};
-	audio_pipeline_link(adc_pipeline, &link_tag[0], 2);
-
-	ESP_LOGI(TAG, "Set up ADC event listener");
-	audio_event_iface_cfg_t    adc_evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
-	audio_event_iface_handle_t adc_evt = audio_event_iface_init(&adc_evt_cfg);
-
-	ESP_LOGI(TAG, "Listening event from all elements of pipeline");
-	audio_pipeline_set_listener(adc_pipeline, adc_evt);
-
-	ESP_LOGI(TAG, "Listening event from peripherals");
-	audio_event_iface_set_listener(esp_periph_set_get_event_iface(set), adc_evt);
 
 	/* DAC */
 
-	es8311_stop(ES_MODULE_DAC);
-	es8311_pa_power(false);
+        /* ESP_LOGI(TAG, "Create DAC pipeline");
+	 * audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+	 * audio_pipeline_handle_t dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
+	 * mem_assert(dac_pipeline); */
 
-/*         ESP_LOGI(TAG, "Create DAC pipeline");
- *         audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
- *         dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
- *         mem_assert(dac_pipeline);
- *
- *         ESP_LOGI(TAG, "Create DAC i2s stream");
- *         i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
- *         dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
- *         dac_i2s = i2s_stream_init(&dac_i2s_cfg);
- *         i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
- *         audio_pipeline_register(dac_pipeline, dac_i2s, "dac"); */
+	ESP_LOGI(TAG, "Create DAC i2s stream");
+	i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+	dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
+	audio_element_handle_t dac_i2s = i2s_stream_init(&dac_i2s_cfg);
+	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
+        /* audio_pipeline_register(dac_pipeline, dac_i2s, "dac"); */
+	audio_pipeline_register(adc_pipeline, dac_i2s, "dac");
+
+	ESP_LOGI(TAG, "Set up ADC event listener");
+	audio_event_iface_cfg_t    evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
+	audio_event_iface_handle_t evt = audio_event_iface_init(&evt_cfg);
+
+	ESP_LOGI(TAG, "Listening event from all elements of pipeline");
+	audio_pipeline_set_listener(adc_pipeline, evt);
+
+	ESP_LOGI(TAG, "Listening event from peripherals");
+	audio_event_iface_set_listener(esp_periph_set_get_event_iface(set), evt);
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline"); */
 	/* audio_pipeline_run(dac_pipeline); */
 
-	/* audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
-	 * audio_pipeline_run(adc_pipeline);
-	 * vTaskDelay(pdMS_TO_TICKS(5000));
-	 * audio_element_set_ringbuf_done(adc_i2s); */
-
 	while (1) {
 		audio_event_iface_msg_t msg;
-		esp_err_t ret = audio_event_iface_listen(adc_evt, &msg, portMAX_DELAY);
+		esp_err_t ret = audio_event_iface_listen(evt, &msg, portMAX_DELAY);
 		if (ret != ESP_OK) {
 			continue;
 		}
@@ -234,7 +221,7 @@ void app_main(void) {
 			if ((int)msg.data == BUTTON_ID_1) {
 				ESP_LOGI(TAG, "[ * ] Button 1");
 				ESP_LOGI(TAG, "Start ADC pipeline");
-				audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
+				/* audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI); */
 				audio_pipeline_run(adc_pipeline);
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
@@ -267,12 +254,12 @@ void app_main(void) {
 
 	/* Make sure audio_pipeline_remove_listener is called before destroying
 	 * event_iface */
-	audio_event_iface_destroy(adc_evt);
+	audio_event_iface_destroy(evt);
 
 	/* Release all resources */
 	audio_pipeline_deinit(adc_pipeline);
 	/* audio_pipeline_deinit(dac_pipeline); */
 	audio_element_deinit(adc_i2s);
-	audio_element_deinit(http_stream_writer);
-	/* audio_element_deinit(dac_i2s); */
+	/* audio_element_deinit(http_stream_writer); */
+	audio_element_deinit(dac_i2s);
 }
