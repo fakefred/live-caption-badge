@@ -14,6 +14,10 @@ pcb/~*
 build/
 sdkconfig
 sdkconfig.old
+*.cmake
+*.env
+ldgen_libraries*
 # misc
 *~
 *.wav
+*.mp3
