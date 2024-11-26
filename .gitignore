@@ -12,12 +12,19 @@ pcb/fp-info-cache
 pcb/~*
 # esp-idf
 build/
+esp-idf/
+managed_components/
+bootloader*
 sdkconfig
 sdkconfig.old
+*.lock
+*.in
 *.cmake
 *.env
+*_args
 ldgen_libraries*
 # misc
 *~
 *.wav
 *.mp3
+.cache/
