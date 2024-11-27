@@ -2,14 +2,18 @@ from PIL import Image
 from jinja2 import Template
 import typing
 import argparse
+import math
 
 
 def hex_lines_from_image(im: Image) -> list[str]:
     buf = []  # buffer of bytes
+    byte_count = math.ceil(im.width / 8)
+
     for y in range(im.height):
-        for x_octet in range(im.width // 8):
+        for x_octet in range(byte_count):
             byte = 0
-            for dx in range(8):
+            bit_count = (im.width % 8) if (x_octet == byte_count - 1) else 8
+            for dx in range(bit_count):
                 x = x_octet * 8 + dx
                 pixel = im.getpixel((x, y))
                 if all(pixel):
@@ -18,7 +22,7 @@ def hex_lines_from_image(im: Image) -> list[str]:
 
     hex_lines = []
     for y in range(im.height):
-        bytes_per_row = im.width // 8
+        bytes_per_row = byte_count
         hex_lines.append(", ".join([f"0x{byte:02x}" for byte in buf[:bytes_per_row]]) + ",")
         del buf[:bytes_per_row]
 
@@ -56,10 +60,6 @@ if __name__ == "__main__":
 
     if grid_image.width % args.width != 0:
         print(f"Width of input image is not a multiple of {W}")
-        exit(1)
-
-    if args.width % 8 != 0:
-        print("Width of character is not a multiple of 8")
         exit(1)
 
     if grid_image.height % args.height != 0:

@@ -1,6 +1,6 @@
 # Tools
 
-## bitmap.py
+## font.py
 
 To display text on the e-paper, we need a bitmap of each printable ASCII
 character in a C file. The vendor code only provides fonts up to size 24,
@@ -31,20 +31,20 @@ font, the recommended settings are
 
 ### Convert image to C file
 
-We wrote a Python script (`bitmap.py`) to convert the image into a C file.
+We wrote a Python script (`font.py`) to convert the image into a C file.
 
 Dependencies: Pillow, Jinja
 
 Script usage:
 
 ```
-python bitmap.py INPUT.png --width WIDTH --height HEIGHT --name NAME -o OUTPUT.c
+python font.py INPUT.png --width WIDTH --height HEIGHT --name NAME -o OUTPUT.c
 ```
 
 For example, to generate `font48.c` with Fira Code:
 
 ```
-python bitmap.py firacode48.png --width 32 --height 60 --name Font48 -o ../main/font48.c
+python font.py firacode48.png --width 32 --height 60 --name Font48 -o ../main/font48.c
 ```
 
 To use the C file, edit the `../main/CMakeLists.txt` and add the C file:
