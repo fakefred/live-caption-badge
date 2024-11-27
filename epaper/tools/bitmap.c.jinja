@@ -1,0 +1,4 @@
+const uint8_t {{ bitmap_name }}_Bitmap[] = {
+{% for line in hex_lines %}{{ line }}
+{% endfor %}
+};

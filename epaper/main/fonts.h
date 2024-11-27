@@ -60,13 +60,8 @@ typedef struct _tFont {
 
 } sFONT;
 
-extern sFONT Font96;
 extern sFONT Font48;
-extern sFONT Font24;
-extern sFONT Font20;
-extern sFONT Font16;
-extern sFONT Font12;
-extern sFONT Font8;
+extern sFONT Font32;
 
 // extern const unsigned char Font16_Table[];
 

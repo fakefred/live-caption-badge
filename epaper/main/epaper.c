@@ -46,8 +46,9 @@ epaper_err_t epaper_init(void) {
 
 	if (first_time) {
 		DEV_Module_Init();
+		EPD_Init();
 	}
-	EPD_Init();
+	EPD_Init_Fast();
 	EPD_Clear();
 	DEV_Delay_ms(500);
 
@@ -113,8 +114,6 @@ epaper_err_t epaper_shutdown(void) {
 	while (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) != pdTRUE) {
 		ESP_LOGW(TAG, "epaper_shutdown take semaphore timeout");
 	}
-	EPD_Init_Fast();
-	EPD_Clear();
 	EPD_Sleep();
 	vTaskSuspend(epaper_task_handle);
 	free(framebuffer);

@@ -12,7 +12,9 @@ def hex_lines_from_image(im: Image) -> list[str]:
     for y in range(im.height):
         for x_octet in range(byte_count):
             byte = 0
-            bit_count = (im.width % 8) if (x_octet == byte_count - 1) else 8
+            bit_count = 8
+            if x_octet == byte_count - 1 and im.width % 8 != 0:
+                bit_count = x_octet == byte_count - 1
             for dx in range(bit_count):
                 x = x_octet * 8 + dx
                 pixel = im.getpixel((x, y))
@@ -88,7 +90,7 @@ if __name__ == "__main__":
             )
             codepoint += 1
 
-    c_jinja_file = open("bitmap.c.jinja")
+    c_jinja_file = open("font.c.jinja")
     c_template = Template(c_jinja_file.read())
     c_jinja_file.close()
 

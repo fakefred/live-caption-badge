@@ -46,7 +46,7 @@ void app_main() {
 		caption_append(bee[chunk_idx]);
 	}
 
-	DEV_Delay_ms(1000);
+	DEV_Delay_ms(2000);
 
 	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 	DEV_Delay_ms(2000);
