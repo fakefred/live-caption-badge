@@ -50,13 +50,14 @@ char* currentText;
 #define PRINT_TEXT_INTERVAL_MS 1000
 #define BUFFER_SIZE 50
 #define MAX_HTTP_RECV_BUFFER 2048
-static esp_http_client_handle_t client;
 
 static EventGroupHandle_t EXIT_FLAG;
 
 audio_pipeline_handle_t pipeline;
+audio_pipeline_handle_t pipeline2;
 audio_element_handle_t i2s_stream_reader;
 audio_element_handle_t http_stream_writer;
+audio_element_handle_t http_stream_writer2;
 
 void print_current_text(void *pvParameters){
     while(1){
@@ -75,7 +76,7 @@ void http_get_task(void *pvParameters)
             return;
         }
         esp_http_client_config_t config = {
-            .url = "http://172.20.10.2:8000",
+            .url = "http://192.168.0.193:8000",
         };
         esp_http_client_handle_t client = esp_http_client_init(&config);
         esp_err_t errGet;
@@ -143,7 +144,7 @@ esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg)
             return ESP_FAIL;
         }
         total_write += msg->buffer_len;
-        printf("\033[A\33[2K\rTotal bytes written: %d\n", total_write);
+        //printf("\033[A\33[2K\rTotal bytes written: %d\n", total_write);
         return msg->buffer_len;
     }
 
@@ -175,6 +176,7 @@ esp_err_t _http_stream_event_handle(http_stream_event_msg_t *msg)
 static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_service_event_t *evt, void *ctx)
 {
     audio_element_handle_t http_stream_writer = (audio_element_handle_t)ctx;
+    //audio_element_handle_t http_stream_writer2 = (audio_element_handle_t)ctx;
     if (evt->type == INPUT_KEY_SERVICE_ACTION_CLICK) {
         switch ((int)evt->data) {
             case INPUT_KEY_USER_ID_MODE:
@@ -187,13 +189,25 @@ static esp_err_t input_key_service_cb(periph_service_handle_t handle, periph_ser
                  * There is no effect when follow APIs output warning message on the first time record
                  */
                 audio_pipeline_stop(pipeline);
+                audio_pipeline_stop(pipeline2);
+
                 audio_pipeline_wait_for_stop(pipeline);
+                audio_pipeline_wait_for_stop(pipeline2);
+
                 audio_pipeline_reset_ringbuffer(pipeline);
+                audio_pipeline_reset_ringbuffer(pipeline2);
+
                 audio_pipeline_reset_elements(pipeline);
+                audio_pipeline_reset_elements(pipeline2);
+
                 audio_pipeline_terminate(pipeline);
+                audio_pipeline_terminate(pipeline2);
 
                 audio_element_set_uri(http_stream_writer, CONFIG_SERVER_URI);
+                audio_element_set_uri(http_stream_writer2, "http://192.168.0.200:8000/upload");
+
                 audio_pipeline_run(pipeline);
+                audio_pipeline_run(pipeline2);
                 break;
         }
     } else if (evt->type == INPUT_KEY_SERVICE_ACTION_CLICK_RELEASE || evt->type == INPUT_KEY_SERVICE_ACTION_PRESS_RELEASE) {
@@ -273,8 +287,32 @@ void app_main(void)
     audio_pipeline_register(pipeline, http_stream_writer, "http");
 
     ESP_LOGI(TAG, "[3.4] Link it together [codec_chip]-->i2s_stream->http_stream-->[http_server]");
-    const char *link_tag[2] = {"i2s", "http"};
-    audio_pipeline_link(pipeline, &link_tag[0], 2);
+    const char *link_tag2[2] = {"i2s", "http"};
+    audio_pipeline_link(pipeline, &link_tag2[0], 2);
+
+    ESP_LOGI(TAG, "[4.0] Create the SECOND pipeline for transmitting audio to another badge");
+    audio_pipeline_cfg_t pipeline_cfg2 = DEFAULT_AUDIO_PIPELINE_CONFIG();
+    pipeline2 = audio_pipeline_init(&pipeline_cfg2);
+    mem_assert(pipeline2);
+
+    ESP_LOGI(TAG, "[4.1] Create ANOTHER http stream to post data to server");
+
+    http_stream_cfg_t http_cfg2 = HTTP_STREAM_CFG_DEFAULT();
+    http_cfg2.task_core = 0;
+    http_cfg2.type = AUDIO_STREAM_WRITER;
+    http_cfg2.event_handle = _http_stream_event_handle;
+    http_stream_writer2 = http_stream_init(&http_cfg2);
+
+    ESP_LOGI(TAG, "[4.2] Register all elements to audio pipeline");
+    audio_pipeline_register(pipeline2, http_stream_writer2, "http");
+
+    ESP_LOGI(TAG, "[4.3] Link it together http_stream-->[http_server]");
+    const char *link_tag[1] = {"http"};
+    audio_pipeline_link(pipeline2, &link_tag[0], 1);
+
+    ESP_LOGI(TAG, "[4.4] Connect input ringbuffer of pipeline_save to http stream multi output");
+    ringbuf_handle_t rb = audio_element_get_output_ringbuf(http_stream_writer2);
+    audio_element_set_multi_output_ringbuf(i2s_stream_reader, rb, 0);
 
     // Initialize Button peripheral
     audio_board_key_init(set);
@@ -286,17 +324,18 @@ void app_main(void)
     periph_service_set_callback(input_ser, input_key_service_cb, (void *)http_stream_writer);
 
     i2s_stream_set_clk(i2s_stream_reader, EXAMPLE_AUDIO_SAMPLE_RATE, EXAMPLE_AUDIO_BITS, EXAMPLE_AUDIO_CHANNELS);
-
-    ESP_LOGI(TAG, "[3.5] Setup the task to send HTTP GET Request periodically");
+    
+    ESP_LOGI(TAG, "[5] Setup the task to send HTTP GET Request periodically");
     currentText = (char*)calloc(20, 1);
-    xTaskCreate(&http_get_task, "http_get_task", 4096, NULL, 5, NULL);
-    xTaskCreate(&print_current_text, "print_current_text", 4096, NULL, 5, NULL);
+    xTaskCreate(&http_get_task, "http_get_task", 4096, NULL, 1, NULL);
+    xTaskCreate(&print_current_text, "print_current_text", 4096, NULL, 1, NULL);
 
-    ESP_LOGI(TAG, "[ 4 ] Press [Rec] button to record, Press [Mode] to exit");
+    ESP_LOGI(TAG, "[ 6 ] Press [Rec] button to record, Press [Mode] to exit");
     xEventGroupWaitBits(EXIT_FLAG, DEMO_EXIT_BIT, true, false, portMAX_DELAY); // wait for interrupt for reset or exit.
 
-    ESP_LOGI(TAG, "[ 5 ] Stop audio_pipeline");
+    ESP_LOGI(TAG, "[ 6 ] Stop audio_pipeline");
     audio_pipeline_stop(pipeline);
+
     audio_pipeline_wait_for_stop(pipeline);
     audio_pipeline_terminate(pipeline);
 
@@ -311,7 +350,9 @@ void app_main(void)
 
     /* Release all resources */
     audio_pipeline_deinit(pipeline);
+    audio_pipeline_deinit(pipeline2);
     audio_element_deinit(http_stream_writer);
+    audio_element_deinit(http_stream_writer2);
     audio_element_deinit(i2s_stream_reader);
     esp_periph_set_destroy(set);
 }
