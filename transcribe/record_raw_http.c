@@ -1530,8 +1530,8 @@ void app_main(void)
     
     ESP_LOGI(TAG, "[ 5 ] Setup the task to send HTTP GET Request periodically");
     currentText = (char*)calloc(20, 1);
-    //xTaskCreate(&http_get_task, "http_get_task", 4096, NULL, 1, NULL);
-    //xTaskCreate(&print_current_text, "print_current_text", 4096, NULL, 1, NULL);
+    xTaskCreate(&http_get_task, "http_get_task", 4096, NULL, 1, NULL);
+    xTaskCreate(&print_current_text, "print_current_text", 4096, NULL, 1, NULL);
 
     ESP_LOGI(TAG, "[ 6 ] Press [Rec] button to record, Press [Mode] to exit");
     xEventGroupWaitBits(EXIT_FLAG, DEMO_EXIT_BIT, true, false, portMAX_DELAY); // wait for interrupt for reset or exit.
