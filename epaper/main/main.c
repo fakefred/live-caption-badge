@@ -15,22 +15,30 @@
 #define TAG "main"
 
 void app_main() {
-	xTaskCreatePinnedToCore(epaper_task, "epaper", 16 * 1024, NULL, 2, NULL, 0);
+	DEV_Delay_ms(100); // wait for power to stablize
+
+	const char *bee[] = {
+		"According to all",
+		"known",
+		"laws of aviation, there",
+		"is",
+		"no way a bee should",
+		"be able to fly.",
+		"Its wings are too small",
+		"to get",
+		"its fat little body off the",
+		"ground. The bee, of course,",
+		"flies anyway because",
+		"bees don't care what",
+		"humans think is impossible.",
+	};
 
 	epaper_init();
-	epaper_set_state(EPAPER_STATE_CAPTION);
+	DEV_Delay_ms(500);
+	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	DEV_Delay_ms(2000);
 
-	const char *bee[] = {"According to all",
-	                     "known",
-	                     "laws of aviation, there",
-	                     "is",
-	                     "no way a bee should",
-	                     "be able to fly. Its wings are too small",
-	                     "to get",
-	                     "its fat little body off the",
-	                     "ground. The bee, of course,",
-	                     "flies anyway because",
-	                     "bees don't care what humans think is impossible."};
+	epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
 
 	for (size_t chunk_idx = 0; chunk_idx < sizeof(bee) / sizeof(char *); chunk_idx++) {
 		size_t chunk_len = strlen(bee[chunk_idx]);
@@ -39,5 +47,9 @@ void app_main() {
 	}
 
 	DEV_Delay_ms(1000);
+
+	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	DEV_Delay_ms(2000);
 	epaper_shutdown();
+	vTaskDelete(NULL);
 }

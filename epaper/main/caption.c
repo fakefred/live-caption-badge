@@ -62,6 +62,8 @@ epaper_err_t caption_init(caption_cfg_t *init_cfg) {
 	}
 
 	cfg = *init_cfg;
+	text_row = 0;
+	text_col = 0;
 	total_text_rows = rows;
 	total_text_cols = cols;
 	ESP_LOGI(TAG, "caption_init: Initialized caption area with %u columns, %u rows",
@@ -126,6 +128,7 @@ epaper_err_t caption_display() {
 
 		size_t bytes_recv =
 		    xMessageBufferReceive(caption_buf, (void *)word, MAX_WORD_LEN, 0);
+		ESP_LOGI(TAG, "caption_display: Received word %s", word);
 		if (bytes_recv == 0) {
 			ESP_LOGE(TAG, "caption_display: Failed to receive word from buffer");
 			has_error = true;

@@ -32,6 +32,9 @@
 #include "DEV_Config.h"
 #include "esp_log.h"
 #include "freertos/idf_additions.h"
+#include "freertos/projdefs.h"
+
+static const char *TAG = "EPD";
 
 QueueHandle_t gpio_evt_queue;
 void IRAM_ATTR busy_isr_handler(void *arg) {
@@ -85,7 +88,9 @@ parameter:
 ******************************************************************************/
 static void EPD_WaitUntilIdle(void) {
 	int dummy = 0;
-	xQueueReceive(gpio_evt_queue, &dummy, portMAX_DELAY);
+	while (xQueueReceive(gpio_evt_queue, &dummy, pdMS_TO_TICKS(5000)) != pdTRUE) {
+		ESP_LOGW(TAG, "EPD_WaitUntilIdle xQueueReceive timeout");
+	}
 }
 /******************************************************************************
 function :	Turn On Display
@@ -103,11 +108,15 @@ function :	Initialize the e-Paper register
 parameter:
 ******************************************************************************/
 UBYTE EPD_7IN5_V2_Init(void) {	
-	ESP_LOGI(EPD_TAG, "EPD_Init");
-	gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
-	gpio_install_isr_service(0);
-	gpio_isr_handler_add(EPD_BUSY_PIN, busy_isr_handler, NULL);
+	static bool first_time = true;
 
+	ESP_LOGI(EPD_TAG, "EPD_Init");
+	if (first_time) {
+		gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
+		gpio_install_isr_service(0);
+		gpio_isr_handler_add(EPD_BUSY_PIN, busy_isr_handler, NULL);
+	}
+	first_time = false;
 	
 	EPD_Reset();
 	EPD_SendCommand(0x01); // POWER SETTING

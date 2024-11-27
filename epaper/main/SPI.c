@@ -27,13 +27,15 @@ void spi_init(void) {
 	    .queue_size = 7, // We want to be able to queue 7 transactions at a time
 	};
 
-	// Initialize the SPI bus
-	ret = spi_bus_initialize(SPI_HOST, &spi_bus_cfg, SPI_DMA_CH_AUTO);
-	ESP_ERROR_CHECK(ret);
+	if (spi == NULL) {
+		// Initialize the SPI bus
+		ret = spi_bus_initialize(SPI_HOST, &spi_bus_cfg, SPI_DMA_CH_AUTO);
+		ESP_ERROR_CHECK(ret);
 
-	// Attach the Slave device to the SPI bus
-	ret = spi_bus_add_device(SPI_HOST, &spi_dev_cfg, &spi);
-	ESP_ERROR_CHECK(ret);
+		// Attach the Slave device to the SPI bus
+		ret = spi_bus_add_device(SPI_HOST, &spi_dev_cfg, &spi);
+		ESP_ERROR_CHECK(ret);
+	}
 }
 
 void spi_write_byte(uint8_t byte) {

@@ -1,6 +1,7 @@
 idf_component_register(
 	SRCS	"main.c"
 		"epaper.c"
+		"ui.c"
 		"caption.c"
 		"SPI.c"
 		"DEV_Config.c"

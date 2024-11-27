@@ -1,5 +1,16 @@
 #pragma once
 
+/*
+ * The epaper is a daemon running in its own task (epaper_task). To use the epaper:
+ *
+ * 1. Invoke epaper_init()
+ * 2. Control epaper layout and contents with epaper_ui_* functions
+ * 3. When done, invoke epaper_shutdown()
+ *
+ * This implementation is not concurrent. Only ONE task is allowed to invoke epaper_*
+ * functions.
+ */
+
 #include "DEV_Config.h"
 #include "fonts.h"
 #include "freertos/idf_additions.h"
@@ -13,21 +24,22 @@
 #define MAX(a, b) (a > b ? a : b)
 #endif
 
-extern MessageBufferHandle_t caption_buf;
-
 typedef enum {
 	EPAPER_OK,
 	EPAPER_ERR,
 } epaper_err_t;
 
 typedef enum {
-	EPAPER_STATE_UNINITIALIZED,
-	EPAPER_STATE_IDLE,
-	EPAPER_STATE_CAPTION,
-	EPAPER_STATE_SHUTDOWN,
-} epaper_state_t;
+	EPAPER_LAYOUT_BADGE,
+	EPAPER_LAYOUT_PAIR,
+	EPAPER_LAYOUT_CAPTION,
+} epaper_layout_t;
 
-extern epaper_state_t epaper_state;
+typedef struct {
+	epaper_layout_t layout;
+} epaper_ui_t;
+
+extern epaper_ui_t epaper_ui;
 
 typedef struct {
 	// bounding box position, in pixels
@@ -35,9 +47,19 @@ typedef struct {
 	sFONT *font;
 } caption_cfg_t;
 
+/*
+ * Initializes epaper and FreeRTOS stuff. Starts epaper_task.
+ */
 epaper_err_t epaper_init(void);
-epaper_err_t epaper_set_state(epaper_state_t new_state);
+
+epaper_err_t epaper_ui_set_layout(epaper_layout_t layout);
+
+/*
+ * Clears epaper and puts epaper to sleep. Stops epaper_task.
+ */
 epaper_err_t epaper_shutdown(void);
+
+/****** BEGIN CAPTION ******/
 
 /*
  * Resets data structures for caption.
@@ -59,4 +81,7 @@ epaper_err_t caption_append(const char *string);
 
 epaper_err_t caption_display();
 
-void epaper_task(void *arg);
+/****** BEGIN UI ******/
+
+epaper_err_t ui_layout_badge(void);
+epaper_err_t ui_layout_caption(void);

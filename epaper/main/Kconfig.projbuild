@@ -1,0 +1,6 @@
+menu "Live Caption Badge"
+config BADGE_NAME
+	string "Badge Name"
+	default "Live Caption Badge"
+	help "Name to display on Badge"
+endmenu
