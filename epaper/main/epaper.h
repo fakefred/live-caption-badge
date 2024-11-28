@@ -13,7 +13,6 @@
 
 #include "DEV_Config.h"
 #include "fonts.h"
-#include "freertos/idf_additions.h"
 #include <stdint.h>
 
 #ifndef MIN
@@ -52,36 +51,14 @@ typedef struct {
  */
 epaper_err_t epaper_init(void);
 
+/*
+ * Sets UI layout.
+ *
+ * The epaper can be in one of the following layouts: badge, pair, caption.
+ */
 epaper_err_t epaper_ui_set_layout(epaper_layout_t layout);
 
 /*
  * Clears epaper and puts epaper to sleep. Stops epaper_task.
  */
 epaper_err_t epaper_shutdown(void);
-
-/****** BEGIN CAPTION ******/
-
-/*
- * Resets data structures for caption.
- */
-epaper_err_t caption_init(caption_cfg_t *cfg);
-
-/*
- * Clears caption area on screen, so that the next chunk of text will be printed in the top left
- * corner.
- */
-epaper_err_t caption_clear();
-
-/*
- * Schedule `string` to be printed in caption area on screen.
- *
- * string: null-terminated C string
- */
-epaper_err_t caption_append(const char *string);
-
-epaper_err_t caption_display();
-
-/****** BEGIN UI ******/
-
-epaper_err_t ui_layout_badge(void);
-epaper_err_t ui_layout_caption(void);

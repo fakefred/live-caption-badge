@@ -1,11 +1,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "DEV_Config.h"
-#include "EPD_7in5_V2.h"
-#include "GUI_Paint.h"
+#include "caption.h"
 #include "epaper.h"
-#include "esp_log.h"
+
 #include "freertos/idf_additions.h"
-#include "portmacro.h"
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>

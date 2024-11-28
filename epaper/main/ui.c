@@ -1,9 +1,10 @@
 #include "EPD_7in5_V2.h"
 #include "GUI_Paint.h"
+#include "bitmap.h"
 #include "epaper.h"
 #include "fonts.h"
-#include "string.h"
-#include "bitmap.h"
+
+#include <string.h>
 
 static const char *TAG = "ui";
 

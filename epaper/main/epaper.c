@@ -2,13 +2,13 @@
 #include "DEV_Config.h"
 #include "EPD_7in5_V2.h"
 #include "GUI_Paint.h"
-#include "esp_err.h"
-#include "esp_log.h"
+#include "caption.h"
 #include "fonts.h"
-#include "freertos/FreeRTOS.h"
+#include "ui.h"
+
+#include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
-#include "portmacro.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -103,7 +103,6 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 		ui_layout_caption();
 	}
 	epaper_ui.layout = layout;
-	/* DEV_Delay_ms(1000); */
 	xSemaphoreGive(epaper_sem);
 	return EPAPER_OK;
 }

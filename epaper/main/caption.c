@@ -76,6 +76,8 @@ epaper_err_t caption_clear() {
 	EPD_Init_Fast();
 	EPD_Init_Part();
 	EPD_Display_Part(framebuffer, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
+	text_row = 0;
+	text_col = 0;
 	return EPAPER_OK;
 }
 
