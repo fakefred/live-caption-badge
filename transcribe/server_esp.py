@@ -4,7 +4,6 @@ import argparse
 import socket
 import json
 
-import sounddevice as sd
 import wave
 
 from vosk import Model, KaldiRecognizer
@@ -17,16 +16,11 @@ print("###########Start loading Vosk model###########")
 model = Model(lang="en-us")
 print("###########Finish loading model###########")
 
-if sys.version_info.major == 3:
-    # Python3
-    from urllib import parse
-    from http.server import HTTPServer
-    from http.server import BaseHTTPRequestHandler
-else:
-    # Python2
-    import urlparse
-    from BaseHTTPServer import HTTPServer
-    from BaseHTTPServer import BaseHTTPRequestHandler
+
+from urllib import parse
+from http.server import HTTPServer
+from http.server import BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
@@ -61,10 +55,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         global textBuffer, index
-        if sys.version_info.major == 3:
-            urlparts = parse.urlparse(self.path)
-        else:
-            urlparts = urlparse.urlparse(self.path)
+        urlparts = parse.urlparse(self.path)
+
         request_file_path = urlparts.path.strip('/')
         total_bytes = 0
         sample_rates = 0
@@ -114,8 +106,7 @@ class Handler(BaseHTTPRequestHandler):
                                     break
                             textBuffer.extend(tmp[i:])
                         '''
-                        currLen = len(textBuffer)
-                        textBuffer.extend(partialResult.split()[currLen:])
+                        textBuffer = partialResult.split()
             print("____________")
             print(len(textBuffer))
             for i in range(len(textBuffer)):
@@ -165,7 +156,7 @@ if not args.ip:
 if not args.port:
     args.port = PORT
 
-httpd = HTTPServer((args.ip, args.port), Handler)
+httpd = ThreadingHTTPServer((args.ip, args.port), Handler)
 
 print("Serving HTTP on {} port {}".format(args.ip, args.port));
 httpd.serve_forever()
