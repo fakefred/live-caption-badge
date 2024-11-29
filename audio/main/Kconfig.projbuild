@@ -2,10 +2,39 @@ menu "Live Caption Badge"
 config WIFI_SSID
 	string "Wi-Fi SSID"
 	default ""
+
 config WIFI_PASSWORD
 	string "Wi-Fi Password"
 	default ""
+
 config SERVER_URI
 	string "Server URI"
 	default "http://192.168.0.248:8000/upload"
+
+config PARTICIPANT_NAME
+	string "Participant Name"
+	default "Lynn CONWAY"
+	help
+		Participant's name to display on Badge
+
+config PARTICIPANT_PRONOUNS
+	string "Participant Pronouns"
+	default "she/her"
+	help
+		Participant's pronouns.
+		Displayed below name.
+
+config PARTICIPANT_AFFILIATION
+	string "Participant Affiliation"
+	default "University of Michigan"
+	help
+		Participant's affiliation, e.g. company or university.
+		Displayed on the bottom of the screen.
+
+config PARTICIPANT_ROLE
+	string "Participant Role"
+	default "Speaker"
+	help
+		Participant's role in convention.
+		Displayed on the bottom of the screen.
 endmenu
