@@ -24,10 +24,7 @@ epaper_err_t ui_layout_badge(void) {
 
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
-		.x_start = 0,
-		.y_start = 0,
-		.x_end = EPD_7IN5_V2_WIDTH,
-		.y_end = EPD_7IN5_V2_HEIGHT,
+		.sleep = true,
 	};
 
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);

@@ -5,6 +5,7 @@ set(
 	main.c
 	audio.c
 	http.c
+	http_server.c
 	${EPAPER_C_SRC}
 )
 set(COMPONENT_ADD_INCLUDEDIRS "")

@@ -51,10 +51,10 @@
 #define EPD_MISO_PIN GPIO_NUM_20 // unused
 #define EPD_CS_PIN GPIO_NUM_15
 #define EPD_RST_PIN GPIO_NUM_12
-// #define EPD_DC_PIN GPIO_NUM_11 // uncomment for S3
-#define EPD_DC_PIN GPIO_NUM_18 // uncomment for C6
-// #define EPD_BUSY_PIN GPIO_NUM_47 // uncomment for S3
-#define EPD_BUSY_PIN GPIO_NUM_19 // uncomment for C6
+#define EPD_DC_PIN GPIO_NUM_11 // uncomment for S3
+// #define EPD_DC_PIN GPIO_NUM_18 // uncomment for C6
+#define EPD_BUSY_PIN GPIO_NUM_47 // uncomment for S3
+// #define EPD_BUSY_PIN GPIO_NUM_19 // uncomment for C6
 #define EPD_PWR_PIN GPIO_NUM_7
 
 #define GPIO_PIN_SET 1

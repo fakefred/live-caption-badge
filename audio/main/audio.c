@@ -73,41 +73,41 @@ esp_err_t audio_init(void) {
 	audio_pipeline_register(adc_pipeline, http_up_stream, "http-up");
 
 	// DAC pipeline: HTTP GET /audio -> DAC
-	ESP_LOGI(TAG, "Create DAC pipeline");
-	audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-	dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
-	mem_assert(dac_pipeline);
-
-	ESP_LOGI(TAG, "Create DAC i2s stream");
-	i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
-	dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
-	dac_i2s = i2s_stream_init(&dac_i2s_cfg);
-	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
-	audio_pipeline_register(dac_pipeline, dac_i2s, "dac");
-
-	ESP_LOGI(TAG, "Create HTTP download stream");
-	http_stream_cfg_t http_down_cfg = HTTP_STREAM_CFG_DEFAULT();
-	http_down_cfg.type = AUDIO_STREAM_READER;
-	http_down_cfg.event_handle = _http_down_stream_event_handle;
-	http_down_stream = http_stream_init(&http_down_cfg);
-	audio_pipeline_register(dac_pipeline, http_down_stream, "http-down");
+/*         ESP_LOGI(TAG, "Create DAC pipeline");
+ *         audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+ *         dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
+ *         mem_assert(dac_pipeline);
+ *
+ *         ESP_LOGI(TAG, "Create DAC i2s stream");
+ *         i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+ *         dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
+ *         dac_i2s = i2s_stream_init(&dac_i2s_cfg);
+ *         i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
+ *         audio_pipeline_register(dac_pipeline, dac_i2s, "dac");
+ *
+ *         ESP_LOGI(TAG, "Create HTTP download stream");
+ *         http_stream_cfg_t http_down_cfg = HTTP_STREAM_CFG_DEFAULT();
+ *         http_down_cfg.type = AUDIO_STREAM_READER;
+ *         http_down_cfg.event_handle = _http_down_stream_event_handle;
+ *         http_down_stream = http_stream_init(&http_down_cfg);
+ *         audio_pipeline_register(dac_pipeline, http_down_stream, "http-down"); */
 
 	// Link pipelines
 	ESP_LOGI(TAG, "Link ADC pipeline");
 	const char *adc_link_tag[2] = {"adc", "http-up"};
 	audio_pipeline_link(adc_pipeline, &adc_link_tag[0], 2);
 
-	ESP_LOGI(TAG, "Link DAC pipeline");
-	const char *dac_link_tag[2] = {"http-down", "dac"};
-	audio_pipeline_link(dac_pipeline, &dac_link_tag[0], 2);
+	/* ESP_LOGI(TAG, "Link DAC pipeline");
+	 * const char *dac_link_tag[2] = {"http-down", "dac"};
+	 * audio_pipeline_link(dac_pipeline, &dac_link_tag[0], 2); */
 
-	ESP_LOGI(TAG, "Set up ADC event listener");
+	ESP_LOGI(TAG, "Set up event listener");
 	audio_event_iface_cfg_t evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
 	evt = audio_event_iface_init(&evt_cfg);
 
 	ESP_LOGI(TAG, "Listening event from all elements of pipeline");
 	audio_pipeline_set_listener(adc_pipeline, evt);
-	audio_pipeline_set_listener(dac_pipeline, evt);
+	/* audio_pipeline_set_listener(dac_pipeline, evt); */
 
 	ESP_LOGI(TAG, "Listening event from peripherals");
 	audio_event_iface_set_listener(esp_periph_set_get_event_iface(periph_set), evt);

@@ -113,7 +113,7 @@ UBYTE EPD_7IN5_V2_Init(void) {
 	ESP_LOGI(EPD_TAG, "EPD_Init");
 	if (first_time) {
 		gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
-		gpio_install_isr_service(0);
+		/* gpio_install_isr_service(0); */
 		gpio_isr_handler_add(EPD_BUSY_PIN, busy_isr_handler, NULL);
 	}
 	first_time = false;

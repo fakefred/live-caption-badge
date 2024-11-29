@@ -164,6 +164,10 @@ void epaper_task(void *arg) {
 				EPD_Init_Fast();
 				EPD_Clear();
 			}
+
+			if (refresh_area.sleep) {
+				EPD_Sleep();
+			}
 		}
 
 		xSemaphoreGive(epaper_sem);

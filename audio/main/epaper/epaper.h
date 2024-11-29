@@ -37,6 +37,7 @@ typedef enum {
 
 typedef struct {
 	epaper_refresh_mode_t mode;
+	bool sleep; // go to sleep after refreshing
 	// bounding box position, in pixels
 	// start-inclusive, end-exclusive
 	UWORD x_start, y_start, x_end, y_end;
