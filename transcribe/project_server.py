@@ -45,6 +45,7 @@ def stream_audio():
 
     while True:
         data = wf.readframes(4000)
+        print(len(data))
         if len(data) == 0:
             break
         if rec.AcceptWaveform(data):
@@ -57,4 +58,4 @@ def stream_audio():
     return finalResult['text'], 200 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8000)
+    app.run(host="0.0.0.0", port=8000)
