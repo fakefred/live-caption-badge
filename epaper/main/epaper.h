@@ -29,6 +29,22 @@ typedef enum {
 } epaper_err_t;
 
 typedef enum {
+	EPAPER_REFRESH_SLOW,
+	EPAPER_REFRESH_FAST,
+	EPAPER_REFRESH_PARTIAL,
+	EPAPER_REFRESH_CLEAR,
+} epaper_refresh_mode_t;
+
+typedef struct {
+	epaper_refresh_mode_t mode;
+	// bounding box position, in pixels
+	// start-inclusive, end-exclusive
+	UWORD x_start, y_start, x_end, y_end;
+} epaper_refresh_area_t;
+
+extern QueueHandle_t epaper_refresh_queue; // queue of areas to refresh
+
+typedef enum {
 	EPAPER_LAYOUT_BADGE,
 	EPAPER_LAYOUT_PAIR,
 	EPAPER_LAYOUT_CAPTION,

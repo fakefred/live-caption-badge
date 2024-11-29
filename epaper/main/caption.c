@@ -72,12 +72,19 @@ epaper_err_t caption_init(caption_cfg_t *init_cfg) {
 }
 
 epaper_err_t caption_clear() {
-	Paint_ClearWindows(cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end, WHITE);
-	EPD_Init_Fast();
-	EPD_Init_Part();
-	EPD_Display_Part(framebuffer, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
 	text_row = 0;
 	text_col = 0;
+
+	Paint_ClearWindows(cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end, WHITE);
+
+	// HACK: hardcoded to clear entire screen
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_CLEAR,
+	};
+	if (xQueueSend(epaper_refresh_queue, &refresh_area, 0) == pdFALSE) {
+		ESP_LOGE(TAG, "caption_clear: Failed to enqueue");
+		return EPAPER_ERR;
+	}
 	return EPAPER_OK;
 }
 
@@ -130,7 +137,7 @@ epaper_err_t caption_display() {
 
 		size_t bytes_recv =
 		    xMessageBufferReceive(caption_buf, (void *)word, MAX_WORD_LEN, 0);
-		ESP_LOGI(TAG, "caption_display: Received word %s", word);
+		/* ESP_LOGI(TAG, "caption_display: Received word \"%s\"", word); */
 		if (bytes_recv == 0) {
 			ESP_LOGE(TAG, "caption_display: Failed to receive word from buffer");
 			has_error = true;
@@ -184,15 +191,33 @@ epaper_err_t caption_display() {
 	      clear_y_end = cfg.y_start + clear_row_end * cfg.font->Height;
 
 	if (has_update) {
+		epaper_refresh_area_t refresh_area;
 		if (need_clear) {
 			ESP_LOGI(TAG, "caption_display: Updating entire caption area");
 			Paint_ClearWindows(cfg.x_start, clear_y_start, cfg.x_end, clear_y_end,
 			                   WHITE);
-			EPD_Display_Part(framebuffer, cfg.x_start, cfg.y_start, cfg.x_end, cfg.y_end);
+			refresh_area = (epaper_refresh_area_t){
+				.mode = EPAPER_REFRESH_PARTIAL,
+				.x_start = cfg.x_start,
+				.y_start = cfg.y_start,
+				.x_end = cfg.x_end,
+				.y_end = cfg.y_end,
+			};
 		} else {
 			ESP_LOGI(TAG, "caption_display: Updating screen area (%u, %u) -- (%u, %u)",
 			         min_x, min_y, max_x, max_y);
-			EPD_Display_Part(framebuffer, min_x, min_y, max_x, max_y);
+			refresh_area = (epaper_refresh_area_t){
+				.mode = EPAPER_REFRESH_PARTIAL,
+				.x_start = min_x,
+				.y_start = min_y,
+				.x_end = max_x,
+				.y_end = max_y,
+			};
+		}
+
+		if (xQueueSend(epaper_refresh_queue, &refresh_area, 0) == pdFALSE) {
+			ESP_LOGE(TAG, "caption_display: Failed to enqueue");
+			has_error = true;
 		}
 	}
 

@@ -4,12 +4,14 @@
 #include "GUI_Paint.h"
 #include "caption.h"
 #include "fonts.h"
+#include "portmacro.h"
 #include "ui.h"
 
 #include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -24,23 +26,27 @@
 #define MAX(a, b) (a > b ? a : b)
 #endif
 
-static bool epaper_is_initialized = false;
+static bool epaper_is_on = false;
+static TaskHandle_t epaper_task_handle;
+
 epaper_ui_t epaper_ui;
-TaskHandle_t epaper_task_handle;
 SemaphoreHandle_t epaper_sem; // take when epaper is refreshing, give when done
+QueueHandle_t epaper_refresh_queue; // queue of areas to refresh
 
 void epaper_task(void *arg);
 
 epaper_err_t epaper_init(void) {
 	ESP_LOGI(TAG, "epaper_init");
-	assert(!epaper_is_initialized);
+	assert(!epaper_is_on);
 
 	static bool first_time = true; // first init since startup
 
 	if (first_time) {
 		epaper_sem = xSemaphoreCreateBinary();
 		xSemaphoreGive(epaper_sem);
+		epaper_refresh_queue = xQueueCreate(16, sizeof(epaper_refresh_area_t));
 	}
+	xQueueReset(epaper_refresh_queue);
 
 	esp_log_level_set(SPI_TAG, ESP_LOG_NONE);
 
@@ -88,7 +94,7 @@ epaper_err_t epaper_init(void) {
 	}
 
 	first_time = false;
-	epaper_is_initialized = true;
+	epaper_is_on = true;
 	return EPAPER_OK;
 }
 
@@ -109,7 +115,7 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 
 epaper_err_t epaper_shutdown(void) {
 	ESP_LOGI(TAG, "epaper_shutdown");
-	assert(epaper_is_initialized);
+	assert(epaper_is_on);
 	while (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) != pdTRUE) {
 		ESP_LOGW(TAG, "epaper_shutdown take semaphore timeout");
 	}
@@ -118,25 +124,48 @@ epaper_err_t epaper_shutdown(void) {
 	free(framebuffer);
 	xSemaphoreGive(epaper_sem);
 	epaper_ui.layout = EPAPER_LAYOUT_BADGE;
-	epaper_is_initialized = false;
+	epaper_is_on = false;
 	return EPAPER_OK;
 }
 
 void epaper_task(void *arg) {
 	while (true) {
+		// Update framebuffer depending on layout
+		if (epaper_ui.layout == EPAPER_LAYOUT_CAPTION) {
+			caption_display();
+		}
+
 		if (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) == pdFALSE) {
 			ESP_LOGW(TAG, "epaper_task take semaphore timeout");
 			continue;
 		}
-		if (epaper_ui.layout == EPAPER_LAYOUT_CAPTION) {
-			caption_display();
+
+		// Transmit refreshed areas to epaper hardware
+		while (uxQueueMessagesWaiting(epaper_refresh_queue) > 0) {
+			epaper_refresh_area_t refresh_area;
+			if (xQueueReceive(epaper_refresh_queue, &refresh_area, 0) == pdFALSE) {
+				ESP_LOGE(TAG, "epaper_task: Failed to dequeue");
+				continue;
+			}
+			ESP_LOGI(TAG, "epaper_task: Dequeued mode=%d", refresh_area.mode);
+
+			if (refresh_area.mode == EPAPER_REFRESH_SLOW) {
+				EPD_Init();
+				EPD_Display(framebuffer);
+			} else if (refresh_area.mode == EPAPER_REFRESH_FAST) {
+				EPD_Init_Fast();
+				EPD_Display(framebuffer);
+			} else if (refresh_area.mode == EPAPER_REFRESH_PARTIAL) {
+				EPD_Init_Part();
+				EPD_Display_Part(framebuffer, refresh_area.x_start,
+				                 refresh_area.y_start, refresh_area.x_end,
+				                 refresh_area.y_end);
+			} else if (refresh_area.mode == EPAPER_REFRESH_CLEAR) {
+				EPD_Init_Fast();
+				EPD_Clear();
+			}
 		}
+
 		xSemaphoreGive(epaper_sem);
-
-		if (epaper_ui.layout == EPAPER_LAYOUT_CAPTION) {
-
-		} else {
-			DEV_Delay_ms(1000);
-		}
 	}
 }

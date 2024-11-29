@@ -34,7 +34,7 @@ void app_main() {
 	epaper_init();
 	DEV_Delay_ms(500);
 	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
-	DEV_Delay_ms(2000);
+        DEV_Delay_ms(2000);
 
 	epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
 
@@ -46,7 +46,7 @@ void app_main() {
 
 	DEV_Delay_ms(2000);
 
-	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+        epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 	DEV_Delay_ms(2000);
 	epaper_shutdown();
 	vTaskDelete(NULL);
