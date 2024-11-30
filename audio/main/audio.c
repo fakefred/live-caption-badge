@@ -15,7 +15,7 @@
 #include "esxxx_common.h"
 #include "freertos/projdefs.h"
 #include "freertos/task.h"
-#include "http.h"
+#include "http_client.h"
 #include "http_stream.h"
 #include "i2s_stream.h"
 #include "nvs_flash.h"

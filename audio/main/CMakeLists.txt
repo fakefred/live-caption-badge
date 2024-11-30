@@ -4,7 +4,7 @@ set(
 	COMPONENT_SRCS
 	main.c
 	audio.c
-	http.c
+	http_client.c
 	http_server.c
 	${EPAPER_C_SRC}
 )
