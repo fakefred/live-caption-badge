@@ -72,6 +72,8 @@ esp_err_t audio_init(void) {
 	http_up_stream = http_stream_init(&http_up_cfg);
 	audio_pipeline_register(adc_pipeline, http_up_stream, "http-up");
 
+	es8311_pa_power(false);
+
 	// DAC pipeline: HTTP GET /audio -> DAC
 /*         ESP_LOGI(TAG, "Create DAC pipeline");
  *         audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();

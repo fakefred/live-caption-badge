@@ -29,7 +29,8 @@ static bool rect_is_valid(UWORD x_start, UWORD y_start, UWORD x_end, UWORD y_end
 }
 
 epaper_err_t caption_init(caption_cfg_t *init_cfg) {
-	if (!rect_is_valid(init_cfg->x_start, init_cfg->y_start, init_cfg->x_end, init_cfg->y_end)) {
+	if (!rect_is_valid(init_cfg->x_start, init_cfg->y_start, init_cfg->x_end,
+	                   init_cfg->y_end)) {
 		ESP_LOGE(TAG, "caption_init: Invalid coordinates");
 		return EPAPER_ERR;
 	}

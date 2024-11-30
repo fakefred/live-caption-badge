@@ -23,8 +23,7 @@ epaper_err_t ui_layout_badge(void) {
 	Paint_DrawString_EN(x_start, 400, CONFIG_PARTICIPANT_ROLE, &Font32, BLACK, WHITE);
 
 	epaper_refresh_area_t refresh_area = {
-		.mode = EPAPER_REFRESH_FAST,
-		.sleep = true,
+		.mode = EPAPER_REFRESH_SLEEP,
 	};
 
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);

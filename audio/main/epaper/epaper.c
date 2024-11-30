@@ -140,34 +140,46 @@ void epaper_task(void *arg) {
 			continue;
 		}
 
+		// only go to sleep if last elem in queue asks us to
+		bool need_sleep = false;
+
 		// Transmit refreshed areas to epaper hardware
 		while (uxQueueMessagesWaiting(epaper_refresh_queue) > 0) {
 			epaper_refresh_area_t refresh_area;
+
 			if (xQueueReceive(epaper_refresh_queue, &refresh_area, 0) == pdFALSE) {
 				ESP_LOGE(TAG, "epaper_task: Failed to dequeue");
 				continue;
 			}
-			ESP_LOGI(TAG, "epaper_task: Dequeued mode=%d", refresh_area.mode);
 
-			if (refresh_area.mode == EPAPER_REFRESH_SLOW) {
+			epaper_refresh_mode_t refresh_mode = refresh_area.mode;
+			ESP_LOGI(TAG, "epaper_task: Dequeued mode=%d", refresh_mode);
+
+			need_sleep = false;
+
+			if (refresh_mode & EPAPER_REFRESH_SLOW) {
 				EPD_Init();
 				EPD_Display(framebuffer);
-			} else if (refresh_area.mode == EPAPER_REFRESH_FAST) {
+			} else if (refresh_mode == EPAPER_REFRESH_FAST) {
 				EPD_Init_Fast();
 				EPD_Display(framebuffer);
-			} else if (refresh_area.mode == EPAPER_REFRESH_PARTIAL) {
+			} else if (refresh_mode == EPAPER_REFRESH_PARTIAL) {
 				EPD_Init_Part();
 				EPD_Display_Part(framebuffer, refresh_area.x_start,
 				                 refresh_area.y_start, refresh_area.x_end,
 				                 refresh_area.y_end);
-			} else if (refresh_area.mode == EPAPER_REFRESH_CLEAR) {
+			} else if (refresh_mode == EPAPER_REFRESH_CLEAR) {
 				EPD_Init_Fast();
 				EPD_Clear();
+			} else if (refresh_mode == EPAPER_REFRESH_SLEEP) {
+				EPD_Init();
+				EPD_Display(framebuffer);
+				need_sleep = true;
 			}
+		}
 
-			if (refresh_area.sleep) {
-				EPD_Sleep();
-			}
+		if (need_sleep) {
+			EPD_Sleep();
 		}
 
 		xSemaphoreGive(epaper_sem);

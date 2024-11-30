@@ -33,11 +33,11 @@ typedef enum {
 	EPAPER_REFRESH_FAST,
 	EPAPER_REFRESH_PARTIAL,
 	EPAPER_REFRESH_CLEAR,
+	EPAPER_REFRESH_SLEEP,
 } epaper_refresh_mode_t;
 
 typedef struct {
 	epaper_refresh_mode_t mode;
-	bool sleep; // go to sleep after refreshing
 	// bounding box position, in pixels
 	// start-inclusive, end-exclusive
 	UWORD x_start, y_start, x_end, y_end;
