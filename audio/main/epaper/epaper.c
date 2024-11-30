@@ -107,6 +107,8 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 		ui_layout_badge();
 	} else if (layout == EPAPER_LAYOUT_CAPTION) {
 		ui_layout_caption();
+	} else if (layout == EPAPER_LAYOUT_PAIR) {
+		ui_layout_pair();
 	}
 	epaper_ui.layout = layout;
 	xSemaphoreGive(epaper_sem);

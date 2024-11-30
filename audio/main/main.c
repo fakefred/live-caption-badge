@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "epaper/DEV_Config.h"
+#include "epaper/EPD_7in5_V2.h"
 #include "epaper/caption.h"
 #include "epaper/epaper.h"
 #include "http_server.h"
@@ -40,13 +41,17 @@ void app_main(void) {
 	periph_set = esp_periph_set_init(&periph_cfg);
 
 	audio_board_key_init(periph_set);
-	audio_board_wifi_init(periph_set);
+	/* audio_board_wifi_init(periph_set); */
 
 	audio_init();
 
 	epaper_init();
 	DEV_Delay_ms(500);
-	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+
+	epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
+	DEV_Delay_ms(1000);
+	EPD_Sleep();
 
 	httpd_handle_t server = start_webserver();
 
