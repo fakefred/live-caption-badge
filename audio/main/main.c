@@ -73,8 +73,8 @@ void app_main(void) {
 				ESP_LOGI(TAG, "[ * ] Button 1");
 				ESP_LOGI(TAG, "Start ADC pipeline");
 
-				audio_pipeline_run(vosk_pipeline);
-				/* audio_pipeline_run(peer_tx_pipeline); */
+				/* audio_pipeline_run(vosk_pipeline); */
+				audio_pipeline_run(peer_tx_pipeline);
 
 				/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
 			} else if ((int)msg.data == BUTTON_ID_2) {
@@ -82,17 +82,17 @@ void app_main(void) {
 				ESP_LOGI(TAG, "Stop ADC pipeline");
 				audio_element_set_ringbuf_done(adc_i2s);
 
-				audio_pipeline_stop(vosk_pipeline);
-				audio_pipeline_wait_for_stop(vosk_pipeline);
-				audio_pipeline_reset_ringbuffer(vosk_pipeline);
-				audio_pipeline_reset_elements(vosk_pipeline);
-				audio_pipeline_terminate(vosk_pipeline);
+				/* audio_pipeline_stop(vosk_pipeline);
+				 * audio_pipeline_wait_for_stop(vosk_pipeline);
+				 * audio_pipeline_reset_ringbuffer(vosk_pipeline);
+				 * audio_pipeline_reset_elements(vosk_pipeline);
+				 * audio_pipeline_terminate(vosk_pipeline); */
 
-				/* audio_pipeline_stop(peer_tx_pipeline); */
-				/* audio_pipeline_wait_for_stop(peer_tx_pipeline); */
-				/* audio_pipeline_reset_ringbuffer(peer_tx_pipeline); */
-				/* audio_pipeline_reset_elements(peer_tx_pipeline); */
-				/* audio_pipeline_terminate(peer_tx_pipeline); */
+				audio_pipeline_stop(peer_tx_pipeline);
+				audio_pipeline_wait_for_stop(peer_tx_pipeline);
+				audio_pipeline_reset_ringbuffer(peer_tx_pipeline);
+				audio_pipeline_reset_elements(peer_tx_pipeline);
+				audio_pipeline_terminate(peer_tx_pipeline);
 
 				/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
 			} else if ((int)msg.data == BUTTON_ID_3) {

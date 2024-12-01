@@ -56,6 +56,7 @@ class Handler(BaseHTTPRequestHandler):
         bits = 0
         channel = 0
         print("Do Post......")
+        print(self.headers)
         if (request_file_path == 'upload'
             and self.headers.get('Transfer-Encoding', '').lower() == 'chunked'):
             data = []
