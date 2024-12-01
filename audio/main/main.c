@@ -41,22 +41,25 @@ void app_main(void) {
 	periph_set = esp_periph_set_init(&periph_cfg);
 
 	audio_board_key_init(periph_set);
-	/* audio_board_wifi_init(periph_set); */
+	audio_board_wifi_init(periph_set);
 
 	audio_init();
 
-	epaper_init();
-	DEV_Delay_ms(500);
-	/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+	/* epaper_init();
+	 * DEV_Delay_ms(500);
+	 * epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
 
-	epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
-	DEV_Delay_ms(1000);
-	EPD_Sleep();
+	/* epaper_ui_set_layout(EPAPER_LAYOUT_PAIR); */
+	/* DEV_Delay_ms(1000); */
+	/* EPD_Sleep(); */
 
 	httpd_handle_t server = start_webserver();
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline");
 	 * audio_pipeline_run(dac_pipeline); */
+
+	/* audio_pipeline_run(vosk_pipeline); */
+	/* audio_pipeline_run(peer_tx_pipeline); */
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -69,19 +72,29 @@ void app_main(void) {
 			if ((int)msg.data == BUTTON_ID_1) {
 				ESP_LOGI(TAG, "[ * ] Button 1");
 				ESP_LOGI(TAG, "Start ADC pipeline");
-				audio_element_set_uri(http_up_stream, CONFIG_SERVER_URI);
-				audio_pipeline_run(adc_pipeline);
-				epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
+
+				audio_pipeline_run(vosk_pipeline);
+				/* audio_pipeline_run(peer_tx_pipeline); */
+
+				/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
 				ESP_LOGI(TAG, "Stop ADC pipeline");
 				audio_element_set_ringbuf_done(adc_i2s);
-				audio_pipeline_stop(adc_pipeline);
-				audio_pipeline_wait_for_stop(adc_pipeline);
-				audio_pipeline_reset_ringbuffer(adc_pipeline);
-				audio_pipeline_reset_elements(adc_pipeline);
-				audio_pipeline_terminate(adc_pipeline);
-				epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+
+				audio_pipeline_stop(vosk_pipeline);
+				audio_pipeline_wait_for_stop(vosk_pipeline);
+				audio_pipeline_reset_ringbuffer(vosk_pipeline);
+				audio_pipeline_reset_elements(vosk_pipeline);
+				audio_pipeline_terminate(vosk_pipeline);
+
+				/* audio_pipeline_stop(peer_tx_pipeline); */
+				/* audio_pipeline_wait_for_stop(peer_tx_pipeline); */
+				/* audio_pipeline_reset_ringbuffer(peer_tx_pipeline); */
+				/* audio_pipeline_reset_elements(peer_tx_pipeline); */
+				/* audio_pipeline_terminate(peer_tx_pipeline); */
+
+				/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
 			} else if ((int)msg.data == BUTTON_ID_3) {
 				ESP_LOGI(TAG, "[ * ] Button 3");
 			}

@@ -20,6 +20,7 @@
 #include "i2s_stream.h"
 #include "nvs_flash.h"
 #include "periph_button.h"
+#include "ringbuf.h"
 
 static const char *TAG = "AUDIO";
 
@@ -28,8 +29,11 @@ int mic_gain = GAIN_37_5DB;
 
 esp_periph_set_handle_t    periph_set;
 audio_board_handle_t       board_handle;
-audio_pipeline_handle_t    adc_pipeline, dac_pipeline;
-audio_element_handle_t     adc_i2s, dac_i2s, http_up_stream, http_down_stream;
+audio_pipeline_handle_t    vosk_pipeline, peer_tx_pipeline;
+audio_pipeline_handle_t    peer_rx_pipeline;
+audio_element_handle_t     adc_i2s, vosk_http_stream, peer_tx_http_stream;
+audio_element_handle_t     dac_i2s, peer_rx_http_stream;
+ringbuf_handle_t           peer_rx_ringbuf;
 audio_event_iface_handle_t evt;
 
 esp_err_t audio_init(void) {
@@ -50,11 +54,16 @@ esp_err_t audio_init(void) {
 	ESP_LOGW(TAG, "Mic gain is: %d", mic_gain);
 
 	// Create pipelines
-	// ADC pipeline: ADC -> HTTP POST /audio
-	ESP_LOGI(TAG, "Create ADC pipeline");
-	audio_pipeline_cfg_t adc_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
-	adc_pipeline = audio_pipeline_init(&adc_pipeline_cfg);
-	mem_assert(adc_pipeline);
+	// TX pipelines: Vosk & Peer TX
+	ESP_LOGI(TAG, "Create Vosk pipeline");
+	audio_pipeline_cfg_t vosk_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+	vosk_pipeline = audio_pipeline_init(&vosk_pipeline_cfg);
+	mem_assert(vosk_pipeline);
+
+	ESP_LOGI(TAG, "Create Peer TX pipeline");
+	audio_pipeline_cfg_t peer_tx_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+	peer_tx_pipeline = audio_pipeline_init(&peer_tx_pipeline_cfg);
+	mem_assert(peer_tx_pipeline);
 
 	ESP_LOGI(TAG, "Create ADC i2s stream");
 	i2s_stream_cfg_t adc_i2s_cfg = I2S_STREAM_CFG_DEFAULT_WITH_TYLE_AND_CH(
@@ -63,52 +72,80 @@ esp_err_t audio_init(void) {
 	adc_i2s_cfg.out_rb_size = 64 * 1024;
 	adc_i2s = i2s_stream_init(&adc_i2s_cfg);
 	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
-	audio_pipeline_register(adc_pipeline, adc_i2s, "adc");
+	audio_pipeline_register(vosk_pipeline, adc_i2s, "adc");
 
-	ESP_LOGI(TAG, "Create HTTP upload stream");
-	http_stream_cfg_t http_up_cfg = HTTP_STREAM_CFG_DEFAULT();
-	http_up_cfg.type = AUDIO_STREAM_WRITER;
-	http_up_cfg.event_handle = _http_up_stream_event_handle;
-	http_up_stream = http_stream_init(&http_up_cfg);
-	audio_pipeline_register(adc_pipeline, http_up_stream, "http-up");
+	ESP_LOGI(TAG, "Create HTTP Vosk stream");
+	http_stream_cfg_t vosk_http_cfg = HTTP_STREAM_CFG_DEFAULT();
+	vosk_http_cfg.type = AUDIO_STREAM_WRITER;
+	vosk_http_cfg.event_handle = _http_up_stream_event_handle;
+	vosk_http_stream = http_stream_init(&vosk_http_cfg);
+	audio_element_set_uri(vosk_http_stream, CONFIG_SERVER_URI);
+	audio_pipeline_register(vosk_pipeline, vosk_http_stream, "http-vosk");
 
-	es8311_pa_power(false);
+	ESP_LOGI(TAG, "Create HTTP Peer TX stream");
+	http_stream_cfg_t peer_tx_http_cfg = HTTP_STREAM_CFG_DEFAULT();
+	peer_tx_http_cfg.type = AUDIO_STREAM_WRITER;
+	peer_tx_http_cfg.event_handle = _http_up_stream_event_handle;
+	peer_tx_http_stream = http_stream_init(&peer_tx_http_cfg);
+	audio_element_set_uri(peer_tx_http_stream, "http://192.168.227.130:80/audio"); // TODO
+	/* audio_pipeline_register(peer_tx_pipeline, peer_tx_http_stream, "http-peer-tx"); */
+	audio_pipeline_register(vosk_pipeline, peer_tx_http_stream, "http-peer-tx");
 
-	// DAC pipeline: HTTP GET /audio -> DAC
-/*         ESP_LOGI(TAG, "Create DAC pipeline");
- *         audio_pipeline_cfg_t dac_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
- *         dac_pipeline = audio_pipeline_init(&dac_pipeline_cfg);
- *         mem_assert(dac_pipeline);
- *
- *         ESP_LOGI(TAG, "Create DAC i2s stream");
- *         i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
- *         dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
- *         dac_i2s = i2s_stream_init(&dac_i2s_cfg);
- *         i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
- *         audio_pipeline_register(dac_pipeline, dac_i2s, "dac");
- *
- *         ESP_LOGI(TAG, "Create HTTP download stream");
- *         http_stream_cfg_t http_down_cfg = HTTP_STREAM_CFG_DEFAULT();
- *         http_down_cfg.type = AUDIO_STREAM_READER;
- *         http_down_cfg.event_handle = _http_down_stream_event_handle;
- *         http_down_stream = http_stream_init(&http_down_cfg);
- *         audio_pipeline_register(dac_pipeline, http_down_stream, "http-down"); */
+	// RX pipeline: Peer RX
+        ESP_LOGI(TAG, "Create Peer RX pipeline");
+	audio_pipeline_cfg_t peer_rx_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
+	peer_rx_pipeline = audio_pipeline_init(&peer_rx_pipeline_cfg);
+	mem_assert(peer_rx_pipeline);
 
-	// Link pipelines
-	ESP_LOGI(TAG, "Link ADC pipeline");
-	const char *adc_link_tag[2] = {"adc", "http-up"};
-	audio_pipeline_link(adc_pipeline, &adc_link_tag[0], 2);
+	ESP_LOGI(TAG, "Create DAC i2s stream");
+	i2s_stream_cfg_t dac_i2s_cfg = I2S_STREAM_CFG_DEFAULT();
+	dac_i2s_cfg.type = AUDIO_STREAM_WRITER;
+	dac_i2s = i2s_stream_init(&dac_i2s_cfg);
+	i2s_stream_set_clk(dac_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
+	audio_pipeline_register(peer_rx_pipeline, dac_i2s, "dac");
 
-	/* ESP_LOGI(TAG, "Link DAC pipeline");
-	 * const char *dac_link_tag[2] = {"http-down", "dac"};
-	 * audio_pipeline_link(dac_pipeline, &dac_link_tag[0], 2); */
+	/* ESP_LOGI(TAG, "Create HTTP download stream");
+	 * http_stream_cfg_t peer_rx_http_cfg = HTTP_STREAM_CFG_DEFAULT();
+	 * peer_rx_http_cfg.type = AUDIO_STREAM_READER;
+	 * peer_rx_http_cfg.event_handle = _http_down_stream_event_handle;
+	 * peer_rx_http_stream = http_stream_init(&peer_rx_http_cfg);
+         * audio_pipeline_register(peer_rx_pipeline, peer_rx_http_stream, "http-peer-rx"); */
+
+	/*
+	 * Link pipelines:
+	 *
+	 * adc_i2s _______ vosk_http_stream
+	 *            |
+	 *            |___ peer_tx_http_stream
+	 *
+	 */
+	ESP_LOGI(TAG, "Link TX pipelines");
+	/* const char *vosk_link_tag[2] = {"adc", "http-vosk"}; */
+	const char *vosk_link_tag[2] = {"adc", "http-peer-tx"};
+	audio_pipeline_link(vosk_pipeline, vosk_link_tag, 2);
+	
+	/* const char *peer_tx_link_tag[1] = {"http-peer-tx"}; */
+	/* audio_pipeline_link(peer_tx_pipeline, peer_tx_link_tag, 1); */
+
+	/* ringbuf_handle_t peer_tx_http_rb = audio_element_get_input_ringbuf(peer_tx_http_stream); */
+	/* audio_element_set_multi_output_ringbuf(adc_i2s, peer_tx_http_rb, 0); */
+
+	/*
+	 * peer_rx_http_stream ------- dac_i2s
+	 */
+	ESP_LOGI(TAG, "Link RX pipeline");
+	const char *peer_rx_link_tag[1] = {"dac"};
+	audio_pipeline_link(peer_rx_pipeline, peer_rx_link_tag, 1);
+
+	peer_rx_ringbuf = rb_create(64 * 1024, 1);
+	audio_element_set_input_ringbuf(dac_i2s, peer_rx_ringbuf);
 
 	ESP_LOGI(TAG, "Set up event listener");
 	audio_event_iface_cfg_t evt_cfg = AUDIO_EVENT_IFACE_DEFAULT_CFG();
 	evt = audio_event_iface_init(&evt_cfg);
 
 	ESP_LOGI(TAG, "Listening event from all elements of pipeline");
-	audio_pipeline_set_listener(adc_pipeline, evt);
+	/* audio_pipeline_set_listener(vosk_pipeline, evt); */
 	/* audio_pipeline_set_listener(dac_pipeline, evt); */
 
 	ESP_LOGI(TAG, "Listening event from peripherals");
@@ -119,30 +156,30 @@ esp_err_t audio_init(void) {
 
 esp_err_t audio_deinit(void) {
 	ESP_LOGI(TAG, "Stop ADC pipeline");
-	audio_pipeline_stop(adc_pipeline);
-	audio_pipeline_wait_for_stop(adc_pipeline);
-	audio_pipeline_terminate(adc_pipeline);
-	audio_pipeline_unregister(adc_pipeline, adc_i2s);
+	audio_pipeline_stop(vosk_pipeline);
+	audio_pipeline_wait_for_stop(vosk_pipeline);
+	audio_pipeline_terminate(vosk_pipeline);
+	audio_pipeline_unregister(vosk_pipeline, adc_i2s);
 
 	ESP_LOGI(TAG, "Stop DAC pipeline");
-	audio_pipeline_stop(dac_pipeline);
-	audio_pipeline_wait_for_stop(dac_pipeline);
-	audio_pipeline_terminate(dac_pipeline);
-	audio_pipeline_unregister(dac_pipeline, dac_i2s);
+	audio_pipeline_stop(peer_rx_pipeline);
+	audio_pipeline_wait_for_stop(peer_rx_pipeline);
+	audio_pipeline_terminate(peer_rx_pipeline);
+	audio_pipeline_unregister(peer_rx_pipeline, dac_i2s);
 
 	/* Terminate the pipeline before removing the listener */
-	audio_pipeline_remove_listener(adc_pipeline);
+	audio_pipeline_remove_listener(vosk_pipeline);
 
 	/* Make sure audio_pipeline_remove_listener is called before destroying
 	 * event_iface */
 	audio_event_iface_destroy(evt);
 
 	/* Release all resources */
-	audio_pipeline_deinit(adc_pipeline);
-	audio_pipeline_deinit(dac_pipeline);
+	audio_pipeline_deinit(vosk_pipeline);
+	audio_pipeline_deinit(peer_rx_pipeline);
 	audio_element_deinit(adc_i2s);
-	audio_element_deinit(http_up_stream);
+	audio_element_deinit(vosk_http_stream);
 	audio_element_deinit(dac_i2s);
-	audio_element_deinit(http_down_stream);
+	audio_element_deinit(peer_tx_http_stream);
 	return ESP_OK;
 }

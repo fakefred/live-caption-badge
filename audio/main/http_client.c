@@ -42,7 +42,7 @@ esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 			return ESP_FAIL;
 		}
 		total_write += msg->buffer_len;
-		/* printf("\033[A\33[2K\rTotal bytes written: %d\n", total_write); */
+		ESP_LOGI(TAG, "Total bytes written: %d", total_write);
 		return msg->buffer_len;
 	}
 
