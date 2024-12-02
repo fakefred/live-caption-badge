@@ -53,13 +53,12 @@ void app_main(void) {
 	/* DEV_Delay_ms(1000); */
 	/* EPD_Sleep(); */
 
-	httpd_handle_t server = start_webserver();
+	/* httpd_handle_t server = start_webserver(); */
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline");
 	 * audio_pipeline_run(dac_pipeline); */
 
-	/* audio_pipeline_run(vosk_pipeline); */
-	/* audio_pipeline_run(peer_tx_pipeline); */
+	bool tx_running = false, rx_running = false;
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -71,30 +70,46 @@ void app_main(void) {
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			if ((int)msg.data == BUTTON_ID_1) {
 				ESP_LOGI(TAG, "[ * ] Button 1");
-				ESP_LOGI(TAG, "Start ADC pipeline");
+				if (!tx_running) {
+					ESP_LOGI(TAG, "Start ADC pipeline");
 
-				audio_pipeline_run(vosk_pipeline);
-				/* audio_pipeline_run(peer_tx_pipeline); */
+					if (audio_pipeline_run(tx_pipeline) == ESP_OK) {
+						tx_running = true;
+					}
 
-				/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
+					/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
+				} else {
+					ESP_LOGI(TAG, "Stop ADC pipeline");
+					audio_element_set_ringbuf_done(adc_i2s);
+
+					audio_pipeline_stop(tx_pipeline);
+					audio_pipeline_wait_for_stop(tx_pipeline);
+					audio_pipeline_reset_ringbuffer(tx_pipeline);
+					audio_pipeline_reset_elements(tx_pipeline);
+					audio_pipeline_terminate(tx_pipeline);
+					tx_running = false;
+
+					/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+				}
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
-				ESP_LOGI(TAG, "Stop ADC pipeline");
-				audio_element_set_ringbuf_done(adc_i2s);
+				if (!rx_running) {
+					ESP_LOGI(TAG, "Start ADC pipeline");
 
-				audio_pipeline_stop(vosk_pipeline);
-				audio_pipeline_wait_for_stop(vosk_pipeline);
-				audio_pipeline_reset_ringbuffer(vosk_pipeline);
-				audio_pipeline_reset_elements(vosk_pipeline);
-				audio_pipeline_terminate(vosk_pipeline);
+					if (audio_pipeline_run(rx_pipeline) == ESP_OK) {
+						rx_running = true;
+					}
+				} else {
+					ESP_LOGI(TAG, "Stop ADC pipeline");
 
-				/* audio_pipeline_stop(peer_tx_pipeline); */
-				/* audio_pipeline_wait_for_stop(peer_tx_pipeline); */
-				/* audio_pipeline_reset_ringbuffer(peer_tx_pipeline); */
-				/* audio_pipeline_reset_elements(peer_tx_pipeline); */
-				/* audio_pipeline_terminate(peer_tx_pipeline); */
+					audio_pipeline_stop(rx_pipeline);
+					audio_pipeline_wait_for_stop(rx_pipeline);
+					audio_pipeline_reset_ringbuffer(rx_pipeline);
+					audio_pipeline_reset_elements(rx_pipeline);
+					audio_pipeline_terminate(rx_pipeline);
+					rx_running = false;
+				}
 
-				/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
 			} else if ((int)msg.data == BUTTON_ID_3) {
 				ESP_LOGI(TAG, "[ * ] Button 3");
 			}

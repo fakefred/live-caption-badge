@@ -56,63 +56,6 @@ static const httpd_uri_t transcription_uri = {
     .user_ctx = NULL,
 };
 
-static esp_err_t audio_post_handler(httpd_req_t *req) {
-	ESP_LOGI(TAG, "POST /audio");
-
-	char len_buf[16];
-	int  ret;
-	int  bytes_recv = 0;
-
-	// read to len_buf until we receive \r\n
-	while (true) {
-		ret = httpd_req_recv(req, len_buf + bytes_recv, 1);
-		if (ret <= 0) {
-			ESP_LOGW(TAG, "POST /audio failed to read length (ret = %d)", ret);
-			return ESP_FAIL;
-		}
-		ESP_LOGI(TAG, "Received %c", len_buf[bytes_recv]);
-		bytes_recv += ret;
-		if (bytes_recv > 2 && len_buf[bytes_recv - 2] == '\r' &&
-		    len_buf[bytes_recv - 1] == '\n') {
-			break;
-		}
-	}
-
-	size_t len = strtol(len_buf, NULL, 16); // payload length
-	char *buf = calloc(len + 2, 1); // plus two bytes for \r\n
-	ESP_LOGI(TAG, "POST /audio: chunk length is %lu", (long unsigned)len);
-
-	ESP_LOGI(TAG, "============ POST /audio ===========");
-
-	bytes_recv = 0;
-	while (bytes_recv < len + 2) {
-		/* Read the data for the request */
-		ret = httpd_req_recv(req, buf + bytes_recv, len + 2 - bytes_recv);
-		if (ret <= 0) {
-			if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
-				/* Retry receiving if timeout occurred */
-				continue;
-			}
-			return ESP_FAIL;
-		}
-		bytes_recv += ret;
-		ESP_LOGI(TAG, "Read %lu bytes", (long unsigned)bytes_recv);
-	}
-
-	ESP_LOGI(TAG, "====================================");
-
-	// End response
-	httpd_resp_send_chunk(req, NULL, 0);
-	return ESP_OK;
-}
-
-static const httpd_uri_t audio_uri = {
-    .uri = "/audio",
-    .method = HTTP_POST,
-    .handler = audio_post_handler,
-    .user_ctx = NULL,
-};
-
 httpd_handle_t start_webserver(void) {
 	httpd_handle_t server = NULL;
 	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -124,7 +67,6 @@ httpd_handle_t start_webserver(void) {
 		// Set URI handlers
 		ESP_LOGI(TAG, "Registering URI handlers");
 		httpd_register_uri_handler(server, &transcription_uri);
-		httpd_register_uri_handler(server, &audio_uri);
 		return server;
 	}
 

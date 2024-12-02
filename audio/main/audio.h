@@ -23,11 +23,9 @@
 
 extern esp_periph_set_handle_t    periph_set;
 extern audio_board_handle_t       board_handle;
-extern audio_pipeline_handle_t    vosk_pipeline, peer_tx_pipeline;
-extern audio_pipeline_handle_t    peer_rx_pipeline;
-extern audio_element_handle_t     adc_i2s, vosk_http_stream, peer_tx_http_stream;
-extern audio_element_handle_t     dac_i2s, peer_rx_http_stream;
-extern ringbuf_handle_t           peer_rx_ringbuf;
+extern audio_pipeline_handle_t    tx_pipeline, rx_pipeline;
+extern audio_element_handle_t     adc_i2s, tx_http;
+extern audio_element_handle_t     dac_i2s, rx_http;
 extern audio_event_iface_handle_t evt;
 
 esp_err_t audio_init(void);
