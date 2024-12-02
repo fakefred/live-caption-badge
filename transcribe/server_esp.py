@@ -4,15 +4,17 @@ import argparse
 import socket
 import json
 import requests
-
+import queue
 import wave
+import threading
 
 from vosk import Model, KaldiRecognizer
 
 print("###########Start loading Vosk model###########")
 model = Model(lang="en-us")
 print("###########Finish loading model###########")
-
+global buffer
+buffer = queue.Queue()
 
 from urllib import parse
 from http.server import HTTPServer
@@ -20,11 +22,25 @@ from http.server import BaseHTTPRequestHandler
 from http.server import ThreadingHTTPServer
 
 PORT = 8000
+def sendTranscriptionResult():
+    global buffer
+    while True:
+        if not buffer.empty():
+            word, clientAddress = buffer.get()
+            try:
+                url = f"http://{clientAddress}:80/transcription"
+                r = requests.post(url, data=word)
+                print(f"Sent: {word} to {url}, Response: {r.status_code}")
+            except Exception as e:
+                print(f"Error sending word {word} to {clientAddress}: {e}")
+            finally:
+                buffer.task_done()
 
 
 class Handler(BaseHTTPRequestHandler):
-    textBuffer = ""
-
+    text = ""
+    previous_stream = ""
+    textBuffer = []
     def _set_headers(self, length):
         self.send_response(200)
         if length > 0:
@@ -54,6 +70,7 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
+        global buffer
         urlparts = parse.urlparse(self.path)
 
         request_file_path = urlparts.path.strip("/")
@@ -95,13 +112,33 @@ class Handler(BaseHTTPRequestHandler):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
                         if result:
-                            self.textBuffer = result
-                            r = requests.post(
-                                f"http://{self.client_address[0]}:80/transcription",
-                                data=result,
-                            )
+                            self.text = result
+                            # r = requests.post(
+                            #     f"http://{self.client_address[0]}:80/transcription",
+                            #     data=result,
+                            # )
+                            temp = result.split()
+                            new_elements = temp[len(self.textBuffer):]
+                            self.textBuffer.extend(new_elements)
+                            for word in new_elements:
+                                buffer.put((word, self.client_address[0]))
+                            for word in self.textBuffer:
+                                print(word)
+                            self.textBuffer = []
+                            self.previous_stream = ""
                     else:
                         partialResult = json.loads(rec.PartialResult())["partial"]
+                        if partialResult.startswith(self.previous_stream):
+                            new_part = partialResult[len(self.previous_stream):].strip()
+                            self.textBuffer.extend(new_part.split())
+                            for word in new_part.split():
+                                buffer.put((word, self.client_address[0]))
+                        else:
+                            self.textBuffer = partialResult.split()
+                            for word in partialResult.split():
+                                buffer.put((word, self.client_address[0]))
+                        self.previous_stream = partialResult
+
             print("____________")
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
@@ -141,6 +178,9 @@ if not args.ip:
     args.ip = get_host_ip()
 if not args.port:
     args.port = PORT
+
+transcriptionThread = threading.Thread(target=sendTranscriptionResult, daemon=True)
+transcriptionThread.start()
 
 httpd = ThreadingHTTPServer((args.ip, args.port), Handler)
 
