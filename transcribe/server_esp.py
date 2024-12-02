@@ -21,10 +21,11 @@ from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
+global audio_buf
+audio_buf = bytes()
+
 
 class Handler(BaseHTTPRequestHandler):
-    textBuffer = ""
-
     def _set_headers(self, length):
         self.send_response(200)
         if length > 0:
@@ -54,6 +55,8 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
+        global audio_buf
+
         urlparts = parse.urlparse(self.path)
 
         request_file_path = urlparts.path.strip("/")
@@ -70,6 +73,7 @@ class Handler(BaseHTTPRequestHandler):
             rec.SetWords(True)
             rec.SetPartialWords(True)
             data = []
+            audio_buf = b""
             sample_rates = self.headers.get("x-audio-sample-rates", "").lower()
             bits = self.headers.get("x-audio-bits", "").lower()
             channel = self.headers.get("x-audio-channel", "").lower()
@@ -91,11 +95,11 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     chunk_data = self._get_chunk_data(chunk_size)
                     data += chunk_data
+                    audio_buf += chunk_data
                     if rec.AcceptWaveform(chunk_data):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
                         if result:
-                            self.textBuffer = result
                             r = requests.post(
                                 f"http://{self.client_address[0]}:80/transcription",
                                 data=result,
@@ -110,14 +114,25 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
 
-    #  def do_GET(self):
-    #  self.send_response(200)
-    #  self.send_header("Content-type", "text/html;charset=utf-8")
-    #  self.send_header("Content-Length", len(self.textBuffer))
-    #  self.end_headers()
-    #  print("Response: ", self.textBuffer)
-    #  self.wfile.write(self.textBuffer.encode('utf-8'))
-    #  self.textBuffer = ""
+            with open("bin", "wb") as f:
+                f.write(audio_buf)
+                f.close()
+
+    def do_GET(self):
+        global audio_buf
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/octet-stream")
+        #  self.send_header("Content-Length", str(len(audio_buf)))
+        self.send_header("Transfer-Encoding", "chunked")
+        self.end_headers()
+
+        for chunk_idx in range(len(audio_buf) // 4096):
+            print(chunk_idx)
+            buf = b"1000\r\n" + audio_buf[(4096 * chunk_idx) : (4096 * (chunk_idx + 1))] + b"\r\n"
+            self.wfile.write(buf)
+        
+        self.wfile.write(b"0\r\n\r\n")
 
 
 def get_host_ip():
