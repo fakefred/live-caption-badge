@@ -32,13 +32,13 @@ def sendTranscriptionResult():
     global buffer
     while True:
         if not buffer.empty():
-            word, clientAddress = buffer.get()
+            words, clientAddress = buffer.get()
             try:
                 url = f"http://{clientAddress}:80/transcription"
-                r = requests.post(url, data=word)
-                print(f"Sent: {word} to {url}, Response: {r.status_code}")
+                r = requests.post(url, data=words)
+                print(f"Sent: {words} to {url}, Response: {r.status_code}")
             except Exception as e:
-                print(f"Error sending word {word} to {clientAddress}: {e}")
+                print(f"Error sending word {words} to {clientAddress}: {e}")
             finally:
                 buffer.task_done()
 
@@ -132,8 +132,7 @@ class Handler(BaseHTTPRequestHandler):
                             temp = result.split()
                             new_elements = temp[len(self.textBuffer):]
                             self.textBuffer.extend(new_elements)
-                            for word in new_elements:
-                                buffer.put((word, self.client_address[0]))
+                            buffer.put((" ".join(new_elements), self.client_address[0]))
                             for word in self.textBuffer:
                                 print(word)
                             self.textBuffer = []
@@ -143,12 +142,10 @@ class Handler(BaseHTTPRequestHandler):
                         if partialResult.startswith(self.previous_stream):
                             new_part = partialResult[len(self.previous_stream):].strip()
                             self.textBuffer.extend(new_part.split())
-                            for word in new_part.split():
-                                buffer.put((word, self.client_address[0]))
+                            buffer.put((new_part, self.client_address[0]))
                         else:
                             self.textBuffer = partialResult.split()
-                            for word in partialResult.split():
-                                buffer.put((word, self.client_address[0]))
+                            buffer.put((partialResult, self.client_address[0]))
                         self.previous_stream = partialResult
 
             print("____________")
