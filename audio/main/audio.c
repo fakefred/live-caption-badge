@@ -102,7 +102,7 @@ esp_err_t audio_init(void) {
 	 *
 	 */
 	ESP_LOGI(TAG, "Link TX pipelines");
-	const char *vosk_link_tag[2] = {"adc", "http-vosk"};
+	const char *vosk_link_tag[2] = {"adc", "tx-http"};
 	audio_pipeline_link(tx_pipeline, vosk_link_tag, 2);
 	
 	/*

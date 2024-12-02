@@ -4,6 +4,7 @@ import argparse
 import socket
 import json
 import requests
+import queue
 
 import wave
 
@@ -21,8 +22,10 @@ from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
-global audio_buf
-audio_buf = bytes()
+global audio_queue, speaking, listening
+audio_queue = queue.Queue()
+speaking = False
+listening = False
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -55,7 +58,9 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
-        global audio_buf
+        global audio_queue, speaking, listening
+
+        speaking = True
 
         urlparts = parse.urlparse(self.path)
 
@@ -73,7 +78,6 @@ class Handler(BaseHTTPRequestHandler):
             rec.SetWords(True)
             rec.SetPartialWords(True)
             data = []
-            audio_buf = b""
             sample_rates = self.headers.get("x-audio-sample-rates", "").lower()
             bits = self.headers.get("x-audio-bits", "").lower()
             channel = self.headers.get("x-audio-channel", "").lower()
@@ -95,44 +99,52 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     chunk_data = self._get_chunk_data(chunk_size)
                     data += chunk_data
-                    audio_buf += chunk_data
+                    if listening:
+                        audio_queue.put(chunk_data)
                     if rec.AcceptWaveform(chunk_data):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
                         if result:
-                            r = requests.post(
-                                f"http://{self.client_address[0]}:80/transcription",
-                                data=result,
-                            )
+                            pass
+                            #  try:
+                                #  r = requests.post(
+                                    #  f"http://{self.client_address[0]}:80/transcription",
+                                    #  data=result,
+                                #  )
+                            #  except:
+                                #  print("POST /transcription failed")
                     else:
                         partialResult = json.loads(rec.PartialResult())["partial"]
             print("____________")
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
-            self.send_header("Content-Length", len(partialResult))
+            #  self.send_header("Content-Length", len(partialResult))
             self.end_headers()
             self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
 
-            with open("bin", "wb") as f:
-                f.write(audio_buf)
-                f.close()
+            speaking = False
 
     def do_GET(self):
-        global audio_buf
+        global audio_queue, speaking, listening
+
+        listening = True
 
         self.send_response(200)
         self.send_header("Content-Type", "application/octet-stream")
-        #  self.send_header("Content-Length", str(len(audio_buf)))
         self.send_header("Transfer-Encoding", "chunked")
         self.end_headers()
 
-        for chunk_idx in range(len(audio_buf) // 4096):
-            print(chunk_idx)
-            buf = b"1000\r\n" + audio_buf[(4096 * chunk_idx) : (4096 * (chunk_idx + 1))] + b"\r\n"
+        while speaking:
+            chunk = audio_queue.get()
+            print(f"Chunk size: {len(chunk)}, queue length: {audio_queue.qsize()}")
+            size = f"{len(chunk):X}".encode("utf-8")
+            buf = size + b"\r\n" + chunk + b"\r\n"
             self.wfile.write(buf)
         
         self.wfile.write(b"0\r\n\r\n")
+
+        listening = False
 
 
 def get_host_ip():
