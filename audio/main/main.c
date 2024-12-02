@@ -45,9 +45,9 @@ void app_main(void) {
 
 	audio_init();
 
-	/* epaper_init();
-	 * DEV_Delay_ms(500);
-	 * epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+	epaper_init();
+	DEV_Delay_ms(500);
+	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 
 	/* epaper_ui_set_layout(EPAPER_LAYOUT_PAIR); */
 	/* DEV_Delay_ms(1000); */
@@ -74,7 +74,7 @@ void app_main(void) {
 						tx_running = true;
 					}
 
-					/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
+					epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
 				} else {
 					ESP_LOGI(TAG, "Stop ADC pipeline");
 					audio_element_set_ringbuf_done(adc_i2s);
@@ -86,7 +86,7 @@ void app_main(void) {
 					audio_pipeline_terminate(tx_pipeline);
 					tx_running = false;
 
-					/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+					epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 				}
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
