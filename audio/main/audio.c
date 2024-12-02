@@ -91,6 +91,7 @@ esp_err_t audio_init(void) {
 	ESP_LOGI(TAG, "Create HTTP download stream");
 	http_stream_cfg_t rx_http_cfg = HTTP_STREAM_CFG_DEFAULT();
 	rx_http_cfg.type = AUDIO_STREAM_READER;
+	rx_http_cfg.event_handle = _http_down_stream_event_handle;
 	rx_http = http_stream_init(&rx_http_cfg);
 	audio_element_set_uri(rx_http, CONFIG_SERVER_URI);
         audio_pipeline_register(rx_pipeline, rx_http, "rx-http");

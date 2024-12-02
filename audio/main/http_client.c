@@ -4,7 +4,7 @@
 #include "esp_log.h"
 #include "http_stream.h"
 
-static const char *TAG = "http";
+static const char *TAG = "http_client";
 
 esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 	esp_http_client_handle_t http = (esp_http_client_handle_t)msg->http_client;
@@ -73,6 +73,12 @@ esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 }
 
 esp_err_t _http_down_stream_event_handle(http_stream_event_msg_t *msg) {
-	
+	if (msg->event_id == HTTP_STREAM_FINISH_TRACK) {
+		audio_pipeline_stop(rx_pipeline);
+		audio_pipeline_wait_for_stop(rx_pipeline);
+		audio_pipeline_reset_ringbuffer(rx_pipeline);
+		audio_pipeline_reset_elements(rx_pipeline);
+		audio_pipeline_terminate(rx_pipeline);
+	}
 	return ESP_OK;
 }

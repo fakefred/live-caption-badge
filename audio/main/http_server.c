@@ -1,8 +1,9 @@
+#include "audio.h"
+
 #include "FreeRTOSConfig.h"
 #include "epaper/caption.h"
 #include "esp_err.h"
 #include "ringbuf.h"
-
 #include <esp_http_server.h>
 #include <esp_log.h>
 #include <esp_system.h>
@@ -56,6 +57,25 @@ static const httpd_uri_t transcription_uri = {
     .user_ctx = NULL,
 };
 
+static esp_err_t poke_get_handler(httpd_req_t *req) {
+	ESP_LOGI(TAG, "======== GET /poke =======");
+
+	if (audio_pipeline_run(rx_pipeline) != ESP_OK) {
+		ESP_LOGE(TAG, "Failed to run rx_pipeline");
+	}
+
+	// End response
+	httpd_resp_send_chunk(req, NULL, 0);
+	return ESP_OK;
+}
+
+static const httpd_uri_t poke_uri = {
+    .uri = "/poke",
+    .method = HTTP_GET,
+    .handler = poke_get_handler,
+    .user_ctx = NULL,
+};
+
 httpd_handle_t start_webserver(void) {
 	httpd_handle_t server = NULL;
 	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -67,6 +87,7 @@ httpd_handle_t start_webserver(void) {
 		// Set URI handlers
 		ESP_LOGI(TAG, "Registering URI handlers");
 		httpd_register_uri_handler(server, &transcription_uri);
+		httpd_register_uri_handler(server, &poke_uri);
 		return server;
 	}
 

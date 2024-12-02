@@ -53,10 +53,7 @@ void app_main(void) {
 	/* DEV_Delay_ms(1000); */
 	/* EPD_Sleep(); */
 
-	/* httpd_handle_t server = start_webserver(); */
-
-	/* ESP_LOGI(TAG, "Start DAC pipeline");
-	 * audio_pipeline_run(dac_pipeline); */
+	httpd_handle_t server = start_webserver();
 
 	bool tx_running = false, rx_running = false;
 
@@ -93,23 +90,6 @@ void app_main(void) {
 				}
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
-				if (!rx_running) {
-					ESP_LOGI(TAG, "Start ADC pipeline");
-
-					if (audio_pipeline_run(rx_pipeline) == ESP_OK) {
-						rx_running = true;
-					}
-				} else {
-					ESP_LOGI(TAG, "Stop ADC pipeline");
-
-					audio_pipeline_stop(rx_pipeline);
-					audio_pipeline_wait_for_stop(rx_pipeline);
-					audio_pipeline_reset_ringbuffer(rx_pipeline);
-					audio_pipeline_reset_elements(rx_pipeline);
-					audio_pipeline_terminate(rx_pipeline);
-					rx_running = false;
-				}
-
 			} else if ((int)msg.data == BUTTON_ID_3) {
 				ESP_LOGI(TAG, "[ * ] Button 3");
 			}
