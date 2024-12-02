@@ -8,13 +8,13 @@ import queue
 from multiprocessing import Process
 
 import wave
+import threading
 
 from vosk import Model, KaldiRecognizer
 
 print("###########Start loading Vosk model###########")
 model = Model(lang="en-us")
 print("###########Finish loading model###########")
-
 
 from urllib import parse
 from http.server import HTTPServer
@@ -38,7 +38,30 @@ def poke_badge(ip: str):
         pass
 
 
+global buffer
+buffer = queue.Queue()
+
+
+def sendTranscriptionResult():
+    global buffer
+    while True:
+        if not buffer.empty():
+            words, clientAddress = buffer.get()
+            try:
+                url = f"http://{clientAddress}:80/transcription"
+                r = requests.post(url, data=words)
+                print(f"Sent: {words} to {url}, Response: {r.status_code}")
+            except Exception as e:
+                print(f"Error sending word {words} to {clientAddress}: {e}")
+            finally:
+                buffer.task_done()
+
+
 class Handler(BaseHTTPRequestHandler):
+    text = ""
+    previous_stream = ""
+    textBuffer = []
+
     def _set_headers(self, length):
         self.send_response(200)
         if length > 0:
@@ -70,6 +93,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         global audio_queues
 
+        global buffer
         urlparts = parse.urlparse(self.path)
 
         request_file_path = urlparts.path.strip("/")
@@ -121,20 +145,31 @@ class Handler(BaseHTTPRequestHandler):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
                         if result:
-                            pass
-                            #  try:
-                            #  r = requests.post(
-                            #  f"http://{self.client_address[0]}:80/transcription",
-                            #  data=result,
-                            #  )
-                            #  except:
-                            #  print("POST /transcription failed")
+                            self.text = result
+                            temp = result.split()
+                            new_elements = temp[len(self.textBuffer) :]
+                            self.textBuffer.extend(new_elements)
+                            buffer.put((" ".join(new_elements), self.client_address[0]))
+                            for word in self.textBuffer:
+                                print(word)
+                            self.textBuffer = []
+                            self.previous_stream = ""
                     else:
                         partialResult = json.loads(rec.PartialResult())["partial"]
+                        if partialResult.startswith(self.previous_stream):
+                            new_part = partialResult[
+                                len(self.previous_stream) :
+                            ].strip()
+                            self.textBuffer.extend(new_part.split())
+                            buffer.put((new_part, self.client_address[0]))
+                        else:
+                            self.textBuffer = partialResult.split()
+                            buffer.put((partialResult, self.client_address[0]))
+                        self.previous_stream = partialResult
+
             print("____________")
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
-            #  self.send_header("Content-Length", len(partialResult))
             self.end_headers()
             self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
@@ -191,6 +226,9 @@ if not args.ip:
     args.ip = get_host_ip()
 if not args.port:
     args.port = PORT
+
+transcriptionThread = threading.Thread(target=sendTranscriptionResult, daemon=True)
+transcriptionThread.start()
 
 httpd = ThreadingHTTPServer((args.ip, args.port), Handler)
 
