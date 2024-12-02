@@ -17,7 +17,6 @@
 #include "freertos/task.h"
 #include "http_client.h"
 #include "http_stream.h"
-#include "tcp_client_stream.h"
 #include "i2s_stream.h"
 #include "nvs_flash.h"
 #include "periph_button.h"
@@ -32,7 +31,7 @@ esp_periph_set_handle_t    periph_set;
 audio_board_handle_t       board_handle;
 audio_pipeline_handle_t    vosk_pipeline, peer_tx_pipeline;
 audio_pipeline_handle_t    peer_rx_pipeline;
-audio_element_handle_t     adc_i2s, vosk_http_stream, peer_tx_tcp_stream;
+audio_element_handle_t     adc_i2s, vosk_http_stream, peer_tx_http_stream;
 audio_element_handle_t     dac_i2s, peer_rx_http_stream;
 ringbuf_handle_t           peer_rx_ringbuf;
 audio_event_iface_handle_t evt;
@@ -73,8 +72,7 @@ esp_err_t audio_init(void) {
 	adc_i2s_cfg.out_rb_size = 64 * 1024;
 	adc_i2s = i2s_stream_init(&adc_i2s_cfg);
 	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
-	/* audio_pipeline_register(vosk_pipeline, adc_i2s, "adc"); */
-	audio_pipeline_register(peer_tx_pipeline, adc_i2s, "adc");
+	audio_pipeline_register(vosk_pipeline, adc_i2s, "adc");
 
 	ESP_LOGI(TAG, "Create HTTP Vosk stream");
 	http_stream_cfg_t vosk_http_cfg = HTTP_STREAM_CFG_DEFAULT();
@@ -85,13 +83,13 @@ esp_err_t audio_init(void) {
 	audio_pipeline_register(vosk_pipeline, vosk_http_stream, "http-vosk");
 
 	ESP_LOGI(TAG, "Create HTTP Peer TX stream");
-	tcp_stream_cfg_t peer_tx_tcp_cfg = TCP_STREAM_CFG_DEFAULT();
-	peer_tx_tcp_cfg.type = AUDIO_STREAM_WRITER;
-	peer_tx_tcp_cfg.host = "192.168.227.130";
-	peer_tx_tcp_cfg.port = 3333;
-	/* peer_tx_tcp_cfg.event_handle = _tcp_up_stream_event_handle; */
-	peer_tx_tcp_stream = tcp_stream_init(&peer_tx_tcp_cfg);
-	audio_pipeline_register(peer_tx_pipeline, peer_tx_tcp_stream, "tcp-peer-tx");
+	http_stream_cfg_t peer_tx_http_cfg = HTTP_STREAM_CFG_DEFAULT();
+	peer_tx_http_cfg.type = AUDIO_STREAM_WRITER;
+	peer_tx_http_cfg.event_handle = _http_up_stream_event_handle;
+	peer_tx_http_stream = http_stream_init(&peer_tx_http_cfg);
+	audio_element_set_uri(peer_tx_http_stream, "http://192.168.227.130:80/audio"); // TODO
+	/* audio_pipeline_register(peer_tx_pipeline, peer_tx_http_stream, "http-peer-tx"); */
+	audio_pipeline_register(vosk_pipeline, peer_tx_http_stream, "http-peer-tx");
 
 	// RX pipeline: Peer RX
         ESP_LOGI(TAG, "Create Peer RX pipeline");
@@ -123,10 +121,11 @@ esp_err_t audio_init(void) {
 	 */
 	ESP_LOGI(TAG, "Link TX pipelines");
 	/* const char *vosk_link_tag[2] = {"adc", "http-vosk"}; */
-	/* audio_pipeline_link(vosk_pipeline, vosk_link_tag, 2); */
+	const char *vosk_link_tag[2] = {"adc", "http-peer-tx"};
+	audio_pipeline_link(vosk_pipeline, vosk_link_tag, 2);
 	
-	const char *peer_tx_link_tag[2] = {"adc", "tcp-peer-tx"};
-	audio_pipeline_link(peer_tx_pipeline, peer_tx_link_tag, 2);
+	/* const char *peer_tx_link_tag[1] = {"http-peer-tx"}; */
+	/* audio_pipeline_link(peer_tx_pipeline, peer_tx_link_tag, 1); */
 
 	/* ringbuf_handle_t peer_tx_http_rb = audio_element_get_input_ringbuf(peer_tx_http_stream); */
 	/* audio_element_set_multi_output_ringbuf(adc_i2s, peer_tx_http_rb, 0); */
@@ -181,6 +180,6 @@ esp_err_t audio_deinit(void) {
 	audio_element_deinit(adc_i2s);
 	audio_element_deinit(vosk_http_stream);
 	audio_element_deinit(dac_i2s);
-	audio_element_deinit(peer_tx_tcp_stream);
+	audio_element_deinit(peer_tx_http_stream);
 	return ESP_OK;
 }
