@@ -11,6 +11,7 @@
 #include "freertos/task.h"
 #include "http_stream.h"
 #include "i2s_stream.h"
+#include "ringbuf.h"
 
 #define AUDIO_SAMPLE_RATE 16000
 #define AUDIO_BITS 16
@@ -22,8 +23,9 @@
 
 extern esp_periph_set_handle_t    periph_set;
 extern audio_board_handle_t       board_handle;
-extern audio_pipeline_handle_t    adc_pipeline, dac_pipeline;
-extern audio_element_handle_t     adc_i2s, dac_i2s, http_up_stream, http_down_stream;
+extern audio_pipeline_handle_t    tx_pipeline, rx_pipeline;
+extern audio_element_handle_t     adc_i2s, tx_http;
+extern audio_element_handle_t     dac_i2s, rx_http;
 extern audio_event_iface_handle_t evt;
 
 esp_err_t audio_init(void);

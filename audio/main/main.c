@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "epaper/DEV_Config.h"
+#include "epaper/EPD_7in5_V2.h"
 #include "epaper/caption.h"
 #include "epaper/epaper.h"
 #include "http_server.h"
@@ -44,14 +45,20 @@ void app_main(void) {
 
 	audio_init();
 
-	epaper_init();
-	DEV_Delay_ms(500);
-	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	/* epaper_init();
+	 * DEV_Delay_ms(500);
+	 * epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
 
-	httpd_handle_t server = start_webserver();
+	/* epaper_ui_set_layout(EPAPER_LAYOUT_PAIR); */
+	/* DEV_Delay_ms(1000); */
+	/* EPD_Sleep(); */
+
+	/* httpd_handle_t server = start_webserver(); */
 
 	/* ESP_LOGI(TAG, "Start DAC pipeline");
 	 * audio_pipeline_run(dac_pipeline); */
+
+	bool tx_running = false, rx_running = false;
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -63,20 +70,46 @@ void app_main(void) {
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			if ((int)msg.data == BUTTON_ID_1) {
 				ESP_LOGI(TAG, "[ * ] Button 1");
-				ESP_LOGI(TAG, "Start ADC pipeline");
-				audio_element_set_uri(http_up_stream, CONFIG_SERVER_URI);
-				audio_pipeline_run(adc_pipeline);
-				epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
+				if (!tx_running) {
+					ESP_LOGI(TAG, "Start ADC pipeline");
+
+					if (audio_pipeline_run(tx_pipeline) == ESP_OK) {
+						tx_running = true;
+					}
+
+					/* epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION); */
+				} else {
+					ESP_LOGI(TAG, "Stop ADC pipeline");
+					audio_element_set_ringbuf_done(adc_i2s);
+
+					audio_pipeline_stop(tx_pipeline);
+					audio_pipeline_wait_for_stop(tx_pipeline);
+					audio_pipeline_reset_ringbuffer(tx_pipeline);
+					audio_pipeline_reset_elements(tx_pipeline);
+					audio_pipeline_terminate(tx_pipeline);
+					tx_running = false;
+
+					/* epaper_ui_set_layout(EPAPER_LAYOUT_BADGE); */
+				}
 			} else if ((int)msg.data == BUTTON_ID_2) {
 				ESP_LOGI(TAG, "[ * ] Button 2");
-				ESP_LOGI(TAG, "Stop ADC pipeline");
-				audio_element_set_ringbuf_done(adc_i2s);
-				audio_pipeline_stop(adc_pipeline);
-				audio_pipeline_wait_for_stop(adc_pipeline);
-				audio_pipeline_reset_ringbuffer(adc_pipeline);
-				audio_pipeline_reset_elements(adc_pipeline);
-				audio_pipeline_terminate(adc_pipeline);
-				epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+				if (!rx_running) {
+					ESP_LOGI(TAG, "Start ADC pipeline");
+
+					if (audio_pipeline_run(rx_pipeline) == ESP_OK) {
+						rx_running = true;
+					}
+				} else {
+					ESP_LOGI(TAG, "Stop ADC pipeline");
+
+					audio_pipeline_stop(rx_pipeline);
+					audio_pipeline_wait_for_stop(rx_pipeline);
+					audio_pipeline_reset_ringbuffer(rx_pipeline);
+					audio_pipeline_reset_elements(rx_pipeline);
+					audio_pipeline_terminate(rx_pipeline);
+					rx_running = false;
+				}
+
 			} else if ((int)msg.data == BUTTON_ID_3) {
 				ESP_LOGI(TAG, "[ * ] Button 3");
 			}

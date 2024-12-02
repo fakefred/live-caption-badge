@@ -5,6 +5,7 @@ import socket
 import json
 import requests
 import queue
+
 import wave
 import threading
 
@@ -22,6 +23,11 @@ from http.server import BaseHTTPRequestHandler
 from http.server import ThreadingHTTPServer
 
 PORT = 8000
+
+global audio_queue, speaking, listening
+audio_queue = queue.Queue()
+speaking = False
+listening = False
 def sendTranscriptionResult():
     global buffer
     while True:
@@ -70,6 +76,10 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
+        global audio_queue, speaking, listening
+
+        speaking = True
+
         global buffer
         urlparts = parse.urlparse(self.path)
 
@@ -108,6 +118,8 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     chunk_data = self._get_chunk_data(chunk_size)
                     data += chunk_data
+                    if listening:
+                        audio_queue.put(chunk_data)
                     if rec.AcceptWaveform(chunk_data):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
@@ -142,19 +154,33 @@ class Handler(BaseHTTPRequestHandler):
             print("____________")
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
-            self.send_header("Content-Length", len(partialResult))
+            #  self.send_header("Content-Length", len(partialResult))
             self.end_headers()
             self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
 
-    #  def do_GET(self):
-    #  self.send_response(200)
-    #  self.send_header("Content-type", "text/html;charset=utf-8")
-    #  self.send_header("Content-Length", len(self.textBuffer))
-    #  self.end_headers()
-    #  print("Response: ", self.textBuffer)
-    #  self.wfile.write(self.textBuffer.encode('utf-8'))
-    #  self.textBuffer = ""
+            speaking = False
+
+    def do_GET(self):
+        global audio_queue, speaking, listening
+
+        listening = True
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/octet-stream")
+        self.send_header("Transfer-Encoding", "chunked")
+        self.end_headers()
+
+        while speaking:
+            chunk = audio_queue.get()
+            print(f"Chunk size: {len(chunk)}, queue length: {audio_queue.qsize()}")
+            size = f"{len(chunk):X}".encode("utf-8")
+            buf = size + b"\r\n" + chunk + b"\r\n"
+            self.wfile.write(buf)
+        
+        self.wfile.write(b"0\r\n\r\n")
+
+        listening = False
 
 
 def get_host_ip():

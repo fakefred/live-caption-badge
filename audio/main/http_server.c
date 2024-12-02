@@ -1,4 +1,7 @@
+#include "FreeRTOSConfig.h"
 #include "epaper/caption.h"
+#include "esp_err.h"
+#include "ringbuf.h"
 
 #include <esp_http_server.h>
 #include <esp_log.h>
@@ -33,7 +36,7 @@ static esp_err_t transcription_post_handler(httpd_req_t *req) {
 	}
 
 	/* Log data received */
-	ESP_LOGI(TAG, "=========== RECEIVED DATA ==========");
+	ESP_LOGI(TAG, "======== POST /transcription =======");
 	ESP_LOGI(TAG, "%.*s", bytes_recv, buf);
 	ESP_LOGI(TAG, "====================================");
 
