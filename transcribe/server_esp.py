@@ -5,6 +5,7 @@ import socket
 import json
 import requests
 import queue
+from multiprocessing import Process
 
 import wave
 
@@ -22,10 +23,19 @@ from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
-global audio_queue, speaking, listening
-audio_queue = queue.Queue()
-speaking = False
-listening = False
+global audio_queues
+audio_queues = dict()  # IP address -> queue.Queue
+
+BADGE_IP_ADDRS = ["192.168.227.130", "192.168.227.173"]
+
+
+def poke_badge(ip: str):
+    url = f"http://{ip}/poke"
+    try:
+        print(f"  -> Poking {ip}")
+        requests.get(url)
+    except:
+        pass
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -47,7 +57,7 @@ class Handler(BaseHTTPRequestHandler):
         return data
 
     def _write_wav(self, data, rates, bits, ch):
-        t = datetime.datetime.utcnow()
+        t = datetime.datetime.now(datetime.UTC)
         time = t.strftime("%Y%m%dT%H%M%SZ")
         filename = str.format("{}_{}_{}_{}.wav", time, rates, bits, ch)
 
@@ -58,9 +68,7 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
-        global audio_queue, speaking, listening
-
-        speaking = True
+        global audio_queues
 
         urlparts = parse.urlparse(self.path)
 
@@ -69,11 +77,18 @@ class Handler(BaseHTTPRequestHandler):
         sample_rates = 0
         bits = 0
         channel = 0
-        print("Do Post......")
         if (
             request_file_path == "upload"
             and self.headers.get("Transfer-Encoding", "").lower() == "chunked"
         ):
+            ip = self.client_address[0]
+            print(f"POST /upload from {ip}")
+
+            for badge_ip in BADGE_IP_ADDRS:
+                if badge_ip != ip:
+                    p = Process(target=poke_badge, args=(badge_ip,))
+                    p.start()
+
             rec = KaldiRecognizer(model, 16000)
             rec.SetWords(True)
             rec.SetPartialWords(True)
@@ -92,27 +107,28 @@ class Handler(BaseHTTPRequestHandler):
             while True:
                 chunk_size = self._get_chunk_size()  # 4096
                 total_bytes += chunk_size
-                #  print("Total bytes received: {}".format(total_bytes))
-                #  sys.stdout.write("\033[F") #for live update.
+                print(f"<-   {ip}: RX {total_bytes} bytes total")
                 if chunk_size == 0:
                     break
                 else:
                     chunk_data = self._get_chunk_data(chunk_size)
                     data += chunk_data
-                    if listening:
-                        audio_queue.put(chunk_data)
+                    for peer_ip, peer_queue in audio_queues.items():
+                        if peer_ip != ip:
+                            peer_queue.put(chunk_data)
+
                     if rec.AcceptWaveform(chunk_data):
                         result = json.loads(rec.Result())["text"]
                         print("Result:", result)
                         if result:
                             pass
                             #  try:
-                                #  r = requests.post(
-                                    #  f"http://{self.client_address[0]}:80/transcription",
-                                    #  data=result,
-                                #  )
+                            #  r = requests.post(
+                            #  f"http://{self.client_address[0]}:80/transcription",
+                            #  data=result,
+                            #  )
                             #  except:
-                                #  print("POST /transcription failed")
+                            #  print("POST /transcription failed")
                     else:
                         partialResult = json.loads(rec.PartialResult())["partial"]
             print("____________")
@@ -123,28 +139,35 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
 
-            speaking = False
-
     def do_GET(self):
-        global audio_queue, speaking, listening
-
-        listening = True
+        global audio_queues
 
         self.send_response(200)
         self.send_header("Content-Type", "application/octet-stream")
         self.send_header("Transfer-Encoding", "chunked")
         self.end_headers()
 
-        while speaking:
-            chunk = audio_queue.get()
-            print(f"Chunk size: {len(chunk)}, queue length: {audio_queue.qsize()}")
+        ip = self.client_address[0]
+        audio_queues[ip] = queue.Queue()
+
+        total_bytes = 0
+
+        while True:
+            chunk = audio_queues[ip].get()
+            total_bytes += len(chunk)
+            print(
+                f"  -> {ip}: TX {total_bytes} bytes total, queue length: {audio_queues[ip].qsize()}"
+            )
             size = f"{len(chunk):X}".encode("utf-8")
             buf = size + b"\r\n" + chunk + b"\r\n"
-            self.wfile.write(buf)
-        
-        self.wfile.write(b"0\r\n\r\n")
+            try:
+                self.wfile.write(buf)
+            except ConnectionResetError:
+                del audio_queues[ip]
+                return
 
-        listening = False
+        self.wfile.write(b"0\r\n\r\n")
+        del audio_queues[ip]
 
 
 def get_host_ip():
