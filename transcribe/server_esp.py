@@ -149,7 +149,8 @@ class Handler(BaseHTTPRequestHandler):
                             temp = result.split()
                             new_elements = temp[len(self.textBuffer) :]
                             self.textBuffer.extend(new_elements)
-                            buffer.put((" ".join(new_elements), self.client_address[0]))
+                            if new_elements:
+                                buffer.put((" ".join(new_elements), self.client_address[0]))
                             for word in self.textBuffer:
                                 print(word)
                             self.textBuffer = []
@@ -160,8 +161,9 @@ class Handler(BaseHTTPRequestHandler):
                             new_part = partialResult[
                                 len(self.previous_stream) :
                             ].strip()
-                            self.textBuffer.extend(new_part.split())
-                            buffer.put((new_part, self.client_address[0]))
+                            if new_part:
+                                self.textBuffer.extend(new_part.split())
+                                buffer.put((new_part, self.client_address[0]))
                         else:
                             self.textBuffer = partialResult.split()
                             buffer.put((partialResult, self.client_address[0]))
