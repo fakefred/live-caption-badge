@@ -109,6 +109,8 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 		ui_layout_caption();
 	} else if (layout == EPAPER_LAYOUT_PAIR) {
 		ui_layout_pair();
+	} else if (layout == EPAPER_LAYOUT_WIFI_CONNECTING) {
+		ui_layout_wifi_connecting();
 	}
 	epaper_ui.layout = layout;
 	xSemaphoreGive(epaper_sem);

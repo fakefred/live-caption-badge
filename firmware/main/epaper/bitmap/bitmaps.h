@@ -8,4 +8,6 @@ typedef struct {
 	uint16_t height;
 } bitmap_t;
 
-extern const bitmap_t UMICH;
+extern const bitmap_t UMICH_LOGO;
+extern const bitmap_t WIFI_LOGO;
+extern const bitmap_t UMICH_LOGO;

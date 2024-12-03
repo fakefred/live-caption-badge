@@ -49,6 +49,7 @@ typedef enum {
 	EPAPER_LAYOUT_BADGE,
 	EPAPER_LAYOUT_PAIR,
 	EPAPER_LAYOUT_CAPTION,
+	EPAPER_LAYOUT_WIFI_CONNECTING,
 } epaper_layout_t;
 
 typedef struct {

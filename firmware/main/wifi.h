@@ -23,6 +23,7 @@
 #include "esp_gatt_common_api.h"
 
 extern char ipAddrComplete [20];
+extern bool wifiIsConnected;
 
 void intToStr(int num, char *str);
 static void event_handler(void* arg, esp_event_base_t event_base,

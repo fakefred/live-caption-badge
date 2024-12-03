@@ -25,7 +25,7 @@ void draw_bitmap(UWORD x_start, UWORD y_start, const bitmap_t *bitmap) {
 epaper_err_t ui_layout_badge(void) {
 	ESP_LOGI(TAG, "ui_layout_badge");
 	Paint_Clear(WHITE);
-	draw_bitmap(0, 30, &UMICH);
+	draw_bitmap(0, 30, &UMICH_LOGO);
 	// TODO: long names?
 	draw_string_large(64, 180, CONFIG_PARTICIPANT_NAME);
 	draw_string_medium(64, 240, CONFIG_PARTICIPANT_PRONOUNS);
@@ -62,6 +62,20 @@ epaper_err_t ui_layout_pair(void) {
 	Paint_DrawString_EN(64, 280, "Hello, my name is", &Font32, BLACK, WHITE);
 	Paint_DrawString_EN(64, 350, CONFIG_PARTICIPANT_NAME, &Font48, BLACK, WHITE);
 	
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_FAST,
+	};
+
+	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	return EPAPER_OK;
+}
+
+epaper_err_t ui_layout_wifi_connecting(void) {
+	ESP_LOGI(TAG, "ui_layout_wifi_connecting");
+	Paint_Clear(WHITE);
+	draw_bitmap(32, 112, &WIFI_LOGO);
+	draw_string_medium(320, 220, "Connecting to Wi-Fi...");
+
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
 	};

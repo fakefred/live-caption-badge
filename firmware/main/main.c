@@ -45,6 +45,10 @@ void app_main(void) {
 
 	audio_board_key_init(periph_set);
 
+	epaper_init();
+	DEV_Delay_ms(500);
+	epaper_ui_set_layout(EPAPER_LAYOUT_WIFI_CONNECTING);
+
 	ESP_LOGI(TAG, "Start WiFi Connection!");
 	wifi_init();
 
@@ -54,17 +58,14 @@ void app_main(void) {
 	ESP_LOGI(TAG, "Start Scanning for target device.");
 	gattc_start();
 
-	audio_init();
-
-	epaper_init();
-	DEV_Delay_ms(500);
-	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
-
-	/* epaper_ui_set_layout(EPAPER_LAYOUT_PAIR); */
-	/* DEV_Delay_ms(1000); */
-	/* EPD_Sleep(); */
+	DEV_Delay_ms(1000);
+	epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
+	DEV_Delay_ms(1000);
+	EPD_Sleep();
 
 	httpd_handle_t server = start_webserver();
+
+	audio_init();
 
 	bool tx_running = false;
 
