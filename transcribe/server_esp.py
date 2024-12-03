@@ -26,7 +26,7 @@ PORT = 8000
 global audio_queues
 audio_queues = dict()  # IP address -> queue.Queue
 
-BADGE_IP_ADDRS = ["192.168.227.130", "192.168.227.173"]
+BADGE_IP_ADDRS = ["192.168.227.113", "192.168.227.117"]
 
 
 def poke_badge(ip: str):
