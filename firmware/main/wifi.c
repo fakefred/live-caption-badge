@@ -217,7 +217,7 @@ void wifi_init(void)
         ESP_LOGI(TAG, "ip variable (string): %s.%s.%s.%s", ipaddrstr[0], ipaddrstr[1], ipaddrstr[2], ipaddrstr[3]);
         ESP_LOGI(TAG, "ip variable 6666(single string): %s", ipAddrComplete);
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG, "Failed to connect to SSID: %s", CONFIG_WIFI_SSID);
+        ESP_LOGE(TAG, "Failed to connect to SSID: %s", CONFIG_WIFI_SSID);
     } else {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }

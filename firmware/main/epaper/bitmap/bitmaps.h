@@ -10,4 +10,4 @@ typedef struct {
 
 extern const bitmap_t UMICH_LOGO;
 extern const bitmap_t WIFI_LOGO;
-extern const bitmap_t UMICH_LOGO;
+extern const bitmap_t NO_WIFI_LOGO;

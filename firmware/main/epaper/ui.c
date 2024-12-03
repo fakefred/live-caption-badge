@@ -83,3 +83,31 @@ epaper_err_t ui_layout_wifi_connecting(void) {
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
 	return EPAPER_OK;
 }
+
+epaper_err_t ui_layout_wifi_connected(void) {
+	ESP_LOGI(TAG, "ui_layout_wifi_connected");
+	Paint_Clear(WHITE);
+	draw_bitmap(32, 112, &WIFI_LOGO);
+	draw_string_medium(320, 220, "Connected to Wi-Fi!");
+
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_FAST,
+	};
+
+	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	return EPAPER_OK;
+}
+
+epaper_err_t ui_layout_wifi_disconnected(void) {
+	ESP_LOGI(TAG, "ui_layout_wifi_disconnected");
+	Paint_Clear(WHITE);
+	draw_bitmap(32, 112, &NO_WIFI_LOGO);
+	draw_string_medium(320, 220, "Wi-Fi disconnected");
+
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_FAST,
+	};
+
+	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	return EPAPER_OK;
+}
