@@ -3,7 +3,7 @@
 	(generator "eeschema")
 	(generator_version "8.0")
 	(uuid "3b930924-1452-4d23-815e-09afbcdc5905")
-	(paper "A4")
+	(paper "USLetter")
 	(title_block
 		(title "Live Caption Badge")
 		(date "2024-11-21")
@@ -4191,7 +4191,7 @@
 		(uuid "875eda29-ce0e-4d9a-91b1-3eb183e480fa")
 	)
 	(junction
-		(at 245.11 106.68)
+		(at 238.76 106.68)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "87ea69c8-8bde-4ca2-88c1-3aed07b602a4")
@@ -4227,7 +4227,7 @@
 		(uuid "c3181bc8-abbd-498b-b88a-3e8cfe9043c1")
 	)
 	(junction
-		(at 246.38 91.44)
+		(at 240.03 91.44)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d85e04c4-6933-44cd-beb8-26ba8485915d")
@@ -4324,7 +4324,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 96.52) (xy 237.49 97.79)
+			(xy 231.14 96.52) (xy 231.14 97.79)
 		)
 		(stroke
 			(width 0)
@@ -4334,7 +4334,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 58.42) (xy 240.03 60.96)
+			(xy 233.68 58.42) (xy 233.68 60.96)
 		)
 		(stroke
 			(width 0)
@@ -4394,7 +4394,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 101.6) (xy 237.49 100.33)
+			(xy 231.14 101.6) (xy 231.14 100.33)
 		)
 		(stroke
 			(width 0)
@@ -4574,7 +4574,7 @@
 	)
 	(wire
 		(pts
-			(xy 228.6 85.09) (xy 237.49 85.09)
+			(xy 222.25 85.09) (xy 231.14 85.09)
 		)
 		(stroke
 			(width 0)
@@ -4604,7 +4604,7 @@
 	)
 	(wire
 		(pts
-			(xy 255.27 91.44) (xy 264.16 91.44)
+			(xy 248.92 91.44) (xy 257.81 91.44)
 		)
 		(stroke
 			(width 0)
@@ -4614,7 +4614,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 86.36) (xy 237.49 85.09)
+			(xy 231.14 86.36) (xy 231.14 85.09)
 		)
 		(stroke
 			(width 0)
@@ -4644,7 +4644,7 @@
 	)
 	(wire
 		(pts
-			(xy 233.68 53.34) (xy 243.84 53.34)
+			(xy 227.33 53.34) (xy 237.49 53.34)
 		)
 		(stroke
 			(width 0)
@@ -4794,7 +4794,7 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 106.68) (xy 247.65 106.68)
+			(xy 238.76 106.68) (xy 241.3 106.68)
 		)
 		(stroke
 			(width 0)
@@ -4844,7 +4844,7 @@
 	)
 	(wire
 		(pts
-			(xy 233.68 50.8) (xy 243.84 50.8)
+			(xy 227.33 50.8) (xy 237.49 50.8)
 		)
 		(stroke
 			(width 0)
@@ -4994,7 +4994,7 @@
 	)
 	(wire
 		(pts
-			(xy 228.6 114.3) (xy 237.49 114.3)
+			(xy 222.25 114.3) (xy 231.14 114.3)
 		)
 		(stroke
 			(width 0)
@@ -5064,7 +5064,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 111.76) (xy 237.49 114.3)
+			(xy 231.14 111.76) (xy 231.14 114.3)
 		)
 		(stroke
 			(width 0)
@@ -5144,7 +5144,7 @@
 	)
 	(wire
 		(pts
-			(xy 246.38 91.44) (xy 247.65 91.44)
+			(xy 240.03 91.44) (xy 241.3 91.44)
 		)
 		(stroke
 			(width 0)
@@ -5274,7 +5274,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 43.18) (xy 240.03 45.72)
+			(xy 233.68 43.18) (xy 233.68 45.72)
 		)
 		(stroke
 			(width 0)
@@ -5284,7 +5284,7 @@
 	)
 	(wire
 		(pts
-			(xy 255.27 106.68) (xy 264.16 106.68)
+			(xy 248.92 106.68) (xy 257.81 106.68)
 		)
 		(stroke
 			(width 0)
@@ -5344,7 +5344,7 @@
 	)
 	(wire
 		(pts
-			(xy 233.68 55.88) (xy 243.84 55.88)
+			(xy 227.33 55.88) (xy 237.49 55.88)
 		)
 		(stroke
 			(width 0)
@@ -5354,7 +5354,7 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 91.44) (xy 246.38 91.44)
+			(xy 238.76 91.44) (xy 240.03 91.44)
 		)
 		(stroke
 			(width 0)
@@ -5364,7 +5364,7 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 97.79) (xy 245.11 106.68)
+			(xy 238.76 97.79) (xy 238.76 106.68)
 		)
 		(stroke
 			(width 0)
@@ -5384,7 +5384,7 @@
 	)
 	(wire
 		(pts
-			(xy 233.68 48.26) (xy 243.84 48.26)
+			(xy 227.33 48.26) (xy 237.49 48.26)
 		)
 		(stroke
 			(width 0)
@@ -5394,7 +5394,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 97.79) (xy 245.11 97.79)
+			(xy 231.14 97.79) (xy 238.76 97.79)
 		)
 		(stroke
 			(width 0)
@@ -5494,7 +5494,7 @@
 	)
 	(wire
 		(pts
-			(xy 246.38 100.33) (xy 246.38 91.44)
+			(xy 240.03 100.33) (xy 240.03 91.44)
 		)
 		(stroke
 			(width 0)
@@ -5624,7 +5624,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 58.42) (xy 243.84 58.42)
+			(xy 233.68 58.42) (xy 237.49 58.42)
 		)
 		(stroke
 			(width 0)
@@ -5724,7 +5724,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 45.72) (xy 243.84 45.72)
+			(xy 233.68 45.72) (xy 237.49 45.72)
 		)
 		(stroke
 			(width 0)
@@ -5754,7 +5754,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 100.33) (xy 246.38 100.33)
+			(xy 231.14 100.33) (xy 240.03 100.33)
 		)
 		(stroke
 			(width 0)
@@ -6038,7 +6038,7 @@
 		(uuid "19b66732-00e6-4531-ae97-58ed8dcd3100")
 	)
 	(label "ESP_IO0"
-		(at 228.6 114.3 0)
+		(at 222.25 114.3 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6181,7 +6181,7 @@
 		(uuid "58bff636-a2fa-4a73-b0c6-05fa1df61686")
 	)
 	(label "UART_RX"
-		(at 233.68 50.8 0)
+		(at 227.33 50.8 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6203,7 +6203,7 @@
 		(uuid "5973156b-0d0e-4b52-b703-b49c652b4e94")
 	)
 	(label "UART_DTR"
-		(at 264.16 91.44 180)
+		(at 257.81 91.44 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6214,7 +6214,7 @@
 		(uuid "5ea8eab7-67f8-437e-ad9d-6520bb4796bc")
 	)
 	(label "UART_DTR"
-		(at 233.68 55.88 0)
+		(at 227.33 55.88 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6291,7 +6291,7 @@
 		(uuid "88fb1bbb-0e01-447d-bb43-ef920c23d073")
 	)
 	(label "UART_RTS"
-		(at 264.16 106.68 180)
+		(at 257.81 106.68 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6346,7 +6346,7 @@
 		(uuid "946b030a-15de-4ce1-9ba8-d8f1c3dee701")
 	)
 	(label "ESP_~{EN}"
-		(at 228.6 85.09 0)
+		(at 222.25 85.09 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6533,7 +6533,7 @@
 		(uuid "d56d8de2-4dfc-49eb-9246-d33af80b0064")
 	)
 	(label "UART_RTS"
-		(at 233.68 53.34 0)
+		(at 227.33 53.34 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -6599,7 +6599,7 @@
 		(uuid "f0d8d036-868e-4715-b352-59288df3ae28")
 	)
 	(label "UART_TX"
-		(at 233.68 48.26 0)
+		(at 227.33 48.26 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7111,7 +7111,7 @@
 	)
 	(symbol
 		(lib_id "power:+3V3")
-		(at 240.03 43.18 0)
+		(at 233.68 43.18 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7120,7 +7120,7 @@
 		(fields_autoplaced yes)
 		(uuid "18346e6a-37b9-4d8d-b4d1-1894e5d1dd15")
 		(property "Reference" "#PWR020"
-			(at 240.03 46.99 0)
+			(at 233.68 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7129,7 +7129,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 240.03 38.1 0)
+			(at 233.68 38.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7137,7 +7137,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 240.03 43.18 0)
+			(at 233.68 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7146,7 +7146,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 240.03 43.18 0)
+			(at 233.68 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7155,7 +7155,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 240.03 43.18 0)
+			(at 233.68 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7247,7 +7247,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_US")
-		(at 251.46 91.44 90)
+		(at 245.11 91.44 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7255,7 +7255,7 @@
 		(dnp no)
 		(uuid "1dce51d5-7509-44f3-8caa-eca026c5c3bf")
 		(property "Reference" "R18"
-			(at 251.46 88.646 90)
+			(at 245.11 88.646 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7263,7 +7263,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 251.46 93.98 90)
+			(at 245.11 93.98 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7271,7 +7271,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 251.714 90.424 90)
+			(at 245.364 90.424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7280,7 +7280,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 251.46 91.44 0)
+			(at 245.11 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7289,7 +7289,7 @@
 			)
 		)
 		(property "Description" "Resistor, US symbol"
-			(at 251.46 91.44 0)
+			(at 245.11 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9407,7 +9407,7 @@
 	)
 	(symbol
 		(lib_id "Transistor_BJT:SS8050")
-		(at 240.03 91.44 0)
+		(at 233.68 91.44 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -9416,7 +9416,7 @@
 		(dnp no)
 		(uuid "8d81d3f2-d81e-4b03-b477-3971fae00548")
 		(property "Reference" "Q2"
-			(at 234.95 90.1699 0)
+			(at 228.6 90.1699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9425,7 +9425,7 @@
 			)
 		)
 		(property "Value" "SS8050"
-			(at 234.95 92.7099 0)
+			(at 228.6 92.7099 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9434,7 +9434,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 234.95 98.806 0)
+			(at 228.6 98.806 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9445,7 +9445,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.secosgmbh.com/datasheet/products/SSMPTransistor/SOT-23/SS8050.pdf"
-			(at 234.95 96.266 0)
+			(at 228.6 96.266 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -9455,7 +9455,7 @@
 			)
 		)
 		(property "Description" "General Purpose NPN Transistor, 1.5A Ic, 25V Vce, SOT-23"
-			(at 205.994 93.726 0)
+			(at 199.644 93.726 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10899,7 +10899,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x06")
-		(at 248.92 50.8 0)
+		(at 242.57 50.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10908,7 +10908,7 @@
 		(fields_autoplaced yes)
 		(uuid "b74f7f54-fb6d-4721-897b-fb617a9eb1e4")
 		(property "Reference" "J2"
-			(at 251.46 50.7999 0)
+			(at 245.11 50.7999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10917,7 +10917,7 @@
 			)
 		)
 		(property "Value" "Conn_01x06"
-			(at 251.46 53.3399 0)
+			(at 245.11 53.3399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10926,7 +10926,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
-			(at 248.92 50.8 0)
+			(at 242.57 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10935,7 +10935,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 248.92 50.8 0)
+			(at 242.57 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10944,7 +10944,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 248.92 50.8 0)
+			(at 242.57 50.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11117,7 +11117,7 @@
 	)
 	(symbol
 		(lib_id "Transistor_BJT:SS8050")
-		(at 240.03 106.68 180)
+		(at 233.68 106.68 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11125,7 +11125,7 @@
 		(dnp no)
 		(uuid "c7c0993a-89dc-402e-a541-1c0dec23e873")
 		(property "Reference" "Q3"
-			(at 234.95 107.9501 0)
+			(at 228.6 107.9501 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11134,7 +11134,7 @@
 			)
 		)
 		(property "Value" "SS8050"
-			(at 234.95 105.4101 0)
+			(at 228.6 105.4101 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11143,7 +11143,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 234.95 99.314 0)
+			(at 228.6 99.314 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11154,7 +11154,7 @@
 			)
 		)
 		(property "Datasheet" "http://www.secosgmbh.com/datasheet/products/SSMPTransistor/SOT-23/SS8050.pdf"
-			(at 234.95 101.854 0)
+			(at 228.6 101.854 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11164,7 +11164,7 @@
 			)
 		)
 		(property "Description" "General Purpose NPN Transistor, 1.5A Ic, 25V Vce, SOT-23"
-			(at 205.994 104.394 0)
+			(at 199.644 104.394 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11805,7 +11805,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 240.03 60.96 0)
+		(at 233.68 60.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11814,7 +11814,7 @@
 		(fields_autoplaced yes)
 		(uuid "ed61c531-5e11-4db6-a095-dbe735db8a05")
 		(property "Reference" "#PWR023"
-			(at 240.03 67.31 0)
+			(at 233.68 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11823,7 +11823,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 240.03 66.04 0)
+			(at 233.68 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11831,7 +11831,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 240.03 60.96 0)
+			(at 233.68 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11840,7 +11840,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 240.03 60.96 0)
+			(at 233.68 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11849,7 +11849,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 240.03 60.96 0)
+			(at 233.68 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12006,7 +12006,7 @@
 	)
 	(symbol
 		(lib_id "Device:R_US")
-		(at 251.46 106.68 90)
+		(at 245.11 106.68 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -12014,7 +12014,7 @@
 		(dnp no)
 		(uuid "f5802518-e984-4363-ad7a-eb74c96f62cc")
 		(property "Reference" "R19"
-			(at 251.46 103.886 90)
+			(at 245.11 103.886 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12022,7 +12022,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 251.46 109.22 90)
+			(at 245.11 109.22 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12030,7 +12030,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 251.714 105.664 90)
+			(at 245.364 105.664 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12039,7 +12039,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 251.46 106.68 0)
+			(at 245.11 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12048,7 +12048,7 @@
 			)
 		)
 		(property "Description" "Resistor, US symbol"
-			(at 251.46 106.68 0)
+			(at 245.11 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)

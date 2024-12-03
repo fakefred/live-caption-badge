@@ -6,7 +6,7 @@
 		(thickness 1.6)
 		(legacy_teardrops no)
 	)
-	(paper "A4")
+	(paper "USLetter")
 	(title_block
 		(title "Live Caption Badge")
 		(date "2024-11-22")
@@ -26688,7 +26688,7 @@
 		(descr "Capacitor SMD 0603 (1608 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
 		(tags "capacitor")
 		(property "Reference" "C48"
-			(at 0 -1.43 360)
+			(at 0 -1.43 0)
 			(layer "F.SilkS")
 			(uuid "58d42722-1067-4ffc-a7bf-c6062b5fc28f")
 			(effects
@@ -26699,7 +26699,7 @@
 			)
 		)
 		(property "Value" "22pF"
-			(at 0 1.43 360)
+			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "a05c0e64-b12a-4149-bbac-5223639f050a")
 			(effects
@@ -26854,7 +26854,7 @@
 			(uuid "9528e37e-92fe-4ab8-b666-9154accf431a")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 0 360)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(uuid "8cc8b967-1455-4c6a-a8f0-8413a9cf1d69")
 			(effects

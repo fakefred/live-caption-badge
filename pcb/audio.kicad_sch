@@ -3,10 +3,11 @@
 	(generator "eeschema")
 	(generator_version "8.0")
 	(uuid "cf4248a2-7644-47b4-bd93-a913cff40fda")
-	(paper "A4")
+	(paper "USLetter")
 	(title_block
 		(title "Live Caption Badge - Audio Subsystem")
-		(date "2024-10-29")
+		(date "2024-11-21")
+		(rev "2")
 	)
 	(lib_symbols
 		(symbol "Connector:TestPoint"
@@ -2860,7 +2861,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 137.16) (xy 252.73 137.16)
+			(xy 228.6 149.86) (xy 240.03 149.86)
 		)
 		(stroke
 			(width 0)
@@ -3030,7 +3031,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 144.78) (xy 252.73 144.78)
+			(xy 228.6 157.48) (xy 240.03 157.48)
 		)
 		(stroke
 			(width 0)
@@ -3110,7 +3111,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 99.06) (xy 237.49 99.06)
+			(xy 227.33 111.76) (xy 224.79 111.76)
 		)
 		(stroke
 			(width 0)
@@ -3210,7 +3211,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 142.24) (xy 252.73 142.24)
+			(xy 228.6 154.94) (xy 240.03 154.94)
 		)
 		(stroke
 			(width 0)
@@ -3220,7 +3221,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 134.62) (xy 252.73 134.62)
+			(xy 228.6 147.32) (xy 240.03 147.32)
 		)
 		(stroke
 			(width 0)
@@ -3260,7 +3261,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 101.6) (xy 237.49 101.6)
+			(xy 227.33 114.3) (xy 224.79 114.3)
 		)
 		(stroke
 			(width 0)
@@ -3370,7 +3371,7 @@
 	)
 	(wire
 		(pts
-			(xy 241.3 147.32) (xy 252.73 147.32)
+			(xy 228.6 160.02) (xy 240.03 160.02)
 		)
 		(stroke
 			(width 0)
@@ -3450,7 +3451,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 109.22) (xy 237.49 109.22)
+			(xy 227.33 121.92) (xy 224.79 121.92)
 		)
 		(stroke
 			(width 0)
@@ -3480,7 +3481,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 93.98) (xy 237.49 93.98)
+			(xy 227.33 106.68) (xy 224.79 106.68)
 		)
 		(stroke
 			(width 0)
@@ -3670,7 +3671,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 104.14) (xy 237.49 104.14)
+			(xy 227.33 116.84) (xy 224.79 116.84)
 		)
 		(stroke
 			(width 0)
@@ -3720,7 +3721,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 111.76) (xy 237.49 111.76)
+			(xy 227.33 124.46) (xy 224.79 124.46)
 		)
 		(stroke
 			(width 0)
@@ -3990,7 +3991,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 96.52) (xy 237.49 96.52)
+			(xy 227.33 109.22) (xy 224.79 109.22)
 		)
 		(stroke
 			(width 0)
@@ -4009,8 +4010,8 @@
 		(uuid "fdc8b6db-e502-498b-8958-75700eb12c16")
 	)
 	(rectangle
-		(start 228.6 128.27)
-		(end 266.7 152.4)
+		(start 215.9 140.97)
+		(end 254 165.1)
 		(stroke
 			(width 0)
 			(type default)
@@ -4021,8 +4022,8 @@
 		(uuid 82a90f00-4e32-4ec4-af96-8434cefab3d3)
 	)
 	(rectangle
-		(start 219.71 87.63)
-		(end 266.7 119.38)
+		(start 207.01 100.33)
+		(end 254 132.08)
 		(stroke
 			(width 0)
 			(type default)
@@ -4064,7 +4065,7 @@
 	)
 	(text "Analog Testpoints"
 		(exclude_from_sim no)
-		(at 245.618 124.968 0)
+		(at 232.918 137.668 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -4074,7 +4075,7 @@
 	)
 	(text "I2S & I2C Testpoints"
 		(exclude_from_sim no)
-		(at 239.268 84.582 0)
+		(at 226.568 97.282 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -4115,7 +4116,7 @@
 		(uuid "0e535058-38ad-4ce2-8465-26ffe3b29b54")
 	)
 	(label "DAC_OUTP"
-		(at 241.3 134.62 0)
+		(at 228.6 147.32 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4137,7 +4138,7 @@
 		(uuid "24f2a35a-2425-4033-87fe-f4bce8372321")
 	)
 	(label "AUDIO_OUT"
-		(at 241.3 147.32 0)
+		(at 228.6 160.02 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4192,7 +4193,7 @@
 		(uuid "909f6b9f-8e3e-4c2f-9b80-b32ff9c7fd31")
 	)
 	(label "MIC_IN"
-		(at 241.3 144.78 0)
+		(at 228.6 157.48 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4225,7 +4226,7 @@
 		(uuid "d9ca3704-c9a6-4a40-8f66-cae0b9101709")
 	)
 	(label "MIC_BIAS"
-		(at 241.3 142.24 0)
+		(at 228.6 154.94 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4236,7 +4237,7 @@
 		(uuid "dd9a7699-c0c5-4872-9c5d-44850aa557f0")
 	)
 	(label "DAC_OUTN"
-		(at 241.3 137.16 0)
+		(at 228.6 149.86 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4283,7 +4284,7 @@
 	)
 	(hierarchical_label "I2C_SDA"
 		(shape input)
-		(at 237.49 109.22 180)
+		(at 224.79 121.92 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4343,7 +4344,7 @@
 	)
 	(hierarchical_label "I2S_LRCK"
 		(shape input)
-		(at 237.49 99.06 180)
+		(at 224.79 111.76 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4355,7 +4356,7 @@
 	)
 	(hierarchical_label "I2S_SCLK"
 		(shape input)
-		(at 237.49 96.52 180)
+		(at 224.79 109.22 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4367,7 +4368,7 @@
 	)
 	(hierarchical_label "I2S_SDIN"
 		(shape input)
-		(at 237.49 104.14 180)
+		(at 224.79 116.84 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4427,7 +4428,7 @@
 	)
 	(hierarchical_label "I2C_SCL"
 		(shape input)
-		(at 237.49 111.76 180)
+		(at 224.79 124.46 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4475,7 +4476,7 @@
 	)
 	(hierarchical_label "I2S_MCLK"
 		(shape input)
-		(at 237.49 93.98 180)
+		(at 224.79 106.68 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4487,7 +4488,7 @@
 	)
 	(hierarchical_label "I2S_SDOUT"
 		(shape input)
-		(at 237.49 101.6 180)
+		(at 224.79 114.3 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4583,7 +4584,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 99.06 270)
+		(at 227.33 111.76 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4592,7 +4593,7 @@
 		(fields_autoplaced yes)
 		(uuid "0289910f-804c-4ae1-b425-beb75d568878")
 		(property "Reference" "TP6"
-			(at 245.11 99.0599 90)
+			(at 232.41 111.7599 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4601,7 +4602,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 100.3299 90)
+			(at 232.41 113.0299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4611,7 +4612,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 104.14 0)
+			(at 227.33 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4620,7 +4621,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 104.14 0)
+			(at 227.33 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4629,7 +4630,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 99.06 0)
+			(at 227.33 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4651,7 +4652,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 252.73 147.32 270)
+		(at 240.03 160.02 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4659,7 +4660,7 @@
 		(dnp no)
 		(uuid "03ec9875-5342-4cd8-925c-2b8a07e9e91f")
 		(property "Reference" "TP16"
-			(at 257.81 147.32 90)
+			(at 245.11 160.02 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4668,7 +4669,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 257.81 148.5899 90)
+			(at 245.11 161.2899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4678,7 +4679,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 252.73 152.4 0)
+			(at 240.03 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4687,7 +4688,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 252.73 152.4 0)
+			(at 240.03 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4696,7 +4697,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 252.73 147.32 0)
+			(at 240.03 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4785,7 +4786,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 252.73 144.78 270)
+		(at 240.03 157.48 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4793,7 +4794,7 @@
 		(dnp no)
 		(uuid "0a23974e-915b-4bfd-b1b0-eb6389ce0d6c")
 		(property "Reference" "TP15"
-			(at 257.81 144.78 90)
+			(at 245.11 157.48 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4802,7 +4803,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 257.81 146.0499 90)
+			(at 245.11 158.7499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4812,7 +4813,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 252.73 149.86 0)
+			(at 240.03 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4821,7 +4822,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 252.73 149.86 0)
+			(at 240.03 162.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4830,7 +4831,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 252.73 144.78 0)
+			(at 240.03 157.48 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4852,7 +4853,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 111.76 270)
+		(at 227.33 124.46 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4861,7 +4862,7 @@
 		(fields_autoplaced yes)
 		(uuid "0be91204-4c2d-40dc-bf67-422b7eaa649c")
 		(property "Reference" "TP10"
-			(at 245.11 111.7599 90)
+			(at 232.41 124.4599 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4870,7 +4871,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 113.0299 90)
+			(at 232.41 125.7299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4880,7 +4881,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 116.84 0)
+			(at 227.33 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4889,7 +4890,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 116.84 0)
+			(at 227.33 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4898,7 +4899,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 111.76 0)
+			(at 227.33 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5602,7 +5603,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 96.52 270)
+		(at 227.33 109.22 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5611,7 +5612,7 @@
 		(fields_autoplaced yes)
 		(uuid "50fda9ea-ee56-4496-941b-996fcf22f6fa")
 		(property "Reference" "TP5"
-			(at 245.11 96.5199 90)
+			(at 232.41 109.2199 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5620,7 +5621,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 97.7899 90)
+			(at 232.41 110.4899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5630,7 +5631,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 101.6 0)
+			(at 227.33 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5639,7 +5640,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 101.6 0)
+			(at 227.33 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5648,7 +5649,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 96.52 0)
+			(at 227.33 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6070,7 +6071,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 234.95 140.97 0)
+		(at 222.25 153.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6078,7 +6079,7 @@
 		(dnp no)
 		(uuid "7fd12774-671a-40d8-8d54-f4bedc4b6544")
 		(property "Reference" "TP11"
-			(at 232.41 135.636 0)
+			(at 219.71 148.336 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6087,7 +6088,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 236.2199 135.89 90)
+			(at 223.5199 148.59 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6097,7 +6098,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 140.97 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6106,7 +6107,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 140.97 0)
+			(at 227.33 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6115,7 +6116,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 234.95 140.97 0)
+			(at 222.25 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6203,7 +6204,7 @@
 	)
 	(symbol
 		(lib_id "power:GNDA")
-		(at 234.95 140.97 0)
+		(at 222.25 153.67 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6212,7 +6213,7 @@
 		(fields_autoplaced yes)
 		(uuid "827fe3b3-4d1b-40df-ae35-2ac098b6e7cf")
 		(property "Reference" "#PWR014"
-			(at 234.95 147.32 0)
+			(at 222.25 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6221,7 +6222,7 @@
 			)
 		)
 		(property "Value" "GNDA"
-			(at 234.95 146.05 0)
+			(at 222.25 158.75 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6229,7 +6230,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 234.95 140.97 0)
+			(at 222.25 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6238,7 +6239,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 234.95 140.97 0)
+			(at 222.25 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6247,7 +6248,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
-			(at 234.95 140.97 0)
+			(at 222.25 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6269,7 +6270,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 252.73 137.16 270)
+		(at 240.03 149.86 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6277,7 +6278,7 @@
 		(dnp no)
 		(uuid "84a8cd06-2192-43ae-8157-6926da50dadf")
 		(property "Reference" "TP13"
-			(at 257.81 137.16 90)
+			(at 245.11 149.86 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6286,7 +6287,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 257.81 138.4299 90)
+			(at 245.11 151.1299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6296,7 +6297,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 252.73 142.24 0)
+			(at 240.03 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6305,7 +6306,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 252.73 142.24 0)
+			(at 240.03 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6314,7 +6315,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 252.73 137.16 0)
+			(at 240.03 149.86 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6902,7 +6903,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 93.98 270)
+		(at 227.33 106.68 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6911,7 +6912,7 @@
 		(fields_autoplaced yes)
 		(uuid "b54e903b-8025-465e-8ace-f0f1c799e201")
 		(property "Reference" "TP4"
-			(at 245.11 93.9799 90)
+			(at 232.41 106.6799 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6920,7 +6921,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 95.2499 90)
+			(at 232.41 107.9499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6930,7 +6931,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 99.06 0)
+			(at 227.33 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6939,7 +6940,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 99.06 0)
+			(at 227.33 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6948,7 +6949,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 93.98 0)
+			(at 227.33 106.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7312,7 +7313,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 109.22 270)
+		(at 227.33 121.92 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7321,7 +7322,7 @@
 		(fields_autoplaced yes)
 		(uuid "c81763fa-ff95-4cb0-8477-d1f83dba7c98")
 		(property "Reference" "TP9"
-			(at 245.11 109.2199 90)
+			(at 232.41 121.9199 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7330,7 +7331,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 110.4899 90)
+			(at 232.41 123.1899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7340,7 +7341,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 114.3 0)
+			(at 227.33 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7349,7 +7350,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 114.3 0)
+			(at 227.33 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7358,7 +7359,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 109.22 0)
+			(at 227.33 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7522,7 +7523,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 101.6 270)
+		(at 227.33 114.3 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7531,7 +7532,7 @@
 		(fields_autoplaced yes)
 		(uuid "d3faf9ef-31b0-465a-ad07-bd9b1c0cec9f")
 		(property "Reference" "TP7"
-			(at 245.11 101.5999 90)
+			(at 232.41 114.2999 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7540,7 +7541,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 102.8699 90)
+			(at 232.41 115.5699 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7550,7 +7551,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 106.68 0)
+			(at 227.33 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7559,7 +7560,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 106.68 0)
+			(at 227.33 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7568,7 +7569,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 101.6 0)
+			(at 227.33 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7864,7 +7865,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 252.73 142.24 270)
+		(at 240.03 154.94 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7872,7 +7873,7 @@
 		(dnp no)
 		(uuid "dac86deb-26fc-4acd-89e8-0e98b4bcf818")
 		(property "Reference" "TP14"
-			(at 257.81 142.24 90)
+			(at 245.11 154.94 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7881,7 +7882,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 257.81 143.5099 90)
+			(at 245.11 156.2099 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7891,7 +7892,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 252.73 147.32 0)
+			(at 240.03 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7900,7 +7901,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 252.73 147.32 0)
+			(at 240.03 160.02 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7909,7 +7910,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 252.73 142.24 0)
+			(at 240.03 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8086,7 +8087,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 257.81 104.14 0)
+		(at 245.11 116.84 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8094,7 +8095,7 @@
 		(dnp no)
 		(uuid "e24ad44f-bbbb-4e1d-8324-9c820b30c446")
 		(property "Reference" "TP17"
-			(at 255.27 98.806 0)
+			(at 242.57 111.506 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8103,7 +8104,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 259.0799 99.06 90)
+			(at 246.3799 111.76 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8113,7 +8114,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 262.89 104.14 0)
+			(at 250.19 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8122,7 +8123,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 262.89 104.14 0)
+			(at 250.19 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8131,7 +8132,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 257.81 104.14 0)
+			(at 245.11 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8153,7 +8154,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 240.03 104.14 270)
+		(at 227.33 116.84 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8162,7 +8163,7 @@
 		(fields_autoplaced yes)
 		(uuid "e2a02aa6-6a0b-4c2f-bf26-7e6381c7944d")
 		(property "Reference" "TP8"
-			(at 245.11 104.1399 90)
+			(at 232.41 116.8399 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8171,7 +8172,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 245.11 105.4099 90)
+			(at 232.41 118.1099 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8181,7 +8182,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 240.03 109.22 0)
+			(at 227.33 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8190,7 +8191,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 240.03 109.22 0)
+			(at 227.33 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8199,7 +8200,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 240.03 104.14 0)
+			(at 227.33 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8362,7 +8363,7 @@
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 252.73 134.62 270)
+		(at 240.03 147.32 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8370,7 +8371,7 @@
 		(dnp no)
 		(uuid "e69f023c-d809-42fd-a03a-3fb7e9fedf65")
 		(property "Reference" "TP12"
-			(at 257.81 134.62 90)
+			(at 245.11 147.32 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8379,7 +8380,7 @@
 			)
 		)
 		(property "Value" "TestPoint"
-			(at 257.81 135.8899 90)
+			(at 245.11 148.5899 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8389,7 +8390,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
-			(at 252.73 139.7 0)
+			(at 240.03 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8398,7 +8399,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 252.73 139.7 0)
+			(at 240.03 152.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8407,7 +8408,7 @@
 			)
 		)
 		(property "Description" "test point"
-			(at 252.73 134.62 0)
+			(at 240.03 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8838,7 +8839,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 257.81 104.14 0)
+		(at 245.11 116.84 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8847,7 +8848,7 @@
 		(fields_autoplaced yes)
 		(uuid "f585c35e-a610-4706-a7ef-36ce30e8eaf6")
 		(property "Reference" "#PWR048"
-			(at 257.81 110.49 0)
+			(at 245.11 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8856,7 +8857,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 257.81 109.22 0)
+			(at 245.11 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8864,7 +8865,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 257.81 104.14 0)
+			(at 245.11 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8873,7 +8874,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 257.81 104.14 0)
+			(at 245.11 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8882,7 +8883,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 257.81 104.14 0)
+			(at 245.11 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
