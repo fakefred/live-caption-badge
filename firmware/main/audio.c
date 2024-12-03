@@ -70,7 +70,7 @@ esp_err_t audio_init(void) {
 	audio_pipeline_register(tx_pipeline, tx_http, "tx-http");
 
 	// RX pipeline: Peer RX
-        ESP_LOGI(TAG, "Create Peer RX pipeline");
+	ESP_LOGI(TAG, "Create Peer RX pipeline");
 	audio_pipeline_cfg_t rx_pipeline_cfg = DEFAULT_AUDIO_PIPELINE_CONFIG();
 	rx_pipeline = audio_pipeline_init(&rx_pipeline_cfg);
 	mem_assert(rx_pipeline);
@@ -88,7 +88,7 @@ esp_err_t audio_init(void) {
 	rx_http_cfg.event_handle = _http_down_stream_event_handle;
 	rx_http = http_stream_init(&rx_http_cfg);
 	audio_element_set_uri(rx_http, CONFIG_SERVER_URI);
-        audio_pipeline_register(rx_pipeline, rx_http, "rx-http");
+	audio_pipeline_register(rx_pipeline, rx_http, "rx-http");
 
 	/*
 	 * Link pipelines:
@@ -99,7 +99,7 @@ esp_err_t audio_init(void) {
 	ESP_LOGI(TAG, "Link TX pipelines");
 	const char *vosk_link_tag[2] = {"adc", "tx-http"};
 	audio_pipeline_link(tx_pipeline, vosk_link_tag, 2);
-	
+
 	/*
 	 * rx_http ------- dac_i2s
 	 */

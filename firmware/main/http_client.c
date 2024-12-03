@@ -14,7 +14,7 @@ esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 	if (msg->event_id == HTTP_STREAM_PRE_REQUEST) {
 		// set header
 		ESP_LOGI(TAG, "[ + ] HTTP client HTTP_STREAM_PRE_REQUEST, length=%d",
-			 msg->buffer_len);
+		         msg->buffer_len);
 		esp_http_client_set_method(http, HTTP_METHOD_POST);
 		char dat[10] = {0};
 		snprintf(dat, sizeof(dat), "%d", AUDIO_SAMPLE_RATE);
@@ -48,7 +48,7 @@ esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 
 	if (msg->event_id == HTTP_STREAM_POST_REQUEST) {
 		ESP_LOGI(TAG,
-			 "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
+		         "[ + ] HTTP client HTTP_STREAM_POST_REQUEST, write end chunked marker");
 		if (esp_http_client_write(http, "0\r\n\r\n", 5) <= 0) {
 			return ESP_FAIL;
 		}

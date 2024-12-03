@@ -32,7 +32,7 @@ typedef enum {
 	MODE_SLEEP,
 } badge_mode_t;
 
-static badge_mode_t badge_mode = MODE_SLEEP;
+static badge_mode_t      badge_mode = MODE_SLEEP;
 static SemaphoreHandle_t fsm_sem;
 
 void handle_button(int button_id) {
@@ -99,7 +99,7 @@ void app_main(void) {
 		ESP_ERROR_CHECK(nvs_flash_erase());
 		err = nvs_flash_init();
 	}
-	
+
 	ESP_ERROR_CHECK(esp_netif_init());
 
 	ESP_LOGI(TAG, "Initialize peripherals");
@@ -139,8 +139,6 @@ void app_main(void) {
 			handle_button((int)msg.data);
 			if ((int)msg.data == BUTTON_ID_1) {
 			} else if ((int)msg.data == BUTTON_ID_2) {
-
-
 
 			} else if ((int)msg.data == BUTTON_ID_3) {
 				ESP_LOGI(TAG, "[ * ] Button 3");

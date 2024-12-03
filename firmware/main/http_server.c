@@ -33,7 +33,6 @@ static esp_err_t transcription_post_handler(httpd_req_t *req) {
 		}
 
 		bytes_recv += ret;
-
 	}
 
 	/* Log data received */
