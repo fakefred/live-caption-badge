@@ -601,8 +601,10 @@ esp_err_t gattc_start(void) {
 
 	ret = esp_ble_gattc_app_register(PROFILE_A_APP_ID);
 	if (ret) {
-		ESP_LOGE(GATTC_TAG, "%s gattc app register failed, error code = %x", __func__, ret);
+		ESP_LOGE(GATTC_TAG, "%s gattc app register failed, error code = %x",
+			 __func__, ret);
 	}
+
 	esp_err_t local_mtu_ret = esp_ble_gatt_set_local_mtu(500);
 	if (local_mtu_ret) {
 		ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
@@ -610,4 +612,9 @@ esp_err_t gattc_start(void) {
 
 	ESP_LOGI(GATTC_TAG, "GATTC setup success");
 	return ESP_OK;
+}
+
+esp_err_t gattc_stop(void) {
+	esp_err_t ret = esp_ble_gattc_app_unregister(PROFILE_A_APP_ID);
+	return ret;
 }

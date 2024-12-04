@@ -67,6 +67,7 @@ void handle_button(int button_id) {
 				ESP_LOGW(TAG, "No badges scanned over BLE");
 				ui_layout_pair_confirm(NULL); // display failure message
 			}
+			gattc_stop();
 		}
 	} else if (badge_mode == MODE_TALK) {
 		if (button_id == BUTTON_ID_1) {
