@@ -5,6 +5,7 @@ import socket
 import json
 import requests
 import queue
+import re
 from multiprocessing import Process
 
 import wave
@@ -91,22 +92,20 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
-        global audio_queues
+        global audio_queues, buffer
 
-        global buffer
         urlparts = parse.urlparse(self.path)
-
         request_file_path = urlparts.path.strip("/")
         total_bytes = 0
         sample_rates = 0
         bits = 0
         channel = 0
         if (
-            request_file_path == "upload"
+            request_file_path == "audio"
             and self.headers.get("Transfer-Encoding", "").lower() == "chunked"
         ):
             ip = self.client_address[0]
-            print(f"POST /upload from {ip}")
+            print(f"POST /audio from {ip}")
 
             for badge_ip in BADGE_IP_ADDRS:
                 if badge_ip != ip:
@@ -177,34 +176,47 @@ class Handler(BaseHTTPRequestHandler):
             self._write_wav(data, 16000, 16, 1)
 
     def do_GET(self):
-        global audio_queues
+        urlparts = parse.urlparse(self.path)
+        request_file_path = urlparts.path.strip("/")
 
-        self.send_response(200)
-        self.send_header("Content-Type", "application/octet-stream")
-        self.send_header("Transfer-Encoding", "chunked")
-        self.end_headers()
+        if request_file_path == "audio":
+            global audio_queues
 
-        ip = self.client_address[0]
-        audio_queues[ip] = queue.Queue()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Transfer-Encoding", "chunked")
+            self.end_headers()
 
-        total_bytes = 0
+            ip = self.client_address[0]
+            audio_queues[ip] = queue.Queue()
 
-        while True:
-            chunk = audio_queues[ip].get()
-            total_bytes += len(chunk)
-            print(
-                f"  -> {ip}: TX {total_bytes} bytes total, queue length: {audio_queues[ip].qsize()}"
-            )
-            size = f"{len(chunk):X}".encode("utf-8")
-            buf = size + b"\r\n" + chunk + b"\r\n"
-            try:
-                self.wfile.write(buf)
-            except ConnectionResetError:
-                del audio_queues[ip]
-                return
+            total_bytes = 0
 
-        self.wfile.write(b"0\r\n\r\n")
-        del audio_queues[ip]
+            while True:
+                chunk = audio_queues[ip].get()
+                total_bytes += len(chunk)
+                print(
+                    f"  -> {ip}: TX {total_bytes} bytes total, queue length: {audio_queues[ip].qsize()}"
+                )
+                size = f"{len(chunk):X}".encode("utf-8")
+                buf = size + b"\r\n" + chunk + b"\r\n"
+                try:
+                    self.wfile.write(buf)
+                except ConnectionResetError:
+                    del audio_queues[ip]
+                    return
+
+            self.wfile.write(b"0\r\n\r\n")
+            del audio_queues[ip]
+        elif request_file_path == "pair":
+            if not urlparts.query.startswith("with="):
+                self.send_response(400)
+
+            
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Transfer-Encoding", "chunked")
+            self.end_headers()
 
 
 def get_host_ip():
