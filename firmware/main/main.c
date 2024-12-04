@@ -39,7 +39,7 @@ typedef enum {
 } badge_mode_t;
 
 static badge_mode_t      badge_mode = MODE_SLEEP;
-static bool              paired = false;
+bool                     paired = false;
 user_t                   peer_badge;
 
 const char name[20] = "Lynn CONWAY";

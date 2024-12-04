@@ -80,6 +80,33 @@ static const httpd_uri_t poke_uri = {
     .user_ctx = NULL,
 };
 
+static esp_err_t unpoke_get_handler(httpd_req_t *req) {
+	ESP_LOGI(TAG, "======== GET /unpoke =======");
+
+	if (audio_pipeline_stop(rx_pipeline) == ESP_OK) {
+		ESP_LOGI(TAG, "No more audio from server");
+		audio_pipeline_stop(rx_pipeline);
+		audio_pipeline_wait_for_stop(rx_pipeline);
+		audio_pipeline_reset_ringbuffer(rx_pipeline);
+		audio_pipeline_reset_elements(rx_pipeline);
+		audio_pipeline_terminate(rx_pipeline);
+		es8311_pa_power(false);
+	} else {
+		ESP_LOGE(TAG, "Failed to stop rx_pipeline");
+	}
+
+	// End response
+	httpd_resp_send_chunk(req, NULL, 0);
+	return ESP_OK;
+}
+
+static const httpd_uri_t unpoke_uri = {
+    .uri = "/unpoke",
+    .method = HTTP_GET,
+    .handler = unpoke_get_handler,
+    .user_ctx = NULL,
+};
+
 httpd_handle_t start_webserver(void) {
 	httpd_handle_t server = NULL;
 	httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -92,6 +119,7 @@ httpd_handle_t start_webserver(void) {
 		ESP_LOGI(TAG, "Registering URI handlers");
 		httpd_register_uri_handler(server, &transcription_uri);
 		httpd_register_uri_handler(server, &poke_uri);
+		httpd_register_uri_handler(server, &unpoke_uri);
 		return server;
 	}
 
