@@ -89,7 +89,7 @@ epaper_err_t ui_layout_pair_searching(void) {
 
 	Paint_SetRotate(ROTATE_180);
 	draw_string_medium(300, 280, "Searching for");
-	draw_string_medium(300, 350, "nearby badges...");
+	draw_string_medium(300, 330, "nearby badges...");
 	Paint_SetRotate(ROTATE_0);
 
 	print_name();
@@ -110,7 +110,7 @@ epaper_err_t ui_layout_pair_confirm(const char *peer_name) {
 	Paint_SetRotate(ROTATE_180);
 	if (peer_name != NULL) {
 		draw_string_medium(300, 280, "Pair with this badge?");
-		draw_string_large(300, 350, peer_name);
+		draw_string_large(300, 330, peer_name);
 		draw_button(BUTTON_ID_1, &CHECK_LOGO);
 		draw_button(BUTTON_ID_2, &CROSS_LOGO);
 	} else { // HACK
@@ -137,7 +137,7 @@ epaper_err_t ui_layout_pair_pending(const char *peer_name) {
 	Paint_SetRotate(ROTATE_180);
 	assert(peer_name != NULL);
 	draw_string_medium(300, 280, "Requesting to pair...");
-	draw_string_large(300, 350, peer_name);
+	draw_string_large(300, 330, peer_name);
 	Paint_SetRotate(ROTATE_0);
 
 	print_name();
@@ -158,7 +158,7 @@ epaper_err_t ui_layout_pair_result(const char *peer_name) {
 	Paint_SetRotate(ROTATE_180);
 	if (peer_name != NULL) {
 		draw_string_medium(300, 280, "You are paired with");
-		draw_string_large(300, 350, peer_name);
+		draw_string_large(300, 330, peer_name);
 	} else { // HACK
 		draw_string_medium(300, 280, "Pairing failed");
 	}
