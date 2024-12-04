@@ -70,8 +70,8 @@ epaper_err_t ui_layout_badge(void) {
 epaper_err_t ui_layout_caption(void) {
 	ESP_LOGI(TAG, "ui_layout_caption");
 
-	draw_button(BUTTON_ID_1, &MUTE_LOGO);
 	caption_enabled = true;
+	draw_button(BUTTON_ID_1, &MUTE_LOGO);
 	return caption_clear();
 }
 
@@ -115,6 +115,7 @@ epaper_err_t ui_layout_pair_confirm(const char *peer_name) {
 		draw_button(BUTTON_ID_2, &CROSS_LOGO);
 	} else { // HACK
 		draw_string_medium(300, 280, "No nearby badges found.");
+		draw_string_medium(450, 420, "Press any key");
 	}
 	Paint_SetRotate(ROTATE_0);
 
@@ -140,7 +141,7 @@ epaper_err_t ui_layout_pair_pending(const char *peer_name) {
 	Paint_SetRotate(ROTATE_0);
 
 	print_name();
-	
+
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
 	};
@@ -161,6 +162,7 @@ epaper_err_t ui_layout_pair_result(const char *peer_name) {
 	} else { // HACK
 		draw_string_medium(300, 280, "Pairing failed");
 	}
+	draw_string_medium(450, 420, "Press any key");
 	Paint_SetRotate(ROTATE_0);
 
 	print_name();

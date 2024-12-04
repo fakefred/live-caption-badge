@@ -199,10 +199,10 @@ epaper_err_t caption_display() {
 			                   WHITE);
 			refresh_area = (epaper_refresh_area_t){
 				.mode = EPAPER_REFRESH_PARTIAL,
-				.x_start = 0,
-				.y_start = 0,
-				.x_end = EPD_7IN5_V2_WIDTH,
-				.y_end = EPD_7IN5_V2_HEIGHT,
+				.x_start = cfg.x_start,
+				.y_start = cfg.y_start,
+				.x_end = cfg.x_end,
+				.y_end = cfg.y_end,
 			};
 		} else {
 			ESP_LOGI(TAG, "caption_display: Updating screen area (%u, %u) -- (%u, %u)",
@@ -220,6 +220,16 @@ epaper_err_t caption_display() {
 			ESP_LOGE(TAG, "caption_display: Failed to enqueue");
 			has_error = true;
 		}
+
+		Paint_ClearWindows(256, 10, 344, 74, WHITE); // HACK
+		epaper_refresh_area_t button_refresh_area = {
+			.mode = EPAPER_REFRESH_PARTIAL,
+			.x_start = 256,
+			.y_start = 10,
+			.x_end = 344,
+			.y_end = 74,
+		};
+		xQueueSend(epaper_refresh_queue, &button_refresh_area, 0);
 	}
 
 	if (has_error) {

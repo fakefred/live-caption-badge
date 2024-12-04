@@ -157,6 +157,7 @@ void epaper_task(void *arg) {
 				EPD_Display(framebuffer);
 				need_sleep = true;
 			}
+			DEV_Delay_ms(50);
 		}
 
 		if (need_sleep) {

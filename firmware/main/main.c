@@ -83,25 +83,35 @@ void handle_button(int button_id) {
 			ui_layout_badge();
 		}
 	} else if (badge_mode == MODE_PAIR_SEARCH) {
-		// TODO
-		badge_mode = MODE_LISTEN;
-		ui_layout_badge();
-	} else if (badge_mode == MODE_PAIR_NO_PEER) {
-		// press any key to go to listen mode
-		ESP_LOGI(TAG, "MODE_LISTEN");
-		badge_mode = MODE_LISTEN;
-		ui_layout_badge();
+		// no interaction available
 	} else if (badge_mode == MODE_PAIR_CONFIRM) {
 		if (button_id == BUTTON_ID_1) {
 			// confirm
 			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
 			badge_mode = MODE_PAIR_PENDING;
+			ui_layout_pair_pending(peer_badge.name);
+			// TODO
 		} else if (button_id == BUTTON_ID_2) {
 			// cancel
-			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
-			badge_mode = MODE_PAIR_PENDING;
+			ESP_LOGI(TAG, "MODE_LISTEN");
+			badge_mode = MODE_LISTEN;
 			ui_layout_badge();
 		}
+	} else if (badge_mode == MODE_PAIR_NO_PEER) {
+		// press any key to go to listen mode
+		ESP_LOGI(TAG, "MODE_LISTEN");
+		badge_mode = MODE_LISTEN;
+		ui_layout_badge();
+	} else if (badge_mode == MODE_PAIR_PENDING) {
+		// no interaction available
+		ESP_LOGI(TAG, "MODE_LISTEN");
+		badge_mode = MODE_LISTEN;
+		ui_layout_badge();
+	} else if (badge_mode == MODE_PAIR_RESULT) {
+		// press any key to go to listen mode
+		ESP_LOGI(TAG, "MODE_LISTEN");
+		badge_mode = MODE_LISTEN;
+		ui_layout_badge();
 	} else if (badge_mode == MODE_SLEEP) {
 		// TODO
 	}
