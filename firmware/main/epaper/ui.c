@@ -42,7 +42,7 @@ void draw_button(int button_id, const bitmap_t *bitmap) {
 	draw_bitmap(x_start, 10, bitmap);
 }
 
-epaper_err_t ui_layout_badge(void) {
+epaper_err_t ui_layout_badge(const char *peer_name) {
 	ESP_LOGI(TAG, "ui_layout_badge");
 
 	Paint_Clear(WHITE);
@@ -57,6 +57,19 @@ epaper_err_t ui_layout_badge(void) {
 	draw_string_medium(x_start, 400, CONFIG_PARTICIPANT_ROLE);
 
 	draw_button(BUTTON_ID_1, &UNMUTE_LOGO);
+
+	Paint_SetRotate(ROTATE_180);
+	if (peer_name == NULL) {
+		// not paired
+		draw_button(BUTTON_ID_2, &LINK_LOGO);
+		draw_string_medium(32, 440, "Not paired");
+	} else {
+		char *str = calloc(100, 1);
+		snprintf(str, 100, "Paired with %s", peer_name);
+		draw_button(BUTTON_ID_2, &UNLINK_LOGO);
+		draw_string_medium(32, 440, str);
+	}
+	Paint_SetRotate(ROTATE_0);
 
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_SLEEP,

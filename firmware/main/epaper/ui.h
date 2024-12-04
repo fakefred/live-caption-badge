@@ -5,7 +5,7 @@
 /*
  * Switches layout to badge mode. Displays logos, name, etc.
  */
-epaper_err_t ui_layout_badge(void);
+epaper_err_t ui_layout_badge(const char *peer_name);
 
 /*
  * Switches layout to caption mode. Displays blank area for caption.

@@ -37,6 +37,7 @@ typedef enum {
 } badge_mode_t;
 
 static badge_mode_t      badge_mode = MODE_SLEEP;
+static bool              paired = false;
 user_t                   peer_badge;
 
 void handle_button(int button_id) {
@@ -81,7 +82,7 @@ void handle_button(int button_id) {
 			audio_pipeline_reset_elements(tx_pipeline);
 			audio_pipeline_terminate(tx_pipeline);
 
-			ui_layout_badge();
+			ui_layout_badge(paired ? peer_badge.name : NULL);
 		}
 	} else if (badge_mode == MODE_PAIR_SEARCH) {
 		// no interaction available
@@ -96,23 +97,24 @@ void handle_button(int button_id) {
 			// cancel
 			ESP_LOGI(TAG, "MODE_LISTEN");
 			badge_mode = MODE_LISTEN;
-			ui_layout_badge();
+			ui_layout_badge(paired ? peer_badge.name : NULL);
 		}
 	} else if (badge_mode == MODE_PAIR_NO_PEER) {
 		// press any key to go to listen mode
 		ESP_LOGI(TAG, "MODE_LISTEN");
 		badge_mode = MODE_LISTEN;
-		ui_layout_badge();
+		ui_layout_badge(paired ? peer_badge.name : NULL);
 	} else if (badge_mode == MODE_PAIR_PENDING) {
 		// no interaction available
+		// TODO
 		ESP_LOGI(TAG, "MODE_LISTEN");
 		badge_mode = MODE_LISTEN;
-		ui_layout_badge();
+		ui_layout_badge(paired ? peer_badge.name : NULL);
 	} else if (badge_mode == MODE_PAIR_RESULT) {
 		// press any key to go to listen mode
 		ESP_LOGI(TAG, "MODE_LISTEN");
 		badge_mode = MODE_LISTEN;
-		ui_layout_badge();
+		ui_layout_badge(paired ? peer_badge.name : NULL);
 	} else if (badge_mode == MODE_SLEEP) {
 		// TODO
 	}
@@ -151,7 +153,7 @@ void app_main(void) {
 
 	ui_layout_wifi_connected();
 	DEV_Delay_ms(1000);
-	ui_layout_badge();
+	ui_layout_badge(NULL);
 
 	httpd_handle_t server = start_webserver();
 
