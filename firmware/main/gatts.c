@@ -18,12 +18,12 @@
 #include "esp_gatt_common_api.h"
 #include "esp_gatts_api.h"
 #include "gatts_table_creat_demo.h"
-#include "sdkconfig.h"
 
 #include "gatts.h"
 
-extern char ipAddrComplete[20];
-#define BLE_DEVICE_NAME "LIVE_CAPTION_BADGE"
+extern char       ipAddrComplete[20];
+extern const char name[20];
+const char        deviceName[] = "LIVE_CAPTION_BADGE";
 
 static uint8_t adv_config_done = 0;
 
@@ -178,7 +178,7 @@ static const esp_gatts_attr_db_t gatt_db[HRS_IDX_NB] = {
     [IDX_CHAR_VAL_B] = {{ESP_GATT_AUTO_RSP},
                         {ESP_UUID_LEN_16, (uint8_t *)&GATTS_CHAR_UUID_TEST_B,
                          ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE, GATTS_DEMO_CHAR_VAL_LEN_MAX,
-                         strlen(CONFIG_PARTICIPANT_NAME), (uint8_t *)CONFIG_PARTICIPANT_NAME}},
+                         sizeof(name), (uint8_t *)name}},
 
     /* Characteristic Declaration */
     [IDX_CHAR_C] = {{ESP_GATT_AUTO_RSP},
@@ -320,7 +320,7 @@ void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts
                                  esp_ble_gatts_cb_param_t *param) {
 	switch (event) {
 	case ESP_GATTS_REG_EVT: {
-		esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(BLE_DEVICE_NAME);
+		esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(deviceName);
 		if (set_dev_name_ret) {
 			ESP_LOGE(GATTS_TABLE_TAG, "set device name failed, error code = %x",
 			         set_dev_name_ret);
@@ -577,4 +577,40 @@ void gatts_init(void) {
 	if (local_mtu_ret) {
 		ESP_LOGE(GATTS_TABLE_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
 	}
+}
+
+esp_err_t gatts_deinit(void) {
+	esp_err_t ret;
+
+	// ret = esp_ble_gatts_app_unregister(ESP_APP_ID);
+	// if(ret != ESP_OK){
+	//     ESP_LOGE(GATTS_TABLE_TAG, "esp_ble_gatts_app_unregister() failed.");
+	//     return ESP_FAIL;
+	// }
+
+	ret = esp_bluedroid_disable();
+	if (ret != ESP_OK) {
+		ESP_LOGE(GATTS_TABLE_TAG, "esp_bluedroid_disable() failed.");
+		return ESP_FAIL;
+	}
+
+	ret = esp_bluedroid_deinit();
+	if (ret != ESP_OK) {
+		ESP_LOGE(GATTS_TABLE_TAG, "esp_bluedroid_deinit() failed.");
+		return ESP_FAIL;
+	}
+
+	ret = esp_bt_controller_disable();
+	if (ret != ESP_OK) {
+		ESP_LOGE(GATTS_TABLE_TAG, "esp_bt_controller_disable() failed.");
+		return ESP_FAIL;
+	}
+
+	ret = esp_bt_controller_deinit();
+	if (ret != ESP_OK) {
+		ESP_LOGE(GATTS_TABLE_TAG, "esp_bt_controller_deinit() failed.");
+		return ESP_FAIL;
+	}
+	ESP_LOGI(GATTS_TABLE_TAG, "gatts_deinit() success");
+	return ESP_OK;
 }

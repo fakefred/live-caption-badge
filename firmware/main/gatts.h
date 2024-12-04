@@ -20,6 +20,7 @@
 #include "esp_gap_ble_api.h"
 #include "esp_gatt_common_api.h"
 #include "esp_gatts_api.h"
+#include "gatts_table_creat_demo.h"
 
 #define GATTS_TABLE_TAG "GATTS_TABLE_DEMO"
 
@@ -58,6 +59,7 @@ void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts
 void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                          esp_ble_gatts_cb_param_t *param);
 
-void gatts_init(void);
+void      gatts_init(void);
+esp_err_t gatts_deinit(void);
 
 #endif // GATTS_H

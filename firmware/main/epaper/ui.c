@@ -13,6 +13,8 @@
 
 static const char *TAG = "ui";
 
+extern const char name[20];
+
 void draw_string_large(UWORD x_start, UWORD y_start, const char *str) {
 	Paint_DrawString_EN(x_start, y_start, str, &Font48, BLACK, WHITE);
 }
@@ -48,7 +50,7 @@ epaper_err_t ui_layout_badge(const char *peer_name) {
 	Paint_Clear(WHITE);
 	draw_bitmap(0, 90, &UMICH_LOGO);
 	// TODO: long names?
-	draw_string_large(64, 240, CONFIG_PARTICIPANT_NAME);
+	draw_string_large(64, 240, name);
 	draw_string_medium(64, 300, CONFIG_PARTICIPANT_PRONOUNS);
 	draw_string_medium(32, 400, CONFIG_PARTICIPANT_AFFILIATION);
 	// HACK: right align
@@ -91,7 +93,7 @@ epaper_err_t ui_layout_caption(void) {
 static void print_name(void) {
 	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
 	draw_string_medium(64, 280, "Hello, my name is");
-	draw_string_large(64, 350, CONFIG_PARTICIPANT_NAME);
+	draw_string_large(64, 350, name);
 }
 
 epaper_err_t ui_layout_pair_searching(void) {
