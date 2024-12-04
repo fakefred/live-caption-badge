@@ -18,9 +18,9 @@
 static const char *TAG = "http_server";
 
 static esp_err_t transcription_post_handler(httpd_req_t *req) {
-	char buf[100];
-	int  ret;
-	int  bytes_recv = 0;
+	char *buf = calloc(req->content_len + 1, 1);
+	int   ret;
+	int   bytes_recv = 0;
 
 	while (bytes_recv < req->content_len) {
 		/* Read the data for the request */
@@ -30,6 +30,7 @@ static esp_err_t transcription_post_handler(httpd_req_t *req) {
 				/* Retry receiving if timeout occurred */
 				continue;
 			}
+			free(buf);
 			return ESP_FAIL;
 		}
 
@@ -47,6 +48,7 @@ static esp_err_t transcription_post_handler(httpd_req_t *req) {
 
 	// End response
 	httpd_resp_send_chunk(req, NULL, 0);
+	free(buf);
 	return ESP_OK;
 }
 
