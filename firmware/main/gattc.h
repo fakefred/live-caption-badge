@@ -48,11 +48,12 @@ typedef struct {
 	char ip[20];
 } user_t;
 
-void      esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param);
-void      esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
-                       esp_ble_gattc_cb_param_t *param);
-void      gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
-                                      esp_ble_gattc_cb_param_t *param);
+void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param);
+void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
+                  esp_ble_gattc_cb_param_t *param);
+void gattc_profile_event_handler(esp_gattc_cb_event_t      event,
+                                 esp_gatt_if_t             gattc_if,
+                                 esp_ble_gattc_cb_param_t *param);
 esp_err_t gattc_start(void);
 
 static esp_bt_uuid_t remote_filter_service_uuid = {
@@ -87,12 +88,13 @@ static esp_bt_uuid_t notify_descr_uuid = {
         },
 };
 
-static esp_ble_scan_params_t ble_scan_params = {.scan_type = BLE_SCAN_TYPE_ACTIVE,
-                                                .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
-                                                .scan_filter_policy = BLE_SCAN_FILTER_ALLOW_ALL,
-                                                .scan_interval = 0x50,
-                                                .scan_window = 0x30,
-                                                .scan_duplicate = BLE_SCAN_DUPLICATE_DISABLE};
+static esp_ble_scan_params_t ble_scan_params = {
+    .scan_type = BLE_SCAN_TYPE_ACTIVE,
+    .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
+    .scan_filter_policy = BLE_SCAN_FILTER_ALLOW_ALL,
+    .scan_interval = 0x50,
+    .scan_window = 0x30,
+    .scan_duplicate = BLE_SCAN_DUPLICATE_DISABLE};
 
 struct gattc_profile_inst {
 	esp_gattc_cb_t gattc_cb;
@@ -105,13 +107,14 @@ struct gattc_profile_inst {
 	esp_bd_addr_t  remote_bda;
 };
 
-/* One gatt-based profile one app_id and one gattc_if, this array will store the gattc_if returned
- * by ESP_GATTS_REG_EVT */
+/* One gatt-based profile one app_id and one gattc_if, this array will store the
+ * gattc_if returned by ESP_GATTS_REG_EVT */
 static struct gattc_profile_inst gl_profile_tab[PROFILE_NUM] = {
     [PROFILE_A_APP_ID] =
         {
             .gattc_cb = gattc_profile_event_handler,
-            .gattc_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+            .gattc_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is
+                                             ESP_GATT_IF_NONE */
         },
 };
 

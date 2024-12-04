@@ -64,15 +64,19 @@ void app_main(void)
     if (ret != ESP_OK) {
       ESP_LOGE(TAG, "GATTC setup failed.");
     }
-
-    while(1){
-        if( xQueueReceive( q, &( userBuffer ),( TickType_t ) 10 ) == pdPASS ){
-            /* xRxedStructure now contains a copy of xMessage. */
-            ESP_LOGI(TAG, "received user name: %s", userBuffer.name);
-            ESP_LOGI(TAG, "received user IP: %s", userBuffer.ip);
-        }else{
-            ESP_LOGI(TAG, "empty queue");
-        }
-        vTaskDelay(pdMS_TO_TICKS(1000));
+    // while(1){
+    //     if( xQueueReceive( q, &( userBuffer ),( TickType_t ) 10 ) == pdPASS ){
+    //         /* xRxedStructure now contains a copy of xMessage. */
+    //         ESP_LOGI(TAG, "received user name: %s", userBuffer.name);
+    //         ESP_LOGI(TAG, "received user IP: %s", userBuffer.ip);
+    //     }else{
+    //         ESP_LOGI(TAG, "empty queue");
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(1000));
+    // }
+    vTaskDelay(pdMS_TO_TICKS(8000));
+    ret = gattc_start();
+    if (ret != ESP_OK) {
+      ESP_LOGE(TAG, "GATTC setup failed.");
     }
 }

@@ -6,10 +6,10 @@
 
 /****************************************************************************
  *
- * This demo showcases BLE GATT client. It can scan BLE devices and connect to one device.
- * Run the gatt_server demo, the client demo will automatically connect to the gatt_server demo.
- * Client demo will enable gatt_server's notify after connection. The two devices will then exchange
- * data.
+ * This demo showcases BLE GATT client. It can scan BLE devices and connect to
+ *one device. Run the gatt_server demo, the client demo will automatically
+ *connect to the gatt_server demo. Client demo will enable gatt_server's notify
+ *after connection. The two devices will then exchange data.
  *
  ****************************************************************************/
 
@@ -157,22 +157,27 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 					    remote_filter_char_uuid, char_elem_result, &count);
 
 					if (status != ESP_GATT_OK) {
-						ESP_LOGE(GATTC_TAG,
-						         "esp_ble_gattc_get_char_by_uuid error");
+						ESP_LOGE(GATTC_TAG, "esp_ble_gattc_get_"
+						                    "char_by_uuid error");
 						free(char_elem_result);
 						char_elem_result = NULL;
 						break;
 					}
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[0].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[1].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[2].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[3].char_handle);
-					/*  Every service have only one char in our 'ESP_GATTS_DEMO'
-					 * demo, so we used first 'char_elem_result' */
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[0].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[1].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[2].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[3].char_handle);
+					/*  Every service have only one char in
+					 * our 'ESP_GATTS_DEMO' demo, so we used
+					 * first 'char_elem_result' */
 					if (count > 0 && (char_elem_result[0].properties &
 					                  ESP_GATT_CHAR_PROP_BIT_READ)) {
 						gl_profile_tab[PROFILE_A_APP_ID].char_handle =
@@ -190,22 +195,27 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 					    remote_filter_char_uuid2, char_elem_result, &count);
 
 					if (status != ESP_GATT_OK) {
-						ESP_LOGE(GATTC_TAG,
-						         "esp_ble_gattc_get_char_by_uuid error");
+						ESP_LOGE(GATTC_TAG, "esp_ble_gattc_get_"
+						                    "char_by_uuid error");
 						free(char_elem_result);
 						char_elem_result = NULL;
 						break;
 					}
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[0].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[1].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[2].char_handle);
-					// ESP_LOGI(GATTC_TAG, "Discovered characteristic with
-					// handle: 0x%04x", char_elem_result[3].char_handle);
-					/*  Every service have only one char in our 'ESP_GATTS_DEMO'
-					 * demo, so we used first 'char_elem_result' */
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[0].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[1].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[2].char_handle);
+					// ESP_LOGI(GATTC_TAG, "Discovered
+					// characteristic with handle: 0x%04x",
+					// char_elem_result[3].char_handle);
+					/*  Every service have only one char in
+					 * our 'ESP_GATTS_DEMO' demo, so we used
+					 * first 'char_elem_result' */
 					if (count > 0 && (char_elem_result[0].properties &
 					                  ESP_GATT_CHAR_PROP_BIT_READ)) {
 						gl_profile_tab[PROFILE_A_APP_ID].char_handle =
@@ -247,10 +257,20 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 				ESP_LOGI(GATTC_TAG, "targetIP: %s", userList[device_count - 1].ip);
 				readIP = !readIP;
 				xQueueSend(ble_device_queue, (void *)&userList[device_count - 1], (TickType_t)10);
+				esp_err_t close_status;
+				ESP_LOGI(GATTC_TAG, "I dont need you now, end connection.");
+				close_status = esp_ble_gattc_close(
+				    gattc_if, gl_profile_tab[PROFILE_A_APP_ID].conn_id);
+				if (close_status == ESP_OK) {
+					ESP_LOGI(GATTC_TAG, "Successfully disconnected");
+				} else {
+					ESP_LOGE(GATTC_TAG, "Unsuccessful disconnection");
+				}
 			}
-			// struct gattc_search_res_evt_param* sr_res = &p_data->search_res;
-			// uint16_t char_id = sr_res->srvc_id.uuid.uuid.uuid16;
-			// ESP_LOGI(GATTC_TAG, "read uuid: %x",
+			// struct gattc_search_res_evt_param* sr_res =
+			// &p_data->search_res; uint16_t char_id =
+			// sr_res->srvc_id.uuid.uuid.uuid16; ESP_LOGI(GATTC_TAG,
+			// "read uuid: %x",
 			// p_data->search_res.srvc_id.uuid.uuid.uuid16);
 		}
 		break;
@@ -287,16 +307,15 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 					    p_data->reg_for_notify.handle, notify_descr_uuid,
 					    descr_elem_result, &count);
 					if (ret_status != ESP_GATT_OK) {
-						ESP_LOGE(
-						    GATTC_TAG,
-						    "esp_ble_gattc_get_descr_by_char_handle error");
+						ESP_LOGE(GATTC_TAG, "esp_ble_gattc_get_descr_"
+						                    "by_char_handle error");
 						free(descr_elem_result);
 						descr_elem_result = NULL;
 						break;
 					}
-					/* Every char has only one descriptor in our
-					 * 'ESP_GATTS_DEMO' demo, so we used first
-					 * 'descr_elem_result' */
+					/* Every char has only one descriptor in
+					 * our 'ESP_GATTS_DEMO' demo, so we used
+					 * first 'descr_elem_result' */
 					if (count > 0 &&
 					    descr_elem_result[0].uuid.len == ESP_UUID_LEN_16 &&
 					    descr_elem_result[0].uuid.uuid.uuid16 ==
@@ -310,8 +329,8 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 					}
 
 					if (ret_status != ESP_GATT_OK) {
-						ESP_LOGE(GATTC_TAG,
-						         "esp_ble_gattc_write_char_descr error");
+						ESP_LOGE(GATTC_TAG, "esp_ble_gattc_write_"
+						                    "char_descr error");
 					}
 
 					/* free descr_elem_result */
@@ -383,7 +402,8 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 		break;
 	}
 	case ESP_GAP_BLE_SCAN_START_COMPLETE_EVT:
-		// scan start complete event to indicate scan start successfully or failed
+		// scan start complete event to indicate scan start successfully
+		// or failed
 		if (param->scan_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
 			ESP_LOGE(GATTC_TAG, "scan start failed, error status = %x",
 			         param->scan_start_cmpl.status);
@@ -396,14 +416,17 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 		esp_ble_gap_cb_param_t *scan_result = (esp_ble_gap_cb_param_t *)param;
 		switch (scan_result->scan_rst.search_evt) {
 		case ESP_GAP_SEARCH_INQ_RES_EVT:
-			// esp_log_buffer_hex(GATTC_TAG, scan_result->scan_rst.bda, 6);
-			// ESP_LOGI(GATTC_TAG, "searched Adv Data Len %d, Scan Response Len %d",
-			// scan_result->scan_rst.adv_data_len, scan_result->scan_rst.scan_rsp_len);
+			// esp_log_buffer_hex(GATTC_TAG,
+			// scan_result->scan_rst.bda, 6); ESP_LOGI(GATTC_TAG,
+			// "searched Adv Data Len %d, Scan Response Len %d",
+			// scan_result->scan_rst.adv_data_len,
+			// scan_result->scan_rst.scan_rsp_len);
 			adv_name =
 			    esp_ble_resolve_adv_data(scan_result->scan_rst.ble_adv,
 			                             ESP_BLE_AD_TYPE_NAME_CMPL, &adv_name_len);
-			// ESP_LOGI(GATTC_TAG, "searched Device Name Len %d", adv_name_len);
-			// esp_log_buffer_char(GATTC_TAG, adv_name, adv_name_len);
+			// ESP_LOGI(GATTC_TAG, "searched Device Name Len %d",
+			// adv_name_len); esp_log_buffer_char(GATTC_TAG,
+			// adv_name, adv_name_len);
 
 #if CONFIG_EXAMPLE_DUMP_ADV_DATA_AND_SCAN_RESP
 			if (scan_result->scan_rst.adv_data_len > 0) {
@@ -423,16 +446,19 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 			// ESP_LOGI(GATTC_TAG, " ");
 
 			// if (adv_name != NULL) {
-			//     if (strlen(remote_device_name) == adv_name_len && strncmp((char
-			//     *)adv_name, remote_device_name, adv_name_len) == 0) {
-			//         ESP_LOGI(GATTC_TAG, "searched device %s", remote_device_name);
-			//         if (connect == false) {
+			//     if (strlen(remote_device_name) == adv_name_len &&
+			//     strncmp((char *)adv_name, remote_device_name,
+			//     adv_name_len) == 0) {
+			//         ESP_LOGI(GATTC_TAG, "searched device %s",
+			//         remote_device_name); if (connect == false) {
 			//             connect = true;
-			//             ESP_LOGI(GATTC_TAG, "connect to the remote device.");
+			//             ESP_LOGI(GATTC_TAG, "connect to the
+			//             remote device.");
 			//             esp_ble_gap_stop_scanning();
 			//             esp_ble_gattc_open(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
 			//             scan_result->scan_rst.bda,
-			//             scan_result->scan_rst.ble_addr_type, true);
+			//             scan_result->scan_rst.ble_addr_type,
+			//             true);
 			//         }
 			//     }
 			// }
@@ -451,18 +477,21 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 					}
 					// if (connect == false) {
 					//     connect = true;
-					//     ESP_LOGI(GATTC_TAG, "connect to the remote device.");
+					//     ESP_LOGI(GATTC_TAG, "connect to
+					//     the remote device.");
 					//     esp_ble_gap_stop_scanning();
 					//     esp_ble_gattc_open(gl_profile_tab[PROFILE_A_APP_ID].gattc_if,
 					//     scan_result->scan_rst.bda,
-					//     scan_result->scan_rst.ble_addr_type, true);
+					//     scan_result->scan_rst.ble_addr_type,
+					//     true);
 					// }
 				}
 			}
 			break;
 		case ESP_GAP_SEARCH_INQ_CMPL_EVT:
 			ESP_LOGI(GATTC_TAG,
-			         "Scanning end, the number of live caption devices found is %d",
+			         "Scanning end, the number of live caption "
+			         "devices found is %d",
 			         device_count);
 			int index = 0;
 			if (device_count > 0) {
@@ -499,8 +528,8 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 		break;
 	case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
 		ESP_LOGI(GATTC_TAG,
-		         "update connection params status = %d, min_int = %d, max_int = "
-		         "%d,conn_int = %d,latency = %d, timeout = %d",
+		         "update connection params status = %d, min_int = %d, "
+		         "max_int = %d,conn_int = %d,latency = %d, timeout = %d",
 		         param->update_conn_params.status, param->update_conn_params.min_int,
 		         param->update_conn_params.max_int, param->update_conn_params.conn_int,
 		         param->update_conn_params.latency, param->update_conn_params.timeout);
@@ -534,9 +563,11 @@ void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
 	do {
 		int idx;
 		for (idx = 0; idx < PROFILE_NUM; idx++) {
-			if (gattc_if == ESP_GATT_IF_NONE || /* ESP_GATT_IF_NONE, not specify a
-			                                       certain gatt_if, need to call every
-			                                       profile cb function */
+			if (gattc_if == ESP_GATT_IF_NONE || /* ESP_GATT_IF_NONE, not
+			                                       specify a certain
+			                                       gatt_if, need to call
+			                                       every profile cb function
+			                                     */
 			    gattc_if == gl_profile_tab[idx].gattc_if) {
 				if (gl_profile_tab[idx].gattc_cb) {
 					gl_profile_tab[idx].gattc_cb(event, gattc_if, param);
@@ -549,7 +580,7 @@ void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
 esp_err_t gattc_start(void) {
 	esp_err_t ret;
 
-	if (!ble_device_queue) {
+	if (ble_device_queue == NULL) {
 		ble_device_queue = xQueueCreate(1, sizeof(user_t));
 	}
 	xQueueReset(ble_device_queue);
@@ -577,6 +608,6 @@ esp_err_t gattc_start(void) {
 		ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
 	}
 
-	ESP_LOGI(GATTC_TAG, "Devices found during scanning. Proceeding with connection.");
-	return ESP_OK; // Devices found
+	ESP_LOGI(GATTC_TAG, "GATTC setup success");
+	return ESP_OK;
 }

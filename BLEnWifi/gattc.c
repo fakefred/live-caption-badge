@@ -221,6 +221,14 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
                 xQueueSend( q,
                        ( void * ) &userList[device_count-1],
                        ( TickType_t ) 10 );
+                esp_err_t close_status;
+                ESP_LOGI(GATTC_TAG, "I dont need you now, end connection.");
+                close_status = esp_ble_gattc_close(gattc_if,gl_profile_tab[PROFILE_A_APP_ID].conn_id);
+                if(close_status == ESP_OK){
+                    ESP_LOGI(GATTC_TAG, "Successfully disconnected");
+                }else{
+                    ESP_LOGE(GATTC_TAG, "Unsuccessful disconnection");
+                }
             }
             // struct gattc_search_res_evt_param* sr_res = &p_data->search_res;
             // uint16_t char_id = sr_res->srvc_id.uuid.uuid.uuid16;
@@ -520,7 +528,7 @@ esp_err_t gattc_start(void)
         ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
 
-    ESP_LOGI(GATTC_TAG, "Devices found during scanning. Proceeding with connection.");
-    return ESP_OK; // Devices found
+    ESP_LOGI(GATTC_TAG, "GATTC setup success");
+    return ESP_OK;
 
 }
