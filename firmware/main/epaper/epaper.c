@@ -29,7 +29,7 @@
 static bool epaper_is_on = false;
 static TaskHandle_t epaper_task_handle;
 
-epaper_ui_t epaper_ui;
+bool caption_enabled;
 SemaphoreHandle_t epaper_sem; // take when epaper is refreshing, give when done
 QueueHandle_t epaper_refresh_queue; // queue of areas to refresh
 
@@ -81,10 +81,6 @@ epaper_err_t epaper_init(void) {
 	};
 	caption_init(&caption_cfg);
 
-	epaper_ui = (epaper_ui_t){
-		.layout = EPAPER_LAYOUT_BADGE,
-	};
-
 	if (first_time) {
 		// priority set to 1 because ESP32-C6-DevKitM has one core only
 		// so app_main and epaper_task have to round-robin
@@ -98,38 +94,6 @@ epaper_err_t epaper_init(void) {
 	return EPAPER_OK;
 }
 
-epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
-	ESP_LOGI(TAG, "epaper_ui_set_layout: layout = %d", layout);
-	while (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) != pdTRUE) {
-		ESP_LOGW(TAG, "epaper_ui_set_layout take semaphore timeout");
-	}
-	if (layout == EPAPER_LAYOUT_BADGE) {
-		ui_layout_badge();
-	} else if (layout == EPAPER_LAYOUT_CAPTION) {
-		ui_layout_caption();
-	} else if (layout == EPAPER_LAYOUT_PAIR) {
-		ui_layout_pair_searching();
-	} else if (layout == EPAPER_LAYOUT_WIFI_CONNECTING) {
-		ui_layout_wifi_connecting();
-	} else if (layout == EPAPER_LAYOUT_WIFI_CONNECTED) {
-		ui_layout_wifi_connected();
-	} else if (layout == EPAPER_LAYOUT_WIFI_DISCONNECTED) {
-		ui_layout_wifi_disconnected();
-	}
-	epaper_ui.layout = layout;
-	xSemaphoreGive(epaper_sem);
-	return EPAPER_OK;
-}
-
-epaper_err_t epaper_ui_pair_confirm(const char *peer_name) {
-	while (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) != pdTRUE) {
-		ESP_LOGW(TAG, "epaper_ui_pair_confirm take semaphore timeout");
-	}
-	ui_layout_pair_confirm(peer_name);
-	xSemaphoreGive(epaper_sem);
-	return EPAPER_OK;
-}
-
 epaper_err_t epaper_shutdown(void) {
 	ESP_LOGI(TAG, "epaper_shutdown");
 	assert(epaper_is_on);
@@ -140,7 +104,7 @@ epaper_err_t epaper_shutdown(void) {
 	vTaskSuspend(epaper_task_handle);
 	free(framebuffer);
 	xSemaphoreGive(epaper_sem);
-	epaper_ui.layout = EPAPER_LAYOUT_BADGE;
+	caption_enabled = false;
 	epaper_is_on = false;
 	return EPAPER_OK;
 }
@@ -148,7 +112,7 @@ epaper_err_t epaper_shutdown(void) {
 void epaper_task(void *arg) {
 	while (true) {
 		// Update framebuffer depending on layout
-		if (epaper_ui.layout == EPAPER_LAYOUT_CAPTION) {
+		if (caption_enabled) {
 			caption_display();
 		}
 

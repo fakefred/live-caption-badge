@@ -3,6 +3,7 @@
 #include "GUI_Paint.h"
 #include "bitmap/bitmaps.h"
 #include "board.h"
+#include "board_def.h"
 #include "caption.h"
 #include "epaper.h"
 #include "font/fonts.h"
@@ -43,6 +44,7 @@ void draw_button(int button_id, const bitmap_t *bitmap) {
 
 epaper_err_t ui_layout_badge(void) {
 	ESP_LOGI(TAG, "ui_layout_badge");
+
 	Paint_Clear(WHITE);
 	draw_bitmap(0, 90, &UMICH_LOGO);
 	// TODO: long names?
@@ -61,6 +63,7 @@ epaper_err_t ui_layout_badge(void) {
 	};
 
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	caption_enabled = false;
 	return EPAPER_OK;
 }
 
@@ -68,10 +71,11 @@ epaper_err_t ui_layout_caption(void) {
 	ESP_LOGI(TAG, "ui_layout_caption");
 
 	draw_button(BUTTON_ID_1, &MUTE_LOGO);
+	caption_enabled = true;
 	return caption_clear();
 }
 
-static epaper_err_t print_name(void) {
+static void print_name(void) {
 	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
 	draw_string_medium(64, 280, "Hello, my name is");
 	draw_string_large(64, 350, CONFIG_PARTICIPANT_NAME);
@@ -89,7 +93,7 @@ epaper_err_t ui_layout_pair_searching(void) {
 	Paint_SetRotate(ROTATE_0);
 
 	print_name();
-	
+
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
 	};
@@ -107,6 +111,8 @@ epaper_err_t ui_layout_pair_confirm(const char *peer_name) {
 	if (peer_name != NULL) {
 		draw_string_medium(300, 280, "Pair with this badge?");
 		draw_string_large(300, 350, peer_name);
+		draw_button(BUTTON_ID_1, &CHECK_LOGO);
+		draw_button(BUTTON_ID_2, &CROSS_LOGO);
 	} else { // HACK
 		draw_string_medium(300, 280, "No nearby badges found.");
 	}

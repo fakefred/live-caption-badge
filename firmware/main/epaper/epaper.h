@@ -45,20 +45,7 @@ typedef struct {
 
 extern QueueHandle_t epaper_refresh_queue; // queue of areas to refresh
 
-typedef enum {
-	EPAPER_LAYOUT_BADGE,
-	EPAPER_LAYOUT_PAIR,
-	EPAPER_LAYOUT_CAPTION,
-	EPAPER_LAYOUT_WIFI_CONNECTING,
-	EPAPER_LAYOUT_WIFI_CONNECTED,
-	EPAPER_LAYOUT_WIFI_DISCONNECTED,
-} epaper_layout_t;
-
-typedef struct {
-	epaper_layout_t layout;
-} epaper_ui_t;
-
-extern epaper_ui_t epaper_ui;
+extern bool caption_enabled;
 
 typedef struct {
 	// bounding box position, in pixels
@@ -70,14 +57,6 @@ typedef struct {
  * Initializes epaper and FreeRTOS stuff. Starts epaper_task.
  */
 epaper_err_t epaper_init(void);
-
-/*
- * Sets UI layout.
- *
- * The epaper can be in one of the following layouts: badge, pair, caption.
- */
-epaper_err_t epaper_ui_set_layout(epaper_layout_t layout);
-epaper_err_t epaper_ui_pair_confirm(const char *peer_name);
 
 /*
  * Clears epaper and puts epaper to sleep. Stops epaper_task.

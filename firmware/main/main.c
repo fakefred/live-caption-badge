@@ -1,7 +1,5 @@
 #include "audio.h"
 #include "epaper/DEV_Config.h"
-#include "epaper/EPD_7in5_V2.h"
-#include "epaper/caption.h"
 #include "epaper/epaper.h"
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
@@ -9,6 +7,7 @@
 #include "gatts.h"
 #include "http_server.h"
 #include "portmacro.h"
+#include "ui.h"
 #include "wifi.h"
 
 #include "audio_element.h"
@@ -46,13 +45,13 @@ void handle_button(int button_id) {
 			if (audio_pipeline_run(tx_pipeline) == ESP_OK) {
 				ESP_LOGI(TAG, "MODE_TALK, Start ADC pipeline");
 				badge_mode = MODE_TALK;
-				epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
+				ui_layout_caption();
 			}
 		} else if (button_id == BUTTON_ID_2) {
 			ESP_LOGI(TAG, "MODE_PAIR_SEARCH, Start Scanning for target device");
 			badge_mode = MODE_PAIR_SEARCH;
 			gattc_start();
-			epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
+			ui_layout_pair_searching();
 			// begin searching for peer
 			if (xQueueReceive(ble_device_queue, &peer_badge, pdMS_TO_TICKS(5000)) ==
 			    pdTRUE) {
@@ -61,12 +60,12 @@ void handle_button(int button_id) {
 				badge_mode = MODE_PAIR_CONFIRM;
 				ESP_LOGI(TAG, "BLE peer name: %s", peer_badge.name);
 				ESP_LOGI(TAG, "BLE peer IP: %s", peer_badge.ip);
-				epaper_ui_pair_confirm(peer_badge.name);
+				ui_layout_pair_confirm(peer_badge.name);
 			} else {
 				ESP_LOGI(TAG, "MODE_PAIR_NO_PEER");
 				badge_mode = MODE_PAIR_NO_PEER;
 				ESP_LOGW(TAG, "No badges scanned over BLE");
-				epaper_ui_pair_confirm(NULL); // display failure message
+				ui_layout_pair_confirm(NULL); // display failure message
 			}
 		}
 	} else if (badge_mode == MODE_TALK) {
@@ -81,17 +80,17 @@ void handle_button(int button_id) {
 			audio_pipeline_reset_elements(tx_pipeline);
 			audio_pipeline_terminate(tx_pipeline);
 
-			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+			ui_layout_badge();
 		}
 	} else if (badge_mode == MODE_PAIR_SEARCH) {
 		// TODO
 		badge_mode = MODE_LISTEN;
-		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+		ui_layout_badge();
 	} else if (badge_mode == MODE_PAIR_NO_PEER) {
 		// press any key to go to listen mode
 		ESP_LOGI(TAG, "MODE_LISTEN");
 		badge_mode = MODE_LISTEN;
-		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+		ui_layout_badge();
 	} else if (badge_mode == MODE_PAIR_CONFIRM) {
 		if (button_id == BUTTON_ID_1) {
 			// confirm
@@ -101,7 +100,7 @@ void handle_button(int button_id) {
 			// cancel
 			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
 			badge_mode = MODE_PAIR_PENDING;
-			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+			ui_layout_badge();
 		}
 	} else if (badge_mode == MODE_SLEEP) {
 		// TODO
@@ -133,15 +132,15 @@ void app_main(void) {
 
 	epaper_init();
 	DEV_Delay_ms(500);
-	epaper_ui_set_layout(EPAPER_LAYOUT_WIFI_CONNECTING);
+	ui_layout_wifi_connecting();
 
 	ESP_LOGI(TAG, "Start WiFi Connection and advertise on BLE");
 	wifi_init();
 	gatts_init();
 
-	epaper_ui_set_layout(EPAPER_LAYOUT_WIFI_CONNECTED);
+	ui_layout_wifi_connected();
 	DEV_Delay_ms(1000);
-	epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	ui_layout_badge();
 
 	httpd_handle_t server = start_webserver();
 
