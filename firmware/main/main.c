@@ -27,27 +27,21 @@
 static const char *TAG = "main";
 
 typedef enum {
-	MODE_PAIR_SEARCH,
-	MODE_PAIR_CONFIRM,
 	MODE_LISTEN,
 	MODE_TALK,
 	MODE_SLEEP,
+	MODE_PAIR_SEARCH,
+	MODE_PAIR_CONFIRM,
+	MODE_PAIR_NO_PEER,
+	MODE_PAIR_PENDING,
+	MODE_PAIR_RESULT,
 } badge_mode_t;
 
 static badge_mode_t      badge_mode = MODE_SLEEP;
+user_t                   peer_badge;
 
 void handle_button(int button_id) {
-	if (badge_mode == MODE_PAIR_SEARCH) {
-		// TODO
-		badge_mode = MODE_LISTEN;
-		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
-	} else if (badge_mode == MODE_PAIR_CONFIRM) {
-		// TODO
-		badge_mode = MODE_LISTEN;
-		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
-	} else if (badge_mode == MODE_SLEEP) {
-		// TODO
-	} else if (badge_mode == MODE_LISTEN) {
+	if (badge_mode == MODE_LISTEN) {
 		if (button_id == BUTTON_ID_1) {
 			if (audio_pipeline_run(tx_pipeline) == ESP_OK) {
 				ESP_LOGI(TAG, "MODE_TALK, Start ADC pipeline");
@@ -55,18 +49,22 @@ void handle_button(int button_id) {
 				epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
 			}
 		} else if (button_id == BUTTON_ID_2) {
-			ESP_LOGI(TAG, "MODE_PAIR, Start Scanning for target device");
+			ESP_LOGI(TAG, "MODE_PAIR_SEARCH, Start Scanning for target device");
 			badge_mode = MODE_PAIR_SEARCH;
 			gattc_start();
 			epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
-			user_t peer;
-			if (xQueueReceive(ble_device_queue, &peer, pdMS_TO_TICKS(5000)) == pdTRUE) {
+			// begin searching for peer
+			if (xQueueReceive(ble_device_queue, &peer_badge, pdMS_TO_TICKS(5000)) ==
+			    pdTRUE) {
+				// found peer
 				ESP_LOGI(TAG, "MODE_PAIR_CONFIRM");
 				badge_mode = MODE_PAIR_CONFIRM;
-				ESP_LOGI(TAG, "BLE peer name: %s", peer.name);
-				ESP_LOGI(TAG, "BLE peer IP: %s", peer.ip);
-				epaper_ui_pair_confirm(peer.name);
+				ESP_LOGI(TAG, "BLE peer name: %s", peer_badge.name);
+				ESP_LOGI(TAG, "BLE peer IP: %s", peer_badge.ip);
+				epaper_ui_pair_confirm(peer_badge.name);
 			} else {
+				ESP_LOGI(TAG, "MODE_PAIR_NO_PEER");
+				badge_mode = MODE_PAIR_NO_PEER;
 				ESP_LOGW(TAG, "No badges scanned over BLE");
 				epaper_ui_pair_confirm(NULL); // display failure message
 			}
@@ -85,6 +83,28 @@ void handle_button(int button_id) {
 
 			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 		}
+	} else if (badge_mode == MODE_PAIR_SEARCH) {
+		// TODO
+		badge_mode = MODE_LISTEN;
+		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	} else if (badge_mode == MODE_PAIR_NO_PEER) {
+		// press any key to go to listen mode
+		ESP_LOGI(TAG, "MODE_LISTEN");
+		badge_mode = MODE_LISTEN;
+		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	} else if (badge_mode == MODE_PAIR_CONFIRM) {
+		if (button_id == BUTTON_ID_1) {
+			// confirm
+			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
+			badge_mode = MODE_PAIR_PENDING;
+		} else if (button_id == BUTTON_ID_2) {
+			// cancel
+			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
+			badge_mode = MODE_PAIR_PENDING;
+			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+		}
+	} else if (badge_mode == MODE_SLEEP) {
+		// TODO
 	}
 }
 

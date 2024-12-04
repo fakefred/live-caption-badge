@@ -14,3 +14,5 @@ extern const bitmap_t NO_WIFI_LOGO;
 extern const bitmap_t MUTE_LOGO;
 extern const bitmap_t UNMUTE_LOGO;
 extern const bitmap_t PAIR_LOGO;
+extern const bitmap_t CHECK_LOGO;
+extern const bitmap_t CROSS_LOGO;

@@ -71,6 +71,12 @@ epaper_err_t ui_layout_caption(void) {
 	return caption_clear();
 }
 
+static epaper_err_t print_name(void) {
+	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
+	draw_string_medium(64, 280, "Hello, my name is");
+	draw_string_large(64, 350, CONFIG_PARTICIPANT_NAME);
+}
+
 epaper_err_t ui_layout_pair_searching(void) {
 	ESP_LOGI(TAG, "ui_layout_pair_searching");
 	Paint_Clear(WHITE);
@@ -82,14 +88,11 @@ epaper_err_t ui_layout_pair_searching(void) {
 	draw_string_medium(300, 350, "nearby badges...");
 	Paint_SetRotate(ROTATE_0);
 
-	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
-	draw_string_medium(64, 280, "Hello, my name is");
-	draw_string_large(64, 350, CONFIG_PARTICIPANT_NAME);
+	print_name();
 	
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
 	};
-
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
 	return EPAPER_OK;
 }
@@ -109,14 +112,56 @@ epaper_err_t ui_layout_pair_confirm(const char *peer_name) {
 	}
 	Paint_SetRotate(ROTATE_0);
 
-	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
-	draw_string_medium(64, 280, "Hello, my name is");
-	draw_string_large(64, 350, CONFIG_PARTICIPANT_NAME);
+	print_name();
 	
 	epaper_refresh_area_t refresh_area = {
 		.mode = EPAPER_REFRESH_FAST,
 	};
+	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	return EPAPER_OK;
+}
 
+epaper_err_t ui_layout_pair_pending(const char *peer_name) {
+	ESP_LOGI(TAG, "ui_layout_pair_confirm");
+	Paint_Clear(WHITE);
+
+	draw_bitmap(540, 40, &PAIR_LOGO);
+
+	Paint_SetRotate(ROTATE_180);
+	assert(peer_name != NULL);
+	draw_string_medium(300, 280, "Requesting to pair...");
+	draw_string_large(300, 350, peer_name);
+	Paint_SetRotate(ROTATE_0);
+
+	print_name();
+	
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_FAST,
+	};
+	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
+	return EPAPER_OK;
+}
+
+epaper_err_t ui_layout_pair_result(const char *peer_name) {
+	ESP_LOGI(TAG, "ui_layout_pair_confirm");
+	Paint_Clear(WHITE);
+
+	draw_bitmap(540, 40, &PAIR_LOGO);
+
+	Paint_SetRotate(ROTATE_180);
+	if (peer_name != NULL) {
+		draw_string_medium(300, 280, "You are paired with");
+		draw_string_large(300, 350, peer_name);
+	} else { // HACK
+		draw_string_medium(300, 280, "Pairing failed");
+	}
+	Paint_SetRotate(ROTATE_0);
+
+	print_name();
+	
+	epaper_refresh_area_t refresh_area = {
+		.mode = EPAPER_REFRESH_FAST,
+	};
 	xQueueSend(epaper_refresh_queue, &refresh_area, 0);
 	return EPAPER_OK;
 }
