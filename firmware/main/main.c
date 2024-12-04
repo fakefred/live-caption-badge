@@ -35,18 +35,14 @@ typedef enum {
 } badge_mode_t;
 
 static badge_mode_t      badge_mode = MODE_SLEEP;
-static SemaphoreHandle_t fsm_sem;
 
 void handle_button(int button_id) {
-	if (xSemaphoreTake(fsm_sem, 0) == pdFALSE) {
-		ESP_LOGW(TAG, "handle_button is busy, keypress ignored");
-		return;
-	}
-
 	if (badge_mode == MODE_PAIR_SEARCH) {
+		// TODO
 		badge_mode = MODE_LISTEN;
 		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 	} else if (badge_mode == MODE_PAIR_CONFIRM) {
+		// TODO
 		badge_mode = MODE_LISTEN;
 		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 	} else if (badge_mode == MODE_SLEEP) {
@@ -63,7 +59,17 @@ void handle_button(int button_id) {
 			badge_mode = MODE_PAIR_SEARCH;
 			gattc_start();
 			epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
-			// TODO: wait for BLE
+			user_t peer;
+			if (xQueueReceive(ble_device_queue, &peer, pdMS_TO_TICKS(5000)) == pdTRUE) {
+				ESP_LOGI(TAG, "MODE_PAIR_CONFIRM");
+				badge_mode = MODE_PAIR_CONFIRM;
+				ESP_LOGI(TAG, "BLE peer name: %s", peer.name);
+				ESP_LOGI(TAG, "BLE peer IP: %s", peer.ip);
+				epaper_ui_pair_confirm(peer.name);
+			} else {
+				ESP_LOGW(TAG, "No badges scanned over BLE");
+				epaper_ui_pair_confirm(NULL); // display failure message
+			}
 		}
 	} else if (badge_mode == MODE_TALK) {
 		if (button_id == BUTTON_ID_1) {
@@ -80,8 +86,6 @@ void handle_button(int button_id) {
 			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 		}
 	}
-
-	xSemaphoreGive(fsm_sem);
 }
 
 void app_main(void) {

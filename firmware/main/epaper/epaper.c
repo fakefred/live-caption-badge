@@ -121,6 +121,15 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 	return EPAPER_OK;
 }
 
+epaper_err_t epaper_ui_pair_confirm(const char *peer_name) {
+	while (xSemaphoreTake(epaper_sem, pdMS_TO_TICKS(5000)) != pdTRUE) {
+		ESP_LOGW(TAG, "epaper_ui_pair_confirm take semaphore timeout");
+	}
+	ui_layout_pair_confirm(peer_name);
+	xSemaphoreGive(epaper_sem);
+	return EPAPER_OK;
+}
+
 epaper_err_t epaper_shutdown(void) {
 	ESP_LOGI(TAG, "epaper_shutdown");
 	assert(epaper_is_on);

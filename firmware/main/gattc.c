@@ -14,6 +14,7 @@
  ****************************************************************************/
 
 #include "esp_err.h"
+#include "freertos/idf_additions.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include <stdbool.h>
@@ -40,7 +41,7 @@ static ble_device_t  deviceList[MAX_DEVICES];
 static user_t        userList[MAX_DEVICES];
 static bool          readIP = false;
 uint32_t             duration = 2;
-extern QueueHandle_t q;
+QueueHandle_t        ble_device_queue;
 
 void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
                                  esp_ble_gattc_cb_param_t *param) {
@@ -245,7 +246,7 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 				       p_data->read.value_len);
 				ESP_LOGI(GATTC_TAG, "targetIP: %s", userList[device_count - 1].ip);
 				readIP = !readIP;
-				xQueueSend(q, (void *)&userList[device_count - 1], (TickType_t)10);
+				xQueueSend(ble_device_queue, (void *)&userList[device_count - 1], (TickType_t)10);
 			}
 			// struct gattc_search_res_evt_param* sr_res = &p_data->search_res;
 			// uint16_t char_id = sr_res->srvc_id.uuid.uuid.uuid16;
@@ -547,6 +548,11 @@ void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
 
 esp_err_t gattc_start(void) {
 	esp_err_t ret;
+
+	if (!ble_device_queue) {
+		ble_device_queue = xQueueCreate(1, sizeof(user_t));
+	}
+	xQueueReset(ble_device_queue);
 
 	// register the  callback function to the gap module
 	ret = esp_ble_gap_register_callback(esp_gap_cb);

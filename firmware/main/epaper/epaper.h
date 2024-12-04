@@ -77,6 +77,7 @@ epaper_err_t epaper_init(void);
  * The epaper can be in one of the following layouts: badge, pair, caption.
  */
 epaper_err_t epaper_ui_set_layout(epaper_layout_t layout);
+epaper_err_t epaper_ui_pair_confirm(const char *peer_name);
 
 /*
  * Clears epaper and puts epaper to sleep. Stops epaper_task.

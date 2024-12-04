@@ -20,7 +20,6 @@
 #include "esp_gap_ble_api.h"
 #include "esp_gatt_common_api.h"
 #include "esp_gatts_api.h"
-#include "gatts_table_creat_demo.h"
 
 #define GATTS_TABLE_TAG "GATTS_TABLE_DEMO"
 

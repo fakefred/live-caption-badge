@@ -96,11 +96,15 @@ epaper_err_t ui_layout_pair_confirm(const char *peer_name) {
 	ESP_LOGI(TAG, "ui_layout_pair_confirm");
 	Paint_Clear(WHITE);
 
-	draw_bitmap(768, 40, &PAIR_LOGO);
+	draw_bitmap(540, 40, &PAIR_LOGO);
 
 	Paint_SetRotate(ROTATE_180);
-	draw_string_medium(64, 280, "Pair with this badge?");
-	draw_string_large(64, 350, peer_name);
+	if (peer_name != NULL) {
+		draw_string_medium(300, 280, "Pair with this badge?");
+		draw_string_large(300, 350, peer_name);
+	} else { // HACK
+		draw_string_medium(300, 280, "No nearby badges found.");
+	}
 	Paint_SetRotate(ROTATE_0);
 
 	Paint_DrawRectangle(10, 236, 790, 244, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);

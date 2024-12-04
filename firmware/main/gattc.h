@@ -35,6 +35,8 @@ static bool                    get_server = false;
 static esp_gattc_char_elem_t  *char_elem_result = NULL;
 static esp_gattc_descr_elem_t *descr_elem_result = NULL;
 
+extern QueueHandle_t ble_device_queue;
+
 // for multiple device connection
 typedef struct {
 	esp_bd_addr_t       bda;
