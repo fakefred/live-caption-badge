@@ -73,7 +73,7 @@ epaper_err_t ui_layout_pair_searching(void) {
 	ESP_LOGI(TAG, "ui_layout_pair_searching");
 	Paint_Clear(WHITE);
 
-	draw_bitmap(500, 40, &PAIR_LOGO);
+	draw_bitmap(540, 40, &PAIR_LOGO);
 
 	Paint_SetRotate(ROTATE_180);
 	draw_string_medium(300, 280, "Searching for");

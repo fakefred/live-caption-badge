@@ -43,6 +43,8 @@ void handle_button(int button_id) {
 	}
 
 	if (badge_mode == MODE_PAIR_SEARCH) {
+		badge_mode = MODE_LISTEN;
+		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 	} else if (badge_mode == MODE_PAIR_CONFIRM) {
 		badge_mode = MODE_LISTEN;
 		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
