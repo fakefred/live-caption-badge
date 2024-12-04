@@ -128,8 +128,6 @@ void app_main(void) {
 	audio_init();
 	es8311_pa_power(false);
 
-	fsm_sem = xSemaphoreCreateBinary();
-	xSemaphoreGive(fsm_sem);
 	badge_mode = MODE_LISTEN;
 
 	while (1) {

@@ -199,10 +199,10 @@ epaper_err_t caption_display() {
 			                   WHITE);
 			refresh_area = (epaper_refresh_area_t){
 				.mode = EPAPER_REFRESH_PARTIAL,
-				.x_start = cfg.x_start,
-				.y_start = cfg.y_start,
-				.x_end = cfg.x_end,
-				.y_end = cfg.y_end,
+				.x_start = 0,
+				.y_start = 0,
+				.x_end = EPD_7IN5_V2_WIDTH,
+				.y_end = EPD_7IN5_V2_HEIGHT,
 			};
 		} else {
 			ESP_LOGI(TAG, "caption_display: Updating screen area (%u, %u) -- (%u, %u)",

@@ -66,6 +66,8 @@ epaper_err_t ui_layout_badge(void) {
 
 epaper_err_t ui_layout_caption(void) {
 	ESP_LOGI(TAG, "ui_layout_caption");
+
+	draw_button(BUTTON_ID_1, &MUTE_LOGO);
 	return caption_clear();
 }
 
