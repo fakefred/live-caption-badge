@@ -539,3 +539,40 @@ void gatts_init(void){
         ESP_LOGE(GATTS_TABLE_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
     }
 }
+
+esp_err_t gatts_deinit(void){
+    esp_err_t ret;
+
+    // ret = esp_ble_gatts_app_unregister(ESP_APP_ID);
+    // if(ret != ESP_OK){
+    //     ESP_LOGE(GATTS_TABLE_TAG, "esp_ble_gatts_app_unregister() failed.");
+    //     return ESP_FAIL;
+    // }
+
+    ret = esp_bluedroid_disable();
+    if(ret != ESP_OK){
+        ESP_LOGE(GATTS_TABLE_TAG, "esp_bluedroid_disable() failed.");
+        return ESP_FAIL;
+    }
+
+    ret = esp_bluedroid_deinit();
+    if(ret != ESP_OK){
+        ESP_LOGE(GATTS_TABLE_TAG, "esp_bluedroid_deinit() failed.");
+        return ESP_FAIL;
+    }
+
+    ret = esp_bt_controller_disable();
+    if(ret != ESP_OK){
+        ESP_LOGE(GATTS_TABLE_TAG, "esp_bt_controller_disable() failed.");
+        return ESP_FAIL;
+    }
+
+    ret = esp_bt_controller_deinit();
+    if(ret != ESP_OK){
+        ESP_LOGE(GATTS_TABLE_TAG, "esp_bt_controller_deinit() failed.");
+        return ESP_FAIL;
+    }
+    ESP_LOGI(GATTS_TABLE_TAG, "gatts_deinit() success");
+    return ESP_OK;
+
+}
