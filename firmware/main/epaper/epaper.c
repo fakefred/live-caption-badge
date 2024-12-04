@@ -73,9 +73,9 @@ epaper_err_t epaper_init(void) {
 
 	// Initialize caption layout on screen
 	caption_cfg_t caption_cfg = {
-		.x_start = 0,
-		.y_start = 0,
-		.x_end = 800,
+		.x_start = 16,
+		.y_start = 60,
+		.x_end = 784,
 		.y_end = 480,
 		.font = &Font48,
 	};
@@ -108,7 +108,7 @@ epaper_err_t epaper_ui_set_layout(epaper_layout_t layout) {
 	} else if (layout == EPAPER_LAYOUT_CAPTION) {
 		ui_layout_caption();
 	} else if (layout == EPAPER_LAYOUT_PAIR) {
-		ui_layout_pair();
+		ui_layout_pair_searching();
 	} else if (layout == EPAPER_LAYOUT_WIFI_CONNECTING) {
 		ui_layout_wifi_connecting();
 	} else if (layout == EPAPER_LAYOUT_WIFI_CONNECTED) {

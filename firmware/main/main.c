@@ -26,7 +26,8 @@
 static const char *TAG = "main";
 
 typedef enum {
-	MODE_PAIR,
+	MODE_PAIR_SEARCH,
+	MODE_PAIR_CONFIRM,
 	MODE_LISTEN,
 	MODE_TALK,
 	MODE_SLEEP,
@@ -41,25 +42,28 @@ void handle_button(int button_id) {
 		return;
 	}
 
-	if (badge_mode == MODE_PAIR) {
+	if (badge_mode == MODE_PAIR_SEARCH) {
+	} else if (badge_mode == MODE_PAIR_CONFIRM) {
+		badge_mode = MODE_LISTEN;
+		epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
+	} else if (badge_mode == MODE_SLEEP) {
 		// TODO
-		return;
-	}
-
-	if (badge_mode == MODE_SLEEP) {
-		// TODO
-		return;
-	}
-
-	// MODE_LISTEN or MODE_TALK
-	if (button_id == BUTTON_ID_1) {
-		if (badge_mode == MODE_LISTEN) {
+	} else if (badge_mode == MODE_LISTEN) {
+		if (button_id == BUTTON_ID_1) {
 			if (audio_pipeline_run(tx_pipeline) == ESP_OK) {
 				ESP_LOGI(TAG, "MODE_TALK, Start ADC pipeline");
 				badge_mode = MODE_TALK;
+				epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
 			}
-			epaper_ui_set_layout(EPAPER_LAYOUT_CAPTION);
-		} else {
+		} else if (button_id == BUTTON_ID_2) {
+			ESP_LOGI(TAG, "MODE_PAIR, Start Scanning for target device");
+			badge_mode = MODE_PAIR_SEARCH;
+			gattc_start();
+			epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
+			// TODO: wait for BLE
+		}
+	} else if (badge_mode == MODE_TALK) {
+		if (button_id == BUTTON_ID_1) {
 			ESP_LOGI(TAG, "MODE_LISTEN, Stop ADC pipeline");
 			badge_mode = MODE_LISTEN;
 
@@ -72,14 +76,6 @@ void handle_button(int button_id) {
 
 			epaper_ui_set_layout(EPAPER_LAYOUT_BADGE);
 		}
-	} else if (button_id == BUTTON_ID_2) {
-		ESP_LOGI(TAG, "MODE_PAIR, Start advertising name and IP address.");
-		badge_mode = MODE_PAIR;
-		gatts_init();
-
-		ESP_LOGI(TAG, "Start Scanning for target device.");
-		gattc_start();
-		epaper_ui_set_layout(EPAPER_LAYOUT_PAIR);
 	}
 
 	xSemaphoreGive(fsm_sem);
@@ -112,8 +108,9 @@ void app_main(void) {
 	DEV_Delay_ms(500);
 	epaper_ui_set_layout(EPAPER_LAYOUT_WIFI_CONNECTING);
 
-	ESP_LOGI(TAG, "Start WiFi Connection!");
+	ESP_LOGI(TAG, "Start WiFi Connection and advertise on BLE");
 	wifi_init();
+	gatts_init();
 
 	epaper_ui_set_layout(EPAPER_LAYOUT_WIFI_CONNECTED);
 	DEV_Delay_ms(1000);
@@ -123,10 +120,9 @@ void app_main(void) {
 
 	audio_init();
 
-	bool tx_running = false;
-
 	fsm_sem = xSemaphoreCreateBinary();
 	xSemaphoreGive(fsm_sem);
+	badge_mode = MODE_LISTEN;
 
 	while (1) {
 		audio_event_iface_msg_t msg;
@@ -137,12 +133,6 @@ void app_main(void) {
 
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			handle_button((int)msg.data);
-			if ((int)msg.data == BUTTON_ID_1) {
-			} else if ((int)msg.data == BUTTON_ID_2) {
-
-			} else if ((int)msg.data == BUTTON_ID_3) {
-				ESP_LOGI(TAG, "[ * ] Button 3");
-			}
 		}
 	}
 

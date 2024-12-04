@@ -12,7 +12,8 @@ epaper_err_t ui_layout_badge(void);
  */
 epaper_err_t ui_layout_caption(void);
 
-epaper_err_t ui_layout_pair(void);
+epaper_err_t ui_layout_pair_searching(void);
+epaper_err_t ui_layout_pair_confirm(const char *peer_name);
 
 epaper_err_t ui_layout_wifi_connecting(void);
 epaper_err_t ui_layout_wifi_connected(void);
