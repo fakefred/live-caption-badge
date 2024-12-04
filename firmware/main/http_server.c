@@ -2,6 +2,7 @@
 
 #include "FreeRTOSConfig.h"
 #include "epaper/caption.h"
+#include "es8311.h"
 #include "esp_err.h"
 #include "ringbuf.h"
 #include <esp_http_server.h>
@@ -59,7 +60,9 @@ static const httpd_uri_t transcription_uri = {
 static esp_err_t poke_get_handler(httpd_req_t *req) {
 	ESP_LOGI(TAG, "======== GET /poke =======");
 
-	if (audio_pipeline_run(rx_pipeline) != ESP_OK) {
+	if (audio_pipeline_run(rx_pipeline) == ESP_OK) {
+		es8311_pa_power(true);
+	} else {
 		ESP_LOGE(TAG, "Failed to run rx_pipeline");
 	}
 

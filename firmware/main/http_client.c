@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "es8311.h"
 #include "esp_err.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
@@ -74,11 +75,13 @@ esp_err_t _http_up_stream_event_handle(http_stream_event_msg_t *msg) {
 
 esp_err_t _http_down_stream_event_handle(http_stream_event_msg_t *msg) {
 	if (msg->event_id == HTTP_STREAM_FINISH_TRACK) {
+		ESP_LOGI(TAG, "No more audio from server");
 		audio_pipeline_stop(rx_pipeline);
 		audio_pipeline_wait_for_stop(rx_pipeline);
 		audio_pipeline_reset_ringbuffer(rx_pipeline);
 		audio_pipeline_reset_elements(rx_pipeline);
 		audio_pipeline_terminate(rx_pipeline);
+		es8311_pa_power(false);
 	}
 	return ESP_OK;
 }

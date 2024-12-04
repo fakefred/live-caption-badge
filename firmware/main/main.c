@@ -15,6 +15,7 @@
 #include "audio_event_iface.h"
 #include "audio_pipeline.h"
 #include "board.h"
+#include "es8311.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_netif.h"
@@ -121,6 +122,7 @@ void app_main(void) {
 	httpd_handle_t server = start_webserver();
 
 	audio_init();
+	es8311_pa_power(false);
 
 	fsm_sem = xSemaphoreCreateBinary();
 	xSemaphoreGive(fsm_sem);
