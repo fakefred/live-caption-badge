@@ -106,7 +106,7 @@ void handle_button(int button_id) {
 			}
 			ESP_LOGI(TAG, "MODE_PAIR_RESULT");
 			badge_mode = MODE_PAIR_RESULT;
-			ui_layout_pair_result(peer_badge.name);
+			ui_layout_pair_result(paired ? peer_badge.name : NULL);
 		} else if (button_id == BUTTON_ID_2) {
 			// cancel
 			ESP_LOGI(TAG, "MODE_LISTEN");
