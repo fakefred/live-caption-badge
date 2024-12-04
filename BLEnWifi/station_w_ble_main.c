@@ -36,7 +36,9 @@ const char deviceName[] = "LIVE_CAPTION_BADGE_2";
 static const char *TAG = "main";
 char ipAddrComplete [20] = {0};
 const char name[20] = "Larry Page";
-
+static user_t userList[MAX_DEVICES];
+user_t userBuffer;
+QueueHandle_t q;
 
 void app_main(void)
 {
@@ -57,9 +59,20 @@ void app_main(void)
     ESP_LOGI(TAG, "Start advertising name and IP address.");
 
     ESP_LOGI(TAG, "Start Scanning for target device.");
-    gattc_start();
+    q = xQueueCreate(1, sizeof(user_t));
+    ret = gattc_start();
+    if (ret != ESP_OK) {
+      ESP_LOGE(TAG, "GATTC setup failed.");
+    }
 
     while(1){
-        vTaskDelay(pdMS_TO_TICKS(500));
+        if( xQueueReceive( q, &( userBuffer ),( TickType_t ) 10 ) == pdPASS ){
+            /* xRxedStructure now contains a copy of xMessage. */
+            ESP_LOGI(TAG, "received user name: %s", userBuffer.name);
+            ESP_LOGI(TAG, "received user IP: %s", userBuffer.ip);
+        }else{
+            ESP_LOGI(TAG, "empty queue");
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
