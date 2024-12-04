@@ -13,6 +13,7 @@
  *
  ****************************************************************************/
 
+#include "esp_err.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include <stdbool.h>
@@ -35,9 +36,11 @@ char test[20] = {0};
 
 static int device_count = 0;
 
-static ble_device_t deviceList[MAX_DEVICES];
-static user_t       userList[MAX_DEVICES];
-static bool         readIP = false;
+static ble_device_t  deviceList[MAX_DEVICES];
+static user_t        userList[MAX_DEVICES];
+static bool          readIP = false;
+uint32_t             duration = 2;
+extern QueueHandle_t q;
 
 void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
                                  esp_ble_gattc_cb_param_t *param) {
@@ -228,18 +231,21 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 			ESP_LOGI(GATTC_TAG, "Read char success, value:");
 			esp_log_buffer_hex(GATTC_TAG, p_data->read.value, p_data->read.value_len);
 			if (!readIP) {
+				ESP_LOGI(GATTC_TAG, "device_count: %d", device_count);
 				memcpy(&test, p_data->read.value, p_data->read.value_len);
 				ESP_LOGI(GATTC_TAG, "name: %s", test);
-				memcpy(&userList[device_count].name, &test,
+				memcpy(&userList[device_count - 1].name, &test,
 				       strlen(test) * sizeof(char));
 				ESP_LOGI(GATTC_TAG, "name(userList): %s",
-				         userList[device_count].name);
+				         userList[device_count - 1].name);
 				readIP = !readIP;
 			} else {
-				memcpy(&userList[device_count].ip, p_data->read.value,
+				ESP_LOGI(GATTC_TAG, "device_count: %d", device_count);
+				memcpy(&userList[device_count - 1].ip, p_data->read.value,
 				       p_data->read.value_len);
-				ESP_LOGI(GATTC_TAG, "targetIP: %s", userList[device_count].ip);
+				ESP_LOGI(GATTC_TAG, "targetIP: %s", userList[device_count - 1].ip);
 				readIP = !readIP;
+				xQueueSend(q, (void *)&userList[device_count - 1], (TickType_t)10);
 			}
 			// struct gattc_search_res_evt_param* sr_res = &p_data->search_res;
 			// uint16_t char_id = sr_res->srvc_id.uuid.uuid.uuid16;
@@ -372,7 +378,6 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 	switch (event) {
 	case ESP_GAP_BLE_SCAN_PARAM_SET_COMPLETE_EVT: {
 		// the unit of the duration is second
-		uint32_t duration = 5;
 		esp_ble_gap_start_scanning(duration);
 		break;
 	}
@@ -455,7 +460,6 @@ void esp_gap_cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
 			}
 			break;
 		case ESP_GAP_SEARCH_INQ_CMPL_EVT:
-			esp_ble_gap_stop_scanning();
 			ESP_LOGI(GATTC_TAG,
 			         "Scanning end, the number of live caption devices found is %d",
 			         device_count);
@@ -541,21 +545,21 @@ void esp_gattc_cb(esp_gattc_cb_event_t event, esp_gatt_if_t gattc_if,
 	} while (0);
 }
 
-void gattc_start(void) {
+esp_err_t gattc_start(void) {
 	esp_err_t ret;
 
 	// register the  callback function to the gap module
 	ret = esp_ble_gap_register_callback(esp_gap_cb);
 	if (ret) {
 		ESP_LOGE(GATTC_TAG, "%s gap register failed, error code = %x", __func__, ret);
-		return;
+		return ret;
 	}
 
 	// register the callback function to the gattc module
 	ret = esp_ble_gattc_register_callback(esp_gattc_cb);
 	if (ret) {
 		ESP_LOGE(GATTC_TAG, "%s gattc register failed, error code = %x", __func__, ret);
-		return;
+		return ret;
 	}
 
 	ret = esp_ble_gattc_app_register(PROFILE_A_APP_ID);
@@ -566,4 +570,7 @@ void gattc_start(void) {
 	if (local_mtu_ret) {
 		ESP_LOGE(GATTC_TAG, "set local  MTU failed, error code = %x", local_mtu_ret);
 	}
+
+	ESP_LOGI(GATTC_TAG, "Devices found during scanning. Proceeding with connection.");
+	return ESP_OK; // Devices found
 }
