@@ -61,12 +61,14 @@ esp_err_t audio_init(void) {
 	i2s_stream_set_clk(adc_i2s, AUDIO_SAMPLE_RATE, AUDIO_BITS, AUDIO_CHANNELS);
 	audio_pipeline_register(tx_pipeline, adc_i2s, "adc");
 
+	const char *server_url = "http://" CONFIG_SERVER_IP ":" CONFIG_SERVER_PORT "/audio";
+
 	ESP_LOGI(TAG, "Create HTTP Vosk stream");
 	http_stream_cfg_t tx_http_cfg = HTTP_STREAM_CFG_DEFAULT();
 	tx_http_cfg.type = AUDIO_STREAM_WRITER;
 	tx_http_cfg.event_handle = _http_up_stream_event_handle;
 	tx_http = http_stream_init(&tx_http_cfg);
-	audio_element_set_uri(tx_http, CONFIG_SERVER_URI);
+	audio_element_set_uri(tx_http, server_url);
 	audio_pipeline_register(tx_pipeline, tx_http, "tx-http");
 
 	// RX pipeline: Peer RX
@@ -87,7 +89,7 @@ esp_err_t audio_init(void) {
 	rx_http_cfg.type = AUDIO_STREAM_READER;
 	rx_http_cfg.event_handle = _http_down_stream_event_handle;
 	rx_http = http_stream_init(&rx_http_cfg);
-	audio_element_set_uri(rx_http, CONFIG_SERVER_URI);
+	audio_element_set_uri(rx_http, server_url);
 	audio_pipeline_register(rx_pipeline, rx_http, "rx-http");
 
 	/*

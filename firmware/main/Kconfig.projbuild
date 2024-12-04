@@ -7,9 +7,13 @@ config WIFI_PASSWORD
 	string "Wi-Fi Password"
 	default ""
 
-config SERVER_URI
-	string "Server URI"
-	default "http://192.168.0.248:8000/upload"
+config SERVER_IP
+	string "Server IP"
+	default "192.168.227.221"
+
+config SERVER_PORT
+	string "Server Port"
+	default "8000"
 
 config PARTICIPANT_NAME
 	string "Participant Name"

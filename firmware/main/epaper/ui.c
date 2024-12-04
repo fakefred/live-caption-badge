@@ -62,12 +62,12 @@ epaper_err_t ui_layout_badge(const char *peer_name) {
 	if (peer_name == NULL) {
 		// not paired
 		draw_button(BUTTON_ID_2, &LINK_LOGO);
-		draw_string_medium(32, 440, "Not paired");
+		draw_string_medium(32, 420, "Not paired");
 	} else {
 		char *str = calloc(100, 1);
 		snprintf(str, 100, "Paired with %s", peer_name);
 		draw_button(BUTTON_ID_2, &UNLINK_LOGO);
-		draw_string_medium(32, 440, str);
+		draw_string_medium(32, 420, str);
 	}
 	Paint_SetRotate(ROTATE_0);
 
