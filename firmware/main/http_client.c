@@ -89,6 +89,7 @@ esp_err_t http_request_to_pair(const char *peer_ip) {
 	    .query = query,
 	    .event_handler = NULL,
 	    .user_data = NULL,
+	    .timeout_ms = 10000,
 	};
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_err_t err = esp_http_client_perform(client);

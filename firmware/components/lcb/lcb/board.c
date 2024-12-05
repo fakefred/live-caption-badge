@@ -72,7 +72,7 @@ esp_err_t audio_board_key_init(esp_periph_set_handle_t set)
     esp_err_t ret = ESP_OK;
     periph_button_cfg_t btn_cfg = {
 	.gpio_mask = (1ULL << GPIO_NUM_40) | (1ULL << GPIO_NUM_41) | (1ULL << GPIO_NUM_42),
-	.long_press_time_ms = 1000,
+	.long_press_time_ms = 5000,
     };
     esp_periph_handle_t btn_handle = periph_button_init(&btn_cfg);
     AUDIO_NULL_CHECK(TAG, btn_handle, return ESP_ERR_ADF_MEMORY_LACK);

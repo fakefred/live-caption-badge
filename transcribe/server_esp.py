@@ -26,9 +26,9 @@ from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
-global audio_queues, pair_dict, firstOne, requested, agree
+global audio_queues, pair_requests
 audio_queues = dict()  # IP address -> queue.Queue
-pair_dict = dict()
+pair_requests = dict() # {(from_ip, to_ip): timestamp}
 firstOne = True
 requested = False
 agree = False
@@ -259,39 +259,28 @@ class Handler(BaseHTTPRequestHandler):
 
             self.wfile.write(b"0\r\n\r\n")
             del audio_queues[ip]
+
         elif request_file_path == "pair":
             if not urlparts.query.startswith("with="):
                 self.send_response(400)
             else:
                 targetIP = urlparts.query.split("with=", 1)[1]
-                print(targetIP)
-                pair_dict[self.client_address[0]] = targetIP
-                print(self.client_address[0])
-                if firstOne == True:
-                    firstOne = False
-                    self.firstTimeStamp = datetime.now()
-                    dT = 0
-                    while requested == False and dT < 5:
-                        dT = (datetime.now() - self.firstTimeStamp).total_seconds()
-                    if dT > 5:
-                        self.send_response(500)
-                    if requested == True:
-                        checkPairingCondition()
-                        if agree:
-                            self.send_response(200)
-                        else:
-                            self.send_response(500)
-                else:
-                    firstOne = True
-                    requested = True
-                    time.sleep(2)
-                    if agree:
+                fromIP = self.client_address[0]
+                pair_requests[(fromIP, targetIP)] = datetime.now()
+                print(f"{fromIP} requests to pair with {targetIP}")
+                for i in range(10):
+                    time.sleep(1)
+                    reverse_pair = (targetIP, fromIP)
+                    if reverse_pair not in pair_requests:
+                        continue
+                    dt = (datetime.now() - pair_requests[reverse_pair]).total_seconds()
+                    if dt <= 10:
                         self.send_response(200)
-                        requested = False
-                    else:
-                        self.send_response(500)
+                        self.end_headers()
+                        return
 
-                resetPairVariable()
+                self.send_response(500)
+                self.end_headers()
 
 
 def get_host_ip():

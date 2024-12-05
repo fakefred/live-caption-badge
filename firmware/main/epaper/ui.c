@@ -174,7 +174,7 @@ epaper_err_t ui_layout_pair_result(const char *peer_name) {
 		draw_string_large(300, 330, peer_name);
 	} else { // HACK
 		draw_string_medium(300, 280, "Pairing failed");
-		draw_string_medium(300, 330, "You can try again");
+		draw_string_medium(300, 330, "Ask to try again?");
 	}
 	draw_string_medium(450, 420, "Press any key");
 	Paint_SetRotate(ROTATE_0);

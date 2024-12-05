@@ -1,6 +1,7 @@
 #include "audio.h"
 #include "epaper/DEV_Config.h"
 #include "epaper/epaper.h"
+#include "esp_system.h"
 #include "http_client.h"
 #include "http_server.h"
 #include "ui.h"
@@ -159,9 +160,16 @@ void app_main(void) {
 
 	ESP_LOGI(TAG, "Start WiFi Connection and advertise on BLE");
 	wifi_init();
+	gatts_init();
 
-	ui_layout_wifi_connected();
-	DEV_Delay_ms(1000);
+	if (wifiIsConnected) {
+		ui_layout_wifi_connected();
+		DEV_Delay_ms(1000);
+	} else {
+		ui_layout_wifi_disconnected();
+		DEV_Delay_ms(5000);
+	}
+
 	ui_layout_badge(NULL);
 
 	httpd_handle_t server = start_webserver();
@@ -180,6 +188,11 @@ void app_main(void) {
 
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			handle_button((int)msg.data);
+		}
+
+		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_LONG_PRESSED &&
+		    (int)msg.data == BUTTON_ID_3) {
+			esp_restart();
 		}
 	}
 
