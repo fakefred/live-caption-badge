@@ -206,7 +206,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html;charset=utf-8")
             self.end_headers()
             #  self.wfile.write(partialResult.encode("utf-8"))
-            self._write_wav(data, 16000, 16, 1)
+            #  self._write_wav(data, 16000, 16, 1)
             speaking[ip] = False
 
     def do_GET(self):
