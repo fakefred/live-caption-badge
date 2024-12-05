@@ -59,6 +59,23 @@ static const httpd_uri_t transcription_uri = {
     .user_ctx = NULL,
 };
 
+static esp_err_t reboot_get_handler(httpd_req_t *req) {
+	ESP_LOGI(TAG, "======== GET /reboot =======");
+
+	// End response
+	httpd_resp_send_chunk(req, NULL, 0);
+
+	esp_restart();
+	return ESP_OK;
+}
+
+static const httpd_uri_t reboot_uri = {
+    .uri = "/reboot",
+    .method = HTTP_GET,
+    .handler = reboot_get_handler,
+    .user_ctx = NULL,
+};
+
 static esp_err_t poke_get_handler(httpd_req_t *req) {
 	ESP_LOGI(TAG, "======== GET /poke =======");
 
@@ -118,6 +135,7 @@ httpd_handle_t start_webserver(void) {
 		// Set URI handlers
 		ESP_LOGI(TAG, "Registering URI handlers");
 		httpd_register_uri_handler(server, &transcription_uri);
+		httpd_register_uri_handler(server, &reboot_uri);
 		httpd_register_uri_handler(server, &poke_uri);
 		httpd_register_uri_handler(server, &unpoke_uri);
 		return server;
