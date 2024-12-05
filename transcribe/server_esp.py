@@ -7,6 +7,8 @@ import requests
 import queue
 import re
 from multiprocessing import Process
+from datetime import datetime
+import time
 
 import wave
 import threading
@@ -24,8 +26,13 @@ from http.server import ThreadingHTTPServer
 
 PORT = 8000
 
-global audio_queues
+global audio_queues, pair_dict, firstOne, requested, agree
 audio_queues = dict()  # IP address -> queue.Queue
+pair_dict = dict()
+firstOne = True
+requested = False
+agree = False
+
 
 BADGE_IP_ADDRS = ["192.168.227.113", "192.168.227.117"]
 
@@ -42,6 +49,18 @@ def poke_badge(ip: str):
 global buffer
 buffer = queue.Queue()
 
+def resetPairVariable():
+    global pair_dict, firstOne, requested, agree
+    pair_dict = dict()
+    firstOne = True
+    requested = False
+    agree = False
+
+def checkPairingCondition():
+    global agree
+    for key, value in pair_dict.items():
+        if value in pair_dict:
+            agree = True
 
 def sendTranscriptionResult():
     global buffer
@@ -62,6 +81,8 @@ class Handler(BaseHTTPRequestHandler):
     text = ""
     previous_stream = ""
     textBuffer = []
+    firstTimeStamp = datetime.now()
+    secondTimeStamp = datetime.now()
 
     def _set_headers(self, length):
         self.send_response(200)
@@ -176,6 +197,7 @@ class Handler(BaseHTTPRequestHandler):
             self._write_wav(data, 16000, 16, 1)
 
     def do_GET(self):
+        global firstOne, pair_dict, firstOne, requested, agree
         urlparts = parse.urlparse(self.path)
         request_file_path = urlparts.path.strip("/")
 
@@ -211,12 +233,36 @@ class Handler(BaseHTTPRequestHandler):
         elif request_file_path == "pair":
             if not urlparts.query.startswith("with="):
                 self.send_response(400)
+            else:
+                targetIP = urlparts.query.split("with=", 1)[1]
+                print(targetIP)
+                pair_dict[self.client_address[0]] = targetIP
+                print(self.client_address[0])
+                if firstOne == True:
+                    firstOne = False
+                    self.firstTimeStamp = datetime.now()
+                    dT = 0
+                    while requested == False and dT < 5:
+                        dT = (datetime.now() - self.firstTimeStamp).total_seconds()
+                    if dT > 5:
+                        self.send_response(500)
+                    if requested == True:
+                        checkPairingCondition()
+                        if agree:
+                            self.send_response(200)
+                        else:
+                            self.send_response(500)
+                else:
+                    firstOne = True
+                    requested = True
+                    time.sleep(2)
+                    if agree:
+                        self.send_response(200)
+                        requested = False
+                    else:
+                        self.send_response(500)
 
-            
-            self.send_response(200)
-            self.send_header("Content-Type", "application/octet-stream")
-            self.send_header("Transfer-Encoding", "chunked")
-            self.end_headers()
+                resetPairVariable()
 
 
 def get_host_ip():
