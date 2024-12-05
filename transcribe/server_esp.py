@@ -46,8 +46,18 @@ def poke_badge(ip: str):
         pass
 
 
-global buffer
+def unpoke_badge(ip: str):
+    url = f"http://{ip}/unpoke"
+    try:
+        print(f"  -> Unpoking {ip}")
+        requests.get(url)
+    except:
+        pass
+
+
+global buffer, speaking
 buffer = queue.Queue()
+speaking = dict() # IP address -> bool
 
 def resetPairVariable():
     global pair_dict, firstOne, requested, agree
@@ -113,7 +123,7 @@ class Handler(BaseHTTPRequestHandler):
         return filename
 
     def do_POST(self):
-        global audio_queues, buffer
+        global audio_queues, buffer, speaking
 
         urlparts = parse.urlparse(self.path)
         request_file_path = urlparts.path.strip("/")
@@ -127,6 +137,8 @@ class Handler(BaseHTTPRequestHandler):
         ):
             ip = self.client_address[0]
             print(f"POST /audio from {ip}")
+
+            speaking[ip] = True
 
             for badge_ip in BADGE_IP_ADDRS:
                 if badge_ip != ip:
@@ -195,6 +207,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             #  self.wfile.write(partialResult.encode("utf-8"))
             self._write_wav(data, 16000, 16, 1)
+            speaking[ip] = False
 
     def do_GET(self):
         global firstOne, pair_dict, firstOne, requested, agree
@@ -215,7 +228,23 @@ class Handler(BaseHTTPRequestHandler):
             total_bytes = 0
 
             while True:
-                chunk = audio_queues[ip].get()
+                try:
+                    chunk = audio_queues[ip].get(timeout=1) # block max 1 second
+                except queue.Empty:
+                    peer_is_speaking = False
+                    for peer_ip, peer_speak in speaking.items():
+                        if peer_ip != ip and peer_speak:
+                            peer_is_speaking = True
+
+                    if peer_is_speaking:
+                        # audio stream is alive
+                        continue
+                    else:
+                        # close connection
+                        p = Process(target=unpoke_badge, args=(ip,))
+                        p.start()
+                        break
+
                 total_bytes += len(chunk)
                 print(
                     f"  -> {ip}: TX {total_bytes} bytes total, queue length: {audio_queues[ip].qsize()}"

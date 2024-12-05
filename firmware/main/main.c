@@ -1,15 +1,17 @@
 #include "audio.h"
 #include "epaper/DEV_Config.h"
 #include "epaper/epaper.h"
+#include "http_client.h"
+#include "http_server.h"
+#include "ui.h"
+#include "wifi.h"
+
 #include "freertos/idf_additions.h"
 #include "freertos/projdefs.h"
 #include "gattc.h"
 #include "gatts.h"
-#include "http_server.h"
 #include "portmacro.h"
-#include "ui.h"
-#include "wifi.h"
-
+#include "sdkconfig.h"
 #include "audio_element.h"
 #include "audio_event_iface.h"
 #include "audio_pipeline.h"
@@ -37,8 +39,10 @@ typedef enum {
 } badge_mode_t;
 
 static badge_mode_t      badge_mode = MODE_SLEEP;
-static bool              paired = false;
+bool                     paired = false;
 user_t                   peer_badge;
+
+const char name[20] = "Lynn CONWAY";
 
 void handle_button(int button_id) {
 	if (badge_mode == MODE_LISTEN) {
@@ -51,8 +55,11 @@ void handle_button(int button_id) {
 		} else if (button_id == BUTTON_ID_2) {
 			ESP_LOGI(TAG, "MODE_PAIR_SEARCH, Start Scanning for target device");
 			badge_mode = MODE_PAIR_SEARCH;
-			gattc_start();
+			gatts_deinit();
 			ui_layout_pair_searching();
+			DEV_Delay_ms(500);
+			gatts_init();
+			gattc_start();
 			// begin searching for peer
 			if (xQueueReceive(ble_device_queue, &peer_badge, pdMS_TO_TICKS(5000)) ==
 			    pdTRUE) {
@@ -68,7 +75,6 @@ void handle_button(int button_id) {
 				ESP_LOGW(TAG, "No badges scanned over BLE");
 				ui_layout_pair_confirm(NULL); // display failure message
 			}
-			gattc_stop();
 		}
 	} else if (badge_mode == MODE_TALK) {
 		if (button_id == BUTTON_ID_1) {
@@ -92,7 +98,15 @@ void handle_button(int button_id) {
 			ESP_LOGI(TAG, "MODE_PAIR_PENDING");
 			badge_mode = MODE_PAIR_PENDING;
 			ui_layout_pair_pending(peer_badge.name);
-			// TODO
+			if (http_request_to_pair(peer_badge.ip) == ESP_OK) {
+				paired = true;
+			} else {
+				paired = false;
+				peer_badge = (user_t){0};
+			}
+			ESP_LOGI(TAG, "MODE_PAIR_RESULT");
+			badge_mode = MODE_PAIR_RESULT;
+			ui_layout_pair_result(paired ? peer_badge.name : NULL);
 		} else if (button_id == BUTTON_ID_2) {
 			// cancel
 			ESP_LOGI(TAG, "MODE_LISTEN");
@@ -106,10 +120,6 @@ void handle_button(int button_id) {
 		ui_layout_badge(paired ? peer_badge.name : NULL);
 	} else if (badge_mode == MODE_PAIR_PENDING) {
 		// no interaction available
-		// TODO
-		ESP_LOGI(TAG, "MODE_LISTEN");
-		badge_mode = MODE_LISTEN;
-		ui_layout_badge(paired ? peer_badge.name : NULL);
 	} else if (badge_mode == MODE_PAIR_RESULT) {
 		// press any key to go to listen mode
 		ESP_LOGI(TAG, "MODE_LISTEN");
@@ -149,7 +159,6 @@ void app_main(void) {
 
 	ESP_LOGI(TAG, "Start WiFi Connection and advertise on BLE");
 	wifi_init();
-	gatts_init();
 
 	ui_layout_wifi_connected();
 	DEV_Delay_ms(1000);
@@ -164,7 +173,7 @@ void app_main(void) {
 
 	while (1) {
 		audio_event_iface_msg_t msg;
-		esp_err_t               ret = audio_event_iface_listen(evt, &msg, portMAX_DELAY);
+		esp_err_t ret = audio_event_iface_listen(evt, &msg, pdMS_TO_TICKS(100));
 		if (ret != ESP_OK) {
 			continue;
 		}

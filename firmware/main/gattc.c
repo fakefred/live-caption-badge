@@ -613,8 +613,3 @@ esp_err_t gattc_start(void) {
 	ESP_LOGI(GATTC_TAG, "GATTC setup success");
 	return ESP_OK;
 }
-
-esp_err_t gattc_stop(void) {
-	esp_err_t ret = esp_ble_gattc_app_unregister(PROFILE_A_APP_ID);
-	return ret;
-}
