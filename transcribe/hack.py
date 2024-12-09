@@ -60,28 +60,21 @@ def select_badge(badges):
 if __name__ == "__main__":
     badges = read_csv()
     while True:
+        try:
+            ip = select_badge(badges)
+        except IndexError:
+            print("Invalid input")
+            continue
+        except ValueError:
+            print("Invalid input")
+            continue
+
         cmd = input("[D]isplay new user / [R]eboot / [P]oke / [U]npoke: ").lower()
         if cmd == "d":
             new_badges = read_csv()
-            found_changes = False
-            for ip, user in new_badges.items():
-                if user != badges[ip]:
-                    print(f"{ip} user info has changed")
-                    found_changes = True
-                    post_user(ip, user)
-                    badges = new_badges
-            if not found_changes:
-                print("No changes")
+            post_user(ip, new_badges[ip])
+            badges = new_badges
         else:
-            try:
-                ip = select_badge(badges)
-            except IndexError:
-                print("Invalid input")
-                continue
-            except ValueError:
-                print("Invalid input")
-                continue
-
             if cmd == "r":
                 get(ip, "reboot")
             elif cmd == "p":
