@@ -43,7 +43,10 @@ static badge_mode_t      badge_mode = MODE_SLEEP;
 bool                     paired = false;
 user_t                   peer_badge;
 
-const char name[20] = "Lynn CONWAY";
+char name[20] = CONFIG_PARTICIPANT_NAME;
+char pronouns[20] = CONFIG_PARTICIPANT_PRONOUNS;
+char affiliation[30] = CONFIG_PARTICIPANT_AFFILIATION;
+char role[20] = CONFIG_PARTICIPANT_ROLE;
 
 void handle_button(int button_id) {
 	if (badge_mode == MODE_LISTEN) {
@@ -185,6 +188,7 @@ void app_main(void) {
 		if (ret != ESP_OK) {
 			continue;
 		}
+		audio_event_iface_discard(evt); // disregard everything else in the queue
 
 		if (msg.source_type == PERIPH_ID_BUTTON && msg.cmd == PERIPH_BUTTON_PRESSED) {
 			handle_button((int)msg.data);

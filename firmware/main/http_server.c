@@ -1,4 +1,8 @@
+#include "DEV_Config.h"
 #include "audio.h"
+#include "gattc.h"
+#include "gatts.h"
+#include "ui.h"
 
 #include "FreeRTOSConfig.h"
 #include "epaper/caption.h"
@@ -16,6 +20,14 @@
 #include <unistd.h>
 
 static const char *TAG = "http_server";
+
+extern char name[20];
+extern char pronouns[20];
+extern char affiliation[30];
+extern char role[20];
+
+extern bool   paired;
+extern user_t peer_badge;
 
 static esp_err_t transcription_post_handler(httpd_req_t *req) {
 	char *buf = calloc(req->content_len + 1, 1);
@@ -73,6 +85,79 @@ static const httpd_uri_t reboot_uri = {
     .uri = "/reboot",
     .method = HTTP_GET,
     .handler = reboot_get_handler,
+    .user_ctx = NULL,
+};
+
+static esp_err_t user_post_handler(httpd_req_t *req) {
+	char *buf = calloc(req->content_len + 1, 1);
+	int   ret;
+	int   bytes_recv = 0;
+
+	while (bytes_recv < req->content_len) {
+		/* Read the data for the request */
+		ret = httpd_req_recv(req, buf + bytes_recv, req->content_len - bytes_recv);
+		if (ret <= 0) {
+			if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+				/* Retry receiving if timeout occurred */
+				continue;
+			}
+			free(buf);
+			return ESP_FAIL;
+		}
+
+		bytes_recv += ret;
+	}
+
+	/* Log data received */
+	ESP_LOGI(TAG, "======== POST /user =======");
+	ESP_LOGI(TAG, "%.*s", bytes_recv, buf);
+	ESP_LOGI(TAG, "===========================");
+
+	buf[bytes_recv] = '\0';
+
+	char *tok = strtok(buf, ";");
+	if (tok == NULL) {
+		return ESP_FAIL;
+	}
+	strncpy(name, tok, sizeof(name));
+	name[sizeof(name) - 1] = '\0';
+
+	tok = strtok(NULL, ";");
+	if (tok == NULL) {
+		return ESP_FAIL;
+	}
+	strncpy(pronouns, tok, sizeof(pronouns));
+	pronouns[sizeof(pronouns) - 1] = '\0';
+
+	tok = strtok(NULL, ";");
+	if (tok == NULL) {
+		return ESP_FAIL;
+	}
+	strncpy(affiliation, tok, sizeof(affiliation));
+	affiliation[sizeof(affiliation) - 1] = '\0';
+
+	tok = strtok(NULL, ";");
+	if (tok == NULL) {
+		return ESP_FAIL;
+	}
+	strncpy(role, tok, sizeof(role));
+	role[sizeof(role) - 1] = '\0';
+
+	ui_layout_badge(paired ? peer_badge.name : NULL);
+	gatts_deinit();
+	DEV_Delay_ms(500);
+	gatts_init();
+
+	// End response
+	httpd_resp_send(req, NULL, 0);
+	free(buf);
+	return ESP_OK;
+}
+
+static const httpd_uri_t user_uri = {
+    .uri = "/user",
+    .method = HTTP_POST,
+    .handler = user_post_handler,
     .user_ctx = NULL,
 };
 
@@ -136,6 +221,7 @@ httpd_handle_t start_webserver(void) {
 		ESP_LOGI(TAG, "Registering URI handlers");
 		httpd_register_uri_handler(server, &transcription_uri);
 		httpd_register_uri_handler(server, &reboot_uri);
+		httpd_register_uri_handler(server, &user_uri);
 		httpd_register_uri_handler(server, &poke_uri);
 		httpd_register_uri_handler(server, &unpoke_uri);
 		return server;

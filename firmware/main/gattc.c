@@ -246,7 +246,7 @@ void gattc_profile_event_handler(esp_gattc_cb_event_t event, esp_gatt_if_t gattc
 				memcpy(&test, p_data->read.value, p_data->read.value_len);
 				ESP_LOGI(GATTC_TAG, "name: %s", test);
 				memcpy(&userList[device_count - 1].name, &test,
-				       strlen(test) * sizeof(char));
+				       (strlen(test) + 1) * sizeof(char));
 				ESP_LOGI(GATTC_TAG, "name(userList): %s",
 				         userList[device_count - 1].name);
 				readIP = !readIP;

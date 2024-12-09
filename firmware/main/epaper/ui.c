@@ -13,7 +13,10 @@
 
 static const char *TAG = "ui";
 
-extern const char name[20];
+extern char name[20];
+extern char pronouns[20];
+extern char affiliation[30];
+extern char role[20];
 
 void draw_string_large(UWORD x_start, UWORD y_start, const char *str) {
 	Paint_DrawString_EN(x_start, y_start, str, &Font48, BLACK, WHITE);
@@ -51,12 +54,12 @@ epaper_err_t ui_layout_badge(const char *peer_name) {
 	draw_bitmap(0, 90, &UMICH_LOGO);
 	// TODO: long names?
 	draw_string_large(64, 240, name);
-	draw_string_medium(64, 300, CONFIG_PARTICIPANT_PRONOUNS);
-	draw_string_medium(32, 400, CONFIG_PARTICIPANT_AFFILIATION);
+	draw_string_medium(64, 300, pronouns);
+	draw_string_medium(32, 400, affiliation);
 	// HACK: right align
-	size_t role_len = strlen(CONFIG_PARTICIPANT_ROLE);
+	size_t role_len = strlen(role);
 	UWORD x_start = 768 - role_len * Font32.Width;
-	draw_string_medium(x_start, 400, CONFIG_PARTICIPANT_ROLE);
+	draw_string_medium(x_start, 400, role);
 
 	draw_button(BUTTON_ID_1, &UNMUTE_LOGO);
 
